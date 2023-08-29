@@ -13,4 +13,4 @@ configs = json.load(open('configs.json','r',encoding='utf-8'))
 
 muice = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
 
-qqbot(muice, Trust_QQ_list=configs['Trust_QQ_list'], AutoCreateTopic=True)
+qqbot(muice, Trust_QQ_list=configs['Trust_QQ_list'], AutoCreateTopic=configs['AutoCreateTopic'])
