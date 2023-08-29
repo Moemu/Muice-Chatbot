@@ -1,4 +1,4 @@
-![cover](src/cover.png)
+![](src/Cover.png)
 <p align="center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
 <img src="https://img.shields.io/badge/Model-ChatGLM2--6B-green" alt="Model">
