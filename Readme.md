@@ -39,6 +39,7 @@ pip install -r requirements.txt
 ```
 mkdir model
 cd model
+git lfs install
 git clone https://huggingface.co/THUDM/chatglm2-6b
 cd ..
 ```
@@ -47,7 +48,7 @@ cd ..
 
 ## go-cqhttp配置
 
-本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `bot` 目录中
+本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
 
 # 配置⚒️
 
