@@ -1,0 +1,10 @@
+{
+    "Trust_QQ_list": [
+        123456789,
+        987654321
+    ],
+    "AutoCreateTopic": false,
+    "read_memory_from_file": true,
+    "known_topic_probability": "0.003",
+    "time_topic_probability": "0.75"
+}
