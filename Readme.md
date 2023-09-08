@@ -174,6 +174,8 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 # 提报 Issue
 > 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
 > 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
+
+
 原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
 
 本项目源码使用[MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，对于微调后的模型文件，不建议作为商业用途
