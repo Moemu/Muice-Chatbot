@@ -62,9 +62,9 @@ cd ..
 
 ## 总结
 
-在完成这些操作后，你应该得到如下文件结构：
+在完成这些操作后，你应该得到类似如下所示的文件结构：
 ```
-├─Muice-Chatbot-main   <- 主路徑
+├─Muice-Chatbot   <- 主路徑
 │  ├─llm
 │  ├─model
 │    ├─ chatglm2-6b
@@ -98,7 +98,7 @@ cd ..
 ```
 
 # 使用🎉
-运行 `main.py` 即可
+在主目录运行 `main.py` 
 
 ```powershell
 conda activate Muice
