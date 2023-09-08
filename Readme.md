@@ -20,6 +20,12 @@
 
 ✔ 提供5条可用的命令
 
+#使用前须知
+- #### 本项目不适合零基础的小白使用。
+- 该项目依赖 pytorch，若不使用支持 CUDA 的显卡（NVIDIA），处理效率会大幅降低。
+- 该项目依赖 pyproject.toml，需要用户手动配置环境。
+
+
 # 安装💻
 
 建议环境：Python 3.10  GPU显存16G以上
@@ -49,6 +55,21 @@ cd ..
 ## go-cqhttp配置
 
 本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
+
+## 总结
+
+在完成这些操作后，你应该得到如下文件结构：
+```
+├─Muice-Chatbot-main   <- 主路徑
+│  ├─llm
+│  ├─model
+│       ├─ chatglm2-6b
+│       ├─ Muice
+│  ├─qqbot
+│  └─src
+├─main.py  <- 主處理程式
+└─...
+```
 
 # 配置⚒️
 
