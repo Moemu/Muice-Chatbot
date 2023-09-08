@@ -67,8 +67,8 @@ cd ..
 ├─Muice-Chatbot-main   <- 主路徑
 │  ├─llm
 │  ├─model
-│       ├─ chatglm2-6b
-│       ├─ Muice
+│    ├─ chatglm2-6b
+│    ├─ Muice
 │  ├─qqbot
 │  └─src
 ├─main.py  <- 主處理程式
