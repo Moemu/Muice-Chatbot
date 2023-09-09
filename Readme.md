@@ -20,9 +20,19 @@
 
 ✔ 提供5条可用的命令
 
+# 使用前须知⚠️
+- #### 本项目不适合零基础的小白使用。
+- 该项目依赖 pytorch，若不使用支持 [ CUDA ](https://developer.nvidia.com/about-cuda) 的显卡（NVIDIA），处理效率会大幅降低。
+  
+- 该项目依赖 pyproject.toml，需要用户手动配置环境。
+
+
 # 安装💻
 
-建议环境：Python 3.10  GPU显存16G以上
+建议环境：
+- Python 3.10
+- 一张支持 CUDA 的显卡
+- 16GB 显存
 
 ## 使用 conda
 
@@ -50,6 +60,21 @@ cd ..
 
 本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
 
+## 总结
+
+在完成这些操作后，你应该得到类似如下所示的文件结构：
+```
+├─Muice-Chatbot   <- 主路徑
+│  ├─llm
+│  ├─model
+│    ├─ chatglm2-6b
+│    ├─ Muice
+│  ├─qqbot
+│  └─src
+├─main.py  <- 主處理程式
+└─...
+```
+
 # 配置⚒️
 
 本项目使用`configs.json`作为配置文件，目前支持配置的项如下：
@@ -73,7 +98,7 @@ cd ..
 ```
 
 # 使用🎉
-运行 `main.py` 即可
+在主目录运行 `main.py` 
 
 ```powershell
 conda activate Muice
@@ -82,25 +107,13 @@ python main.py
 
 # 命令🕹️
 
-## /clean
-
-清空本轮对话历史
-
-## /refresh
-
-刷新本次对话
-
-## /help
-
-显示所有可用的命令列表
-
-## /reset
-
-重置所有对话数据(将存档对话数据)
-
-## /undo
-
-撤销上一次对话
+|  命令   | 释义  |
+|  ----  | ----  |
+| /clean  | 清空本轮对话历史 |
+| /refresh  | 刷新本次对话 |
+| /help  | 显示所有可用的命令列表 |
+| /reset  | 重置所有对话数据(将存档对话数据) |
+| /undo  | 撤销上一次对话 |
 
 # 示例对话
 
@@ -145,6 +158,11 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 模型训练：Moemu
 
 训练集编写：Moemu
+
+# 提报 Issue
+> 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
+> 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
+
 
 原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
 
