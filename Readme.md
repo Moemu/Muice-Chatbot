@@ -23,8 +23,6 @@
 # 使用前须知⚠️
 - #### 本项目不适合零基础的小白使用。
 - 该项目依赖 pytorch，若不使用支持 [ CUDA ](https://developer.nvidia.com/about-cuda) 的显卡（NVIDIA），处理效率会大幅降低。
-  
-- 该项目依赖 pyproject.toml，需要用户手动配置环境。
 
 
 # 安装💻
