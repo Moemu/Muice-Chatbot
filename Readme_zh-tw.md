@@ -56,7 +56,7 @@
 #### 3. 在 ```用戶變量```（```User variables for [Your Username]``` ）中 找到 ```Path```一欄，點選```編輯```（```Edit```）−−>```新增```（```New```），新增 Anacoda 路徑。（預設路徑為```C:\ProgramData\anaconda3\Library\bin```、```C:\ProgramData\anaconda3\Scripts```和```C:\ProgramData\anaconda3```，這三者都需要新增到 Path 中）
 
 ### 安裝 Pytorch
-#### 1. 從 [Pytorch.org](https://pytorch.org/get-started/locally/) 產生並複製適合您設備統的命令（請在 ```Package``` 一欄中選擇 ```conda```，在 ```Language``` 一欄中選擇 ```Python```；若您的顯示卡支援 CUDA，請在 ```Compute Platform``` 一欄選擇相應的 CUDA 版本，否則選 ```CPU```）
+#### 1. 從 [Pytorch.org](https://pytorch.org/get-started/locally/) 產生並複製適合您設備的命令（請在 ```Package``` 一欄中選擇 ```conda```，在 ```Language``` 一欄中選擇 ```Python```；若您的顯示卡支援 CUDA，請在 ```Compute Platform``` 一欄選擇相應的 CUDA 版本，否則選 ```CPU```）
 #### 2. 在您的設備上使用管理員權限啓動 ```命令提示字元```（```cmd```），貼上並執行上一步複製的安裝命令，等待安裝完成
 
 
