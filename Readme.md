@@ -43,7 +43,7 @@
 
 ### 安裝 conda
 #### 1. 從 [Anacoda.com](https://www.anaconda.com/download/) 下載適合您系統的安裝包
-#### 2. 安裝選項選擇```Install for All Users``` 及 ```Add to PATH```
+#### 2. 安裝選項選擇 ```Install for All Users``` 及 ```Add to PATH```
 
 ### 添加 conda 至系統環境變量中
 #### 1. 右鍵點按```本機```（```This PC```）−−>```内容```（```Porperties```）
@@ -71,7 +71,7 @@ pip install -r requirements.txt
 
 ### 克隆模型
 
-#### 在上一步產生的 Muice-Chatbot 資料夾中運行下列命令：
+#### 在上一步產生的 ```Muice-Chatbot``` 資料夾中運行下列命令：
 ```
 mkdir model
 cd model
