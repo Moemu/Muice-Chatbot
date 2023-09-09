@@ -7,6 +7,8 @@
 
 ### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
 
+本文档同时提供[繁體中文版](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
+
 # 介绍✨
 
 沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)微调而成，训练集长度1.3K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
@@ -24,6 +26,7 @@
 # 使用前须知⚠️
 - #### 本项目不适合零基础的小白使用。
 - 该项目依赖 pytorch，若不使用支持 [ CUDA ](https://developer.nvidia.com/about-cuda) 的显卡（NVIDIA），处理效率会大幅降低。
+- 关于Python、Conda的安装与PyTorch的配置，请移至[配置運行環境](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md#windows-%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%9D%E5%8F%8A%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97)，这里不再重复
 
 
 # 安装💻
@@ -43,7 +46,7 @@ conda activate Muice
 pip install -r requirements.txt
 ```
 
-## 克隆模型
+## 克隆原始模型
 
 ```
 mkdir model
@@ -53,25 +56,32 @@ git clone https://huggingface.co/THUDM/chatglm2-6b
 cd ..
 ```
 
-除此之外，在[Releases](https://github.com/Moemu/Muice-Chatbot/releases)上下载微调后的模型压缩包，解压后命名为`Muice`并放置于`model`文件夹中以使用我们的微调模型
+## 克隆沐雪微调模型
+
+在[Releases](https://github.com/Moemu/Muice-Chatbot/releases)上下载微调后的模型压缩包，解压后命名为`Muice`并放置于`model`文件夹中以使用我们的微调模型
 
 ## go-cqhttp配置
 
 本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
 
+有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)
+
 ## 总结
 
 在完成这些操作后，你应该得到类似如下所示的文件结构：
 ```
-├─Muice-Chatbot   <- 主路径
-│  ├─llm
-│  ├─model
-│    ├─ chatglm2-6b
-│    ├─ Muice
-│  ├─qqbot
-│  └─src
-├─main.py  <- 主程序
-└─...
+Muice-Chatbot    <- 主路径
+ ├─llm
+ ├─model
+ │  ├─ chatglm2-6b
+ │  └─ Muice
+ ├─qqbot
+ │  ├─go-cqhttp.exe
+ │  └─...
+ ├─configs.json  <- 配置文件
+ ├─main.py       <- 主函数
+ ├─requirements.txt
+ └─...
 ```
 
 # 配置⚒️
@@ -97,7 +107,7 @@ cd ..
 ```
 
 # 使用🎉
-在主目录运行 `main.py` 
+在本项目根目录下运行 `main.py` 
 
 ```powershell
 conda activate Muice
@@ -150,11 +160,25 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 
    对应策略：未来将会对训练集进行调整，在此之前建议将配置项中的`known_topic_probability`调至0
 
+# 提报 Issue
+
+> 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
+> 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
+
+
+原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
+
+本项目源码使用[MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，对于微调后的模型文件，不建议作为商业用途
+
 # 关于🎗️
 
-模型训练：Moemu
+代码编写：[Moemu](https://github.com/Moemu)
 
-训练集编写：Moemu
+安装及配置指南编写：[TurboHK](https://github.com/TurboHK)
+
+模型训练：[Moemu](https://github.com/Moemu)
+
+训练集编写：[Moemu](https://github.com/Moemu)
 
 代码贡献：
 
@@ -165,14 +189,4 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 Star History：
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
-
-
-# 提报 Issue
-> 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
-> 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
-
-
-原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
-
-本项目源码使用[MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，对于微调后的模型文件，不建议作为商业用途
 
