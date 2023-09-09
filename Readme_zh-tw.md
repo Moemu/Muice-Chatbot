@@ -208,4 +208,4 @@ Q: 工作又忙又累，還要加班什麼的（此回答不穩定）
 
 原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
 
-本項目源碼使 用[MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，對於微調後的模型文件，不建議作為商業用途
+本項目源碼使用 [MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，對於微調後的模型文件，不建議作為商業用途
