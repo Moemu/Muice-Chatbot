@@ -22,6 +22,7 @@ def qqbot(Muice: Muice, Trust_QQ_list: list, AutoCreateTopic: False):
             for st in reply:
                 if st == '' or st == ' ':
                     continue
+                time.sleep(len(st)*0.8)
                 message.sender.send_message(st)
                 logging.info(f'发送信息: {st}')
                 time.sleep(3)
