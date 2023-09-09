@@ -104,7 +104,8 @@ Muice-Chatbot    <- 主路徑
  │  └─...
  ├─configs.json  <- Muice 設定檔
  ├─main.py       <- 主處理程式
- └─requirements.txt
+ ├─requirements.txt
+ └─...
 ```
 
 ### 配置 Muice
