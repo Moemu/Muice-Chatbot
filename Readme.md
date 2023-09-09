@@ -71,7 +71,7 @@ pip install -r requirements.txt
 
 ### 克隆模型
 
-#### 在上一步產生的 ```Muice-Chatbot``` 資料夾中運行下列命令：
+#### 在上一步產生的 `Muice-Chatbot` 資料夾中運行下列命令：
 ```
 mkdir model
 cd model
@@ -83,11 +83,11 @@ cd ..
 
 ### 下載微調後的模型壓縮檔
 
-從 [Releases](https://github.com/Moemu/Muice-Chatbot/releases) 下載微調後的模型壓縮檔，解壓縮後將其重新命名為`Muice`並置於`model`資料夾中
+從 [Releases](https://github.com/Moemu/Muice-Chatbot/releases) 下載微調後的模型壓縮檔，解壓縮後將其重新命名為 `Muice` 並置於 `model` 資料夾中
 
 
 ### 配置 go-cqhttp
-本項目目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)進行機器人交互，请从其 [Releases](https://github.com/Mrs4s/go-cqhttp/releases) 中下載相應的版本及處理程式，並置於 `qqbot` 資料夾中
+本項目目使用 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) 進行機器人交互，请从其 [Releases](https://github.com/Mrs4s/go-cqhttp/releases) 中下載相應的版本及處理程式，並置於 `qqbot` 資料夾中
 
 有關 go-cqhttp 的詳細配置方法及問題，請訪問 [go-cqhttp 主頁](https://docs.go-cqhttp.org/) 及其 [Github 頁面](https://github.com/Mrs4s/go-cqhttp)
 
@@ -108,7 +108,7 @@ Muice-Chatbot    <- 主路徑
 ```
 
 ### 配置 Muice
-本項目使用`configs.json`作為設定檔，目前支援如下功能：
+本項目使用 `configs.json` 作為設定檔，目前支援如下功能：
 
 ```json
 {
@@ -129,7 +129,7 @@ Muice-Chatbot    <- 主路徑
 ```
 
 ## 4. 啓動
-在根路徑（```Muice-Chatbot ```資料夾）中開啓 Powershell，逐行鍵入以下命令：
+在根路徑（```Muice-Chatbot``` 資料夾）中開啓 Powershell，逐行鍵入以下命令：
 ```powershell
 conda activate Muice
 python main.py
