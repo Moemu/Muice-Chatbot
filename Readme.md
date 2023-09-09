@@ -52,14 +52,14 @@
 
 ### 安裝 Pytorch
 #### 1. 從 [Pytorch.org](https://pytorch.org/get-started/locally/) 產生並複製適合您設備統的命令（請在```Package```一欄中選擇```conda```，在```Language```一欄中選擇```Python```；若您的顯示卡支援 CUDA，請在```Compute Platform```一欄選擇相應的 CUDA 版本，否則選```CPU```）
-#### 2. 在您的設備上使用管理員權限啓動 ```命令提示字元```（```cmd```），貼上上一步複製的安裝命令，等待安裝完成
+#### 2. 在您的設備上使用管理員權限啓動 ```命令提示字元```（```cmd```），貼上並執行上一步複製的安裝命令，等待安裝完成
 
 
 ## 3. 安裝及配置項目
 
 ### 使用 conda
 
-#### 在 Powershell 中運行下列命令：
+#### 在 Powershell 中執行下列命令：
 
 ```Powershell
 git clone https://github.com/Moemu/Muice-Chatbot
@@ -71,7 +71,7 @@ pip install -r requirements.txt
 
 ### 克隆模型
 
-#### 在上一步產生的 `Muice-Chatbot` 資料夾中運行下列命令：
+#### 在上一步產生的 `Muice-Chatbot` 資料夾中執行下列命令：
 ```
 mkdir model
 cd model
