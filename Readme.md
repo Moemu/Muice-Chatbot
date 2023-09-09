@@ -5,6 +5,7 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
+### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
 
 # 介绍✨
 
@@ -30,7 +31,7 @@
 建议环境：
 - Python 3.10
 - 一张支持 CUDA 的显卡
-- 16GB 显存
+- 15GB 显存(最低要求: 13G)
 
 ## 使用 conda
 
@@ -62,14 +63,14 @@ cd ..
 
 在完成这些操作后，你应该得到类似如下所示的文件结构：
 ```
-├─Muice-Chatbot   <- 主路徑
+├─Muice-Chatbot   <- 主路径
 │  ├─llm
 │  ├─model
 │    ├─ chatglm2-6b
 │    ├─ Muice
 │  ├─qqbot
 │  └─src
-├─main.py  <- 主處理程式
+├─main.py  <- 主程序
 └─...
 ```
 
@@ -151,11 +152,20 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 
 # 关于🎗️
 
-代码编写：Moemu
-
 模型训练：Moemu
 
 训练集编写：Moemu
+
+代码贡献：
+
+<a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
+  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot" />
+</a>
+
+Star History：
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
+
 
 # 提报 Issue
 > 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
