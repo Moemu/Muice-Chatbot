@@ -13,11 +13,12 @@ def qqbot(Muice: Muice, Trust_QQ_list: list, AutoCreateTopic: False):
         # nickname = user_info['data']['nickname']
         # sender = message.sender
         # message = message.message
-        # prompt = f'{nickname}: {message}'  
+        # prompt = f'{nickname}: {message}'
+        user_qq = message.sender.id
         if 'CQ' in message.message:
             return
         else:
-            reply = Muice.ask(message.message)
+            reply = Muice.ask(message.message,user_qq)
         try:           
             for st in reply:
                 if st == '' or st == ' ':
@@ -35,7 +36,7 @@ def qqbot(Muice: Muice, Trust_QQ_list: list, AutoCreateTopic: False):
         主动发起对话
         '''
         topic = Muice.CreateANewTopic()
-        reply = Muice.ask(topic)
+        reply = Muice.ask(topic,Trust_QQ_list[0])
         if reply != '':
             for st in reply:
                 time.sleep(3)

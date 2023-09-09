@@ -17,13 +17,14 @@ class Muice():
         self.time_topics = self.time_topic.copy()
         self.last_message_time = time.time()
         self.is_command = False
+
+    def ask(self, text: str, user_qq:int) -> str:
+        '''发送信息'''
+        self.user_qq = str(user_qq)
         if self.read_memory_from_file:
             self.history = self.get_recent_chat_memory()
         else:
             self.history = []
-
-    def ask(self, text: str) -> str:
-        '''发送信息'''
         if text == '':
             return ''
         
@@ -78,7 +79,7 @@ class Muice():
         获取最近一条记忆
         '''
         try:
-            with open('./memory/chat_memory.json', 'r', encoding='utf-8') as f:
+            with open(f'./memory/{self.user_qq}.json', 'r', encoding='utf-8') as f:
                 data = f.readlines()
                 return json.loads(data[-1])['history']
         except:
@@ -86,11 +87,12 @@ class Muice():
 
     def save_chat_memory(self, reply:str):
         '''
-        保存至记忆数据库'''
+        保存至记忆数据库
+        '''
         self.history.append([self.user_text, reply])
         if not os.path.isdir('memory'):
             os.mkdir('memory')
-        with open('./memory/chat_memory.json', 'a', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_qq}.json', 'a', encoding='utf-8') as f:
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
             f.write('\n')
 
@@ -98,10 +100,10 @@ class Muice():
         '''
         删除最后一条记忆
         '''
-        with open('./memory/chat_memory.json', 'r', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_qq}.json', 'r', encoding='utf-8') as f:
             data = f.readlines()
             del data[-1]
-        with open('./memory/chat_memory.json', 'w', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_qq}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
     def refresh(self):
@@ -133,8 +135,8 @@ class Muice():
             return True
         
         elif text == '/reset':
-            shutil.copy('./memory/chat_memory.json','./memory/chat_memory_backup.json')
-            os.remove('./memory/chat_memory.json')
+            shutil.copy(f'./memory/{self.user_qq}.json','./memory/chat_memory_backup.json')
+            os.remove(f'./memory/{self.user_qq}.json')
             self.history = []
             return True
         

@@ -2,6 +2,8 @@ from Muice import Muice
 from qqbot import qqbot
 import json
 
+print('在09.10更新中, 将使用(QQ号).json的方式来存储聊天记录, 对于重新拉取的源码， 可能会出现记忆缺失的情况, 对此, 请手动重命名memory下的chat_memory.json文件, 以便恢复记忆')
+
 #使用API模式调用模型
 # from llm.api import Model
 # model = Model('https://127.0.0.1:8000')
