@@ -5,6 +5,9 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
+<p align="center">
+  <a href="https://github.com/Moemu/Muice-Chatbot/blob/main/Readme.md">簡體中文版</a>
+</p>
 
 # 介紹✨
 
