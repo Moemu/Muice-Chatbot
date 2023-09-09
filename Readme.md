@@ -83,7 +83,7 @@ cd ..
 
 ### 下載微調後的模型壓縮檔
 
-從 [Releases](https://github.com/Moemu/Muice-Chatbot/releases)下載微調後的模型壓縮檔，解壓縮後將其重新命名為`Muice`並置於`model`資料夾中
+從 [Releases](https://github.com/Moemu/Muice-Chatbot/releases) 下載微調後的模型壓縮檔，解壓縮後將其重新命名為`Muice`並置於`model`資料夾中
 
 
 ### 配置 go-cqhttp
