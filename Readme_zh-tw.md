@@ -52,7 +52,7 @@
 
 ### 添加 conda 至系統環境變量中
 #### 1. 右鍵點按```本機```（```This PC```）−−>```内容```（```Porperties```）
-#### 2. 找到```高級系統設定```（```Advanced System Settings```）−−>```環境變量```（```Environment Variables...``）
+#### 2. 找到```高級系統設定```（```Advanced System Settings```）−−>```環境變量```（`Environment Variables...`）
 #### 3. 在 ```用戶變量```（```User variables for [Your Username]``` ）中 找到 ```Path```一欄，點選```編輯```（```Edit```）−−>```新增```（```New```），新增 Anacoda 路徑。（預設路徑為```C:\ProgramData\anaconda3\Library\bin```、```C:\ProgramData\anaconda3\Scripts```和```C:\ProgramData\anaconda3```，這三者都需要新增到 Path 中）
 
 ### 安裝 Pytorch
