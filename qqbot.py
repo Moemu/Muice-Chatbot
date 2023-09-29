@@ -12,11 +12,6 @@ def qqbot(Muice: Muice, Trust_QQ_list: list, AutoCreateTopic: False):
     cqapi = cqHttpApi(download_path='./qqbot/download')
 
     def on_private_msg(message: Message):
-        # user_info = message.sender.get_stranger_info()
-        # nickname = user_info['data']['nickname']
-        # sender = message.sender
-        # message = message.message
-        # prompt = f'{nickname}: {message}'
         user_qq = message.sender.id
         if 'CQ' in message.message:
             return
