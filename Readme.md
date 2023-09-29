@@ -17,7 +17,7 @@
 
 # 功能🪄
 
-✔ 提供本人由1.3k+对话数据微调的ChatGLM2-6B P-Tuning V2模型（回答原创率：98%+）
+✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型（回答原创率：98%+）
 
 ✔ 主动发起聊天（局限于已有的Prompt）
 
@@ -27,8 +27,7 @@
 
 建议环境：
 - Python 3.10
-- 一张支持 CUDA 的显卡
-- 15GB 显存(最低要求: 13G)
+- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 5.5G/CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -42,12 +41,23 @@ pip install -r requirements.txt
 
 ## 克隆原始模型
 
-```
+```powershell
 mkdir model
 cd model
 git lfs install
 git clone https://huggingface.co/THUDM/chatglm2-6b
 cd ..
+```
+
+## 克隆原始模型（int4量化）
+
+```powershell
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/THUDM/chatglm2-6b-int4
+cd ..
+pip install cpm_kernels
 ```
 
 ## 克隆沐雪微调模型
@@ -67,7 +77,8 @@ cd ..
 Muice-Chatbot    <- 主路径
  ├─llm
  ├─model
- │  ├─ chatglm2-6b
+ │  ├─ chatglm2-6b <- 原始模型 (两者二选一)
+ │  ├─ chatglm2-6b-int4 <- int4原始模型
  │  └─ Muice
  ├─qqbot
  │  ├─go-cqhttp.exe
@@ -84,23 +95,26 @@ Muice-Chatbot    <- 主路径
 
 ```json
 {
-    // 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
-    "Trust_QQ_list": [
-        123456789,
-        987654321
-    ],
-    // 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+    "Trust_QQ_list": [],
     "AutoCreateTopic": false,
-    // 从文件中读取记忆，用于项目重启后加载原来的记忆
     "read_memory_from_file": true,
-    // 概率：随机发起一个已知的话题
     "known_topic_probability": "0.003",
-    // 概率：早、中、傍、晚触发日常问候
     "time_topic_probability": "0.75"
 }
 ```
 
+`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
+
+`AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+
+`read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
+
+`known_topic_probability`: 概率：随机发起一个已知的话题
+
+`time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+
 # 使用🎉
+
 在本项目根目录下运行 `main.py` 
 
 ```powershell
@@ -145,14 +159,6 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 > 年龄：16岁？
 > 生日：06.12
 > 性格：微傲，喜欢用"本雪"来称呼自己，但很会关心别人。害怕独自一个人，不和她聊天的时候她会**主动**找你聊天
-
-# 已知问题
-
-1. 对于以下问题，模型回答的泛化性较差
-
-   （创造一个新话题）、雪雪最近有没有什么值得分享的事情？
-
-   对应策略：未来将会对训练集进行调整，在此之前建议将配置项中的`known_topic_probability`调至0
 
 # 提报 Issue
 
