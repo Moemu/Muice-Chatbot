@@ -8,7 +8,8 @@
 <p align="center">
   <a href="https://github.com/Moemu/Muice-Chatbot/blob/main/Readme.md">簡體中文版</a>
 </p>
-## 10.20更新：我們已無力提供對qqbot相關程式碼的更新，詳見[#18](https://github.com/Moemu/Muice-Chatbot/issues/18)，現時我們打算提供一個前端頁面來完成對沐雪的任何互動，對此帶來的不便我深感歉意。
+
+### 10.20更新：我們已無力提供對qqbot相關程式碼的更新，詳見https://github.com/Moemu/Muice-Chatbot/issues/18，現時我們打算提供一個前端頁面來完成對沐雪的任何互動，對此帶來的不便我深感歉意。
 
 ### 由於本作者現在正在高三備戰高考，因此可能無法及時處理任何問題/頻繁提供更新，感謝您的諒解
 
