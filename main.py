@@ -10,6 +10,9 @@ try:
     # from llm.api import Model
     # model = Model('https://127.0.0.1:8000')
     # 使用本地模式调用模型
+    # 加载Qlora微调的qwen-7B模型
+    # from llm.qwen import Model
+    # model = Model('./model/Muice')
     from llm.chatglm2 import Model
     if os.path.exists('model/chatglm2-6b'):
         model = Model('model/chatglm2-6b','model/Muice')

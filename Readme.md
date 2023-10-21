@@ -1,9 +1,10 @@
 ![](src/Cover.png)
 <p align="center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
-<img src="https://img.shields.io/badge/Model-ChatGLM2--6B-green" alt="Model">
+<img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
+
 
 ### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
 
@@ -19,7 +20,7 @@
 
 # 功能🪄
 
-✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型（回答原创率：98%+）
+✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
 
 ✔ 主动发起聊天（局限于已有的Prompt）
 
@@ -43,6 +44,8 @@ pip install -r requirements.txt
 
 ## 克隆原始模型
 
+下面三个选一个就好了
+
 ```powershell
 mkdir model
 cd model
@@ -62,6 +65,19 @@ cd ..
 pip install cpm_kernels
 ```
 
+## 克隆Qwen-7B原始模型（int4量化）
+
+```powershell
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/Qwen/Qwen-7B-Chat-Int4
+cd ..
+pip install peft
+pip install optimum
+pip install auto-gptq
+```
+
 ## 克隆沐雪微调模型
 
 在[Releases](https://github.com/Moemu/Muice-Chatbot/releases)上下载微调后的模型压缩包，解压后命名为`Muice`并放置于`model`文件夹中以使用我们的微调模型
@@ -79,8 +95,9 @@ pip install cpm_kernels
 Muice-Chatbot    <- 主路径
  ├─llm
  ├─model
- │  ├─ chatglm2-6b <- 原始模型 (两者二选一)
+ │  ├─ chatglm2-6b <- 原始模型 (三者三选一)
  │  ├─ chatglm2-6b-int4 <- int4原始模型
+ │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
  ├─qqbot
  │  ├─go-cqhttp.exe
