@@ -6,7 +6,7 @@
 </p>
 
 
-### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
+### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见 https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
 
 ### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
 
@@ -86,7 +86,7 @@ pip install auto-gptq
 
 本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
 
-有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)
+有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/go-cqhttp)
 
 ## 总结
 
@@ -170,6 +170,8 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 > 赚钱嘛，总是伴随着一些苦逼的活
 
 # 沐雪人设
+
+> ⚠️ 请注意, AI 只是对人类的自然语言进行模仿，它们是程序和演算法的集合，没有自我意识。如果你在寻找灵魂伴侣，冰冷的演算法可能不是个好选择。
 
 与其他聊天机器人项目不同，本项目提供由本人通过自家对话数据集微调后的模型，在Release中提供下载，关于微调后的模型人设，目前公开的信息如下：
 
