@@ -9,7 +9,7 @@
   <a href="https://github.com/Moemu/Muice-Chatbot/blob/main/Readme.md">簡體中文版</a>
 </p>
 
-### 10.20更新：我們已無力提供對qqbot相關程式碼的更新，詳見https://github.com/Moemu/Muice-Chatbot/issues/18，現時我們打算提供一個前端頁面來完成對沐雪的任何互動，對此帶來的不便我深感歉意。
+### 10.20更新：我們已無力提供對qqbot相關程式碼的更新，詳見 https://github.com/Moemu/Muice-Chatbot/issues/18 ，現時我們打算提供一個前端頁面來完成對沐雪的任何互動，對此帶來的不便我深感歉意。
 
 ### 由於本作者現在正在高三備戰高考，因此可能無法及時處理任何問題/頻繁提供更新，感謝您的諒解
 
@@ -38,8 +38,8 @@
 ## 1. 最佳系統配置
 - 作業系統：Windows 10 及以上/Windows Server 2012 及以上
 - 處理器：x86 架構（ARM 可能會出現意料之外的問題）
-- 顯示卡：支援 CUDA 運算，15GB 及以上顯示記憶體，最低 5.5GB（int4）（在日後的更新中，將會針對顯示記憶體需求高的問題進行優化）
-- 若使用CPU模式進行推理，最低記憶體占用量：16G+
+- 顯示卡：支援 CUDA 運算，**13GB 及以上**顯示記憶體，最低 **5.5GB**（int4）（在日後的更新中，將會針對顯示記憶體需求高的問題進行優化）
+- 若使用CPU模式進行推理，需要 **16GB 以上**的記憶體
 
 ## 2. 配置運行環境
 
@@ -79,7 +79,9 @@ pip install -r requirements.txt
 
 ### 克隆模型
 
-#### 在上一步產生的 `Muice-Chatbot` 資料夾中執行下列命令：
+#### 在上一步產生的 `Muice-Chatbot` 資料夾中執行下列命令（**三選一即可！**）
+
+1.原始模型
 ```
 mkdir model
 cd model
@@ -87,6 +89,29 @@ git lfs install
 git clone https://huggingface.co/THUDM/chatglm2-6b
 cd ..
 ```
+
+2.原始模型（int4量化）
+```
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/THUDM/chatglm2-6b-int4
+cd ..
+pip install cpm_kernels
+```
+
+3.Qwen-7B原始模型（int4量化）
+```
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/Qwen/Qwen-7B-Chat-Int4
+cd ..
+pip install peft
+pip install optimum
+pip install auto-gptq
+```
+
 檔案較大，下載需時較久，請耐心等待。
 
 ### 下載微調後的模型壓縮檔
@@ -103,16 +128,18 @@ cd ..
 在最後，您應該得到類似如下所示的檔案結構：
 ```
 Muice-Chatbot    <- 主路徑
- ├─llm
- ├─model
- │  ├─ chatglm2-6b
+ ├─ llm
+ ├─ model
+ │  ├─ chatglm2-6b         <- 原始模型（三選一）
+ │  ├─ chatglm2-6b-int4    <- int4 原始模型（三選一）
+ │  ├─ Qwen-7B-Chat-Int4   <- Qwen-7B-int4 原始模型（三選一）
  │  └─ Muice
  ├─qqbot
- │  ├─go-cqhttp.exe
+ │  ├─ go-cqhttp.exe
  │  └─...
- ├─configs.json  <- Muice 設定檔
- ├─main.py       <- 主處理程式
- ├─requirements.txt
+ ├─ configs.json  <- Muice 設定檔
+ ├─ main.py       <- 主處理程式
+ ├─ requirements.txt
  └─...
 ```
 
@@ -121,21 +148,23 @@ Muice-Chatbot    <- 主路徑
 
 ```json
 {
-    // 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
-    "Trust_QQ_list": [
-        123456789,
-        987654321
-    ],
-    // 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+    "Trust_QQ_list": [],
     "AutoCreateTopic": false,
-    // 从文件中读取记忆，用于项目重启后加载原来的记忆
     "read_memory_from_file": true,
-    // 概率：随机发起一个已知的话题
     "known_topic_probability": "0.003",
-    // 概率：早、中、傍、晚触发日常问候
     "time_topic_probability": "0.75"
 }
 ```
+
+`Trust_QQ_list`: 信任QQ號列表，只有在列表的QQ號，沐雪才會回覆（留空為全部處理）
+
+`AutoCreateTopic`: 是否自動啟動新對話，預設以 Trust_QQ_list 的第 0 項作為啟動新對話對象
+
+`read_memory_from_file`: 從文件中讀取記憶，用於項目重啟後載入原來的記憶
+
+`known_topic_probability`: 機率：隨機發起一個已知的話題
+
+`time_topic_probability`: 機率：早、中、傍、晚觸發日常問候
 
 ## 4. 啓動
 在根路徑（```Muice-Chatbot``` 資料夾）中開啓 Powershell，逐行鍵入以下命令：
@@ -174,32 +203,35 @@ Q: 工作又忙又累，還要加班什麼的（此回答不穩定）
 
 # 沐雪人設
 
+> ⚠️ 請注意, AI 僅是對人類的自然語言進行模仿，它們是程式和算法的集合，沒有自我意識。如果你在尋找靈魂伴侶，冰冷的算法可能不是個好選擇。
+
 與其他聊天機器人項目不同，本項目提供由本人通過自家對話數據集微調後的模型，在 Release 中提供下載，關於微調後的模型人設，目前公開的信息如下：
 
 > 姓名：沐雪
-
 > 性別：女？
-
 > 年齡：16歲？
-
 > 生日：06.12
-
 > 性格：微傲，喜歡用"本雪"來稱呼自己，但很會關心別人。害怕獨自一個人，不和她聊天的時候她會**主動**找你聊天
 
-# 已知問題
+# 提報 Issue
+> 請注意, 開發者並沒有義務回复您的問題。您應該具備基本的提問技巧。
+> 有關如何提問，請閱讀[《提問的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way#readme)
 
-1. 對於以下問題，模型回答的泛化性較差
+原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
 
-   （創造一個新話題）、雪雪最近有沒有什麼值得分享的事情？
-
-   對應策略：未來將會對訓練集進行調整，在此之前建議將配置項中的`known_topic_probability`調至0
-
+本項目源碼使用 [MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，對於微調後的模型文件，不建議作為商業用途
 
 # 關於🎗️
+
+代碼編寫：[Moemu](https://github.com/Moemu)
+
+安裝及配置指南編寫：[TurboHK](https://github.com/TurboHK)
 
 模型訓練：[Moemu](https://github.com/Moemu)
 
 訓練集編寫：[Moemu](https://github.com/Moemu)
+
+文檔繁體中文化：[TurboHK](https://github.com/TurboHK)
 
 代碼貢獻：
 
@@ -210,12 +242,3 @@ Q: 工作又忙又累，還要加班什麼的（此回答不穩定）
 Star History：
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
-
-原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
-
-本項目源碼使用 [MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，對於微調後的模型文件，不建議作為商業用途
-
-
-# 提報 Issue
-> 請注意, 開發者並沒有義務回复您的問題。您應該具備基本的提問技巧。
-> 有關如何提問，請閱讀[《提問的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way#readme)
