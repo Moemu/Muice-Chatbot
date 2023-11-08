@@ -1,9 +1,12 @@
 ![](src/Cover.png)
 <p align="center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
-<img src="https://img.shields.io/badge/Model-ChatGLM2--6B-green" alt="Model">
+<img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
+
+
+### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
 
 ### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
 
@@ -17,24 +20,17 @@
 
 # 功能🪄
 
-✔ 提供本人由1.3k+对话数据微调的ChatGLM2-6B P-Tuning V2模型（回答原创率：98%+）
+✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
 
 ✔ 主动发起聊天（局限于已有的Prompt）
 
 ✔ 提供5条可用的命令
 
-# 使用前须知⚠️
-- #### 本项目不适合零基础的小白使用。
-- 该项目依赖 pytorch，若不使用支持 [ CUDA ](https://developer.nvidia.com/about-cuda) 的显卡（NVIDIA），处理效率会大幅降低。
-- 关于Python、Conda的安装与PyTorch的配置，请移至[配置運行環境](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md#windows-%E7%89%88%E6%9C%AC%E5%AE%89%E8%A3%9D%E5%8F%8A%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97)，这里不再重复
-
-
 # 安装💻
 
 建议环境：
 - Python 3.10
-- 一张支持 CUDA 的显卡
-- 15GB 显存(最低要求: 13G)
+- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 5.5G/CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -48,12 +44,38 @@ pip install -r requirements.txt
 
 ## 克隆原始模型
 
-```
+下面三个选一个就好了
+
+```powershell
 mkdir model
 cd model
 git lfs install
 git clone https://huggingface.co/THUDM/chatglm2-6b
 cd ..
+```
+
+## 克隆原始模型（int4量化）
+
+```powershell
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/THUDM/chatglm2-6b-int4
+cd ..
+pip install cpm_kernels
+```
+
+## 克隆Qwen-7B原始模型（int4量化）
+
+```powershell
+mkdir model
+cd model
+git lfs install
+git clone https://huggingface.co/Qwen/Qwen-7B-Chat-Int4
+cd ..
+pip install peft
+pip install optimum
+pip install auto-gptq
 ```
 
 ## 克隆沐雪微调模型
@@ -73,7 +95,9 @@ cd ..
 Muice-Chatbot    <- 主路径
  ├─llm
  ├─model
- │  ├─ chatglm2-6b
+ │  ├─ chatglm2-6b <- 原始模型 (三者三选一)
+ │  ├─ chatglm2-6b-int4 <- int4原始模型
+ │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
  ├─qqbot
  │  ├─go-cqhttp.exe
@@ -90,23 +114,26 @@ Muice-Chatbot    <- 主路径
 
 ```json
 {
-    // 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
-    "Trust_QQ_list": [
-        123456789,
-        987654321
-    ],
-    // 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+    "Trust_QQ_list": [],
     "AutoCreateTopic": false,
-    // 从文件中读取记忆，用于项目重启后加载原来的记忆
     "read_memory_from_file": true,
-    // 概率：随机发起一个已知的话题
     "known_topic_probability": "0.003",
-    // 概率：早、中、傍、晚触发日常问候
     "time_topic_probability": "0.75"
 }
 ```
 
+`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
+
+`AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+
+`read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
+
+`known_topic_probability`: 概率：随机发起一个已知的话题
+
+`time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+
 # 使用🎉
+
 在本项目根目录下运行 `main.py` 
 
 ```powershell
@@ -151,14 +178,6 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 > 年龄：16岁？
 > 生日：06.12
 > 性格：微傲，喜欢用"本雪"来称呼自己，但很会关心别人。害怕独自一个人，不和她聊天的时候她会**主动**找你聊天
-
-# 已知问题
-
-1. 对于以下问题，模型回答的泛化性较差
-
-   （创造一个新话题）、雪雪最近有没有什么值得分享的事情？
-
-   对应策略：未来将会对训练集进行调整，在此之前建议将配置项中的`known_topic_probability`调至0
 
 # 提报 Issue
 

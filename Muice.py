@@ -1,5 +1,5 @@
 from Tools import divede_sentences
-import logging,time,random,json,os,shutil
+import logging,time,random,json,os
 
 
 class Muice():
@@ -16,7 +16,7 @@ class Muice():
         self.time_topic = {'07':'（发起一个早晨问候）','12':'（发起一个中午问候）','18':'（发起一个傍晚问候）','00':'（发起一个临睡问候）'}
         self.time_topics = self.time_topic.copy()
         self.last_message_time = time.time()
-        self.is_command = False
+
 
     def ask(self, text: str, user_qq:int) -> str:
         '''发送信息'''
@@ -27,16 +27,7 @@ class Muice():
             self.history = []
         if text == '':
             return ''
-        
-        command_check_result = self.command_runner(text)
-        if command_check_result == True:
-            self.is_command = True
-            return ["操作已完成"]
-        elif type(command_check_result) == str:
-            self.is_command = True
-            return [command_check_result]
 
-        self.is_command = False
         self.user_text = text
 
         logging.info(f'收到消息: {text}')
@@ -67,9 +58,9 @@ class Muice():
             self.time_topic = self.time_topics.copy()
         return ''
 
-    def finish_ask(self, reply: list):
+    def finish_ask(self, reply: list, is_command: bool):
         '''结束对话并保存记忆'''
-        if (reply != [] and reply != [""]) and self.is_command == False:
+        if (reply != [] and reply != [""]) and is_command == False:
             reply = "".join(reply)
             self.save_chat_memory(reply)
             self.last_message_time = time.time()
@@ -115,35 +106,3 @@ class Muice():
         self.history = self.get_recent_chat_memory()
         response = self.model.ask(self.user_text, self.history)
         return response
-    
-    def command_runner(self,text:str) -> bool|str:
-        '''
-        执行可能存在的命令, 否则正常对话
-        '''
-        text
-        if text == '/help':
-            help_text = "/clean 清空本轮对话历史 \n /help 显示所有可用的命令列表 \n /refresh 刷新本次对话回复 \n /reset 重置所有对话数据(将存档对话数据) \n /undo 撤销上一次对话"
-            return help_text
-        
-        elif text == '/refresh':
-            reply = self.refresh()
-            self.save_chat_memory(reply)
-            return reply
-        
-        elif text == '/clean':
-            self.history = []
-            return True
-        
-        elif text == '/reset':
-            shutil.copy(f'./memory/{self.user_qq}.json','./memory/chat_memory_backup.json')
-            os.remove(f'./memory/{self.user_qq}.json')
-            self.history = []
-            return True
-        
-        elif text == '/undo':
-            self.remove_last_chat_memory()
-            self.history = self.get_recent_chat_memory()
-            return True
-
-        else:
-            return False
