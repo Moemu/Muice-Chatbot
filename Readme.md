@@ -2,6 +2,7 @@
 <p align="center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
 <img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
+<img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
@@ -184,6 +185,7 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 > 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
 > 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
 
+训练集开源地址： [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)
 
 原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
 
