@@ -16,8 +16,8 @@ class Model():
             model = AutoModel.from_pretrained(model_path, config=config, trust_remote_code=True).cuda()
         else:
             logging.warning("未检测到GPU,将使用CPU进行推理")
-            model = AutoModel.from_pretrained(model_path, config=config, trust_remote_code=True).cpu()
-        prefix_state_dict = torch.load(os.path.join(pt_model_path, "pytorch_model.bin"))
+            model = AutoModel.from_pretrained(model_path, config=config, trust_remote_code=True).float()
+        prefix_state_dict = torch.load(os.path.join(pt_model_path, "pytorch_model.bin"),map_location='cpu')
         new_prefix_state_dict = {}
         for k, v in prefix_state_dict.items():
             if k.startswith("transformer.prefix_encoder."):
