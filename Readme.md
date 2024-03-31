@@ -109,9 +109,9 @@ Muice-Chatbot    <- 主路径
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
  ├─configs.json  <- 配置文件
- ├─~main.py       <- 主函数~
  ├─onebot.py     <- onebot服务
  ├─defqq.py      <- onebot函数
+ ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
 ```
