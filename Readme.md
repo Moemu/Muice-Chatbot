@@ -9,6 +9,8 @@
 
 ### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
 
+##   3.31现以提供onebot服务, 您可以使用当前方式来运行
+
 ### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
 
 本文档同时提供[繁體中文版](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
@@ -83,11 +85,17 @@ pip install auto-gptq
 
 在[Releases](https://github.com/Moemu/Muice-Chatbot/releases)上下载微调后的模型压缩包，解压后命名为`Muice`并放置于`model`文件夹中以使用我们的微调模型
 
-## go-cqhttp配置
+## bot服务配置
 
-本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
+~本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中~
 
-有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)
+~有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)~
+
+现以提供onebot服务支持, 无需担心gocq的风控
+
+本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
+
+注:请在安装好LLOneBot后, 于设置中开启HTTP服务, 监听端口填写`8010`, 开启HTTP事件上报, 上报地址填写`http://127.0.0.1:8020` 以正常运行
 
 ## 总结
 
@@ -100,11 +108,10 @@ Muice-Chatbot    <- 主路径
  │  ├─ chatglm2-6b-int4 <- int4原始模型
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
- ├─qqbot
- │  ├─go-cqhttp.exe
- │  └─...
  ├─configs.json  <- 配置文件
  ├─main.py       <- 主函数
+ ├─onebot.py     <- onebot服务
+ ├─defqq.py      <- onebot函数
  ├─requirements.txt
  └─...
 ```
@@ -135,11 +142,11 @@ Muice-Chatbot    <- 主路径
 
 # 使用🎉
 
-在本项目根目录下运行 `main.py` 
+在本项目根目录下运行 `onebot.py` 
 
 ```powershell
 conda activate Muice
-python main.py
+python onebot.py
 ```
 
 # 命令🕹️
