@@ -208,7 +208,7 @@ Q: 工作又忙又累，还要加班什么的（此回答不稳定）
 
 训练集编写：[Moemu](https://github.com/Moemu)
 
-OneBot支持:[MoeSnowyFox](https://github.com/MoeSnowyFox)
+OneBot服务支持: [MoeSnowyFox](https://github.com/MoeSnowyFox)
 
 代码贡献：
 
