@@ -87,10 +87,6 @@ pip install auto-gptq
 
 ## bot服务配置
 
-~本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中~
-
-~有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)~
-
 现以提供onebot服务支持, 无需担心gocq的风控
 
 本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
@@ -142,11 +138,11 @@ Muice-Chatbot    <- 主路径
 
 # 使用🎉
 
-在本项目根目录下运行 `onebot.py` 
+在本项目根目录下运行 `main.py` 
 
 ```powershell
 conda activate Muice
-python onebot.py
+python main.py
 ```
 
 # 命令🕹️

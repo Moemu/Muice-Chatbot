@@ -1,5 +1,6 @@
 from Muice import Muice
 from qqbot import qqbot
+from onebot import flask
 import json,logging,os,traceback
 
 logging.info('在09.10更新中, 将使用(QQ号).json的方式来存储聊天记录, 对于重新拉取的源码， 可能会出现记忆缺失的情况, 对此, 请手动重命名memory下的chat_memory.json文件, 以便恢复记忆')
@@ -31,4 +32,8 @@ configs = json.load(open('configs.json','r',encoding='utf-8'))
 
 muice = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
 
-qqbot(muice, Trust_QQ_list=configs['Trust_QQ_list'], AutoCreateTopic=configs['AutoCreateTopic'])
+# qqbot(muice, Trust_QQ_list=configs['Trust_QQ_list'], AutoCreateTopic=configs['AutoCreateTopic'])
+
+Flask = flask(muice, Trust_QQ_list=configs['Trust_QQ_list'], AutoCreateTopic=configs['AutoCreateTopic'])
+app = Flask.load_app()
+app.run(host='127.0.0.1', port=8020)  # 运行 Flask #http事件上报端口应为http://127.0.0.1:8020
