@@ -40,41 +40,54 @@ class flask():
         @self.app.route('/', methods=['POST'])
         def post():  
             data = request.json
+            print(data)
             if not data.get('message_type', {}) == "private":
                 return Response(status=404)
             command = Command(Muice)
             command.load_default_command()    
             mess = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])  
+            #print(mess)
             sender_user_id = data.get('sender', {}).get('user_id')
             if not sender_user_id in self.Trust_QQ_list:
-                return
+                return Response(status=404)
             print(str(sender_user_id) + ": " + mess)
             is_command, result = command.run(mess)
             #print(str(is_command)+"*****"+str(result))  
             if is_command and result:  
-                reply = result  
+                Muice.reply = result  
             elif is_command:  
-                reply = "操作已完成"  
+                Muice.reply = "操作已完成"  
             else:  
-                reply = self.Muice.ask(text=mess, user_qq=sender_user_id)  
+                Muice.reply = self.Muice.ask(text=mess, user_qq=sender_user_id)
+
             try:
-                if not type(reply) == list:
-                    print(f'不支持的回复类型: {reply}')
-                    return
-                for st in reply:
-                    if st == '' or st == ' ':
-                        continue
-                    if not is_command:
-                        time.sleep(len(st)*0.8)
-                        defqq.prmess(prid=sender_user_id, messages=st, port=self.port)        
-                        print(f'发送消息{sender_user_id}: {st}')
-                        time.sleep(3)
-                    elif type(reply) == str and not reply in ['',' ']:
-                        if not is_command:
-                            time.sleep(len(st)*0.8)
-                            defqq.prmess(prid=sender_user_id, messages=reply, port=self.port)    
-                            print(f'回复{sender_user_id}: {reply}')                       
-                Muice.finish_ask(reply,is_command)
+                if type(Muice.reply) == list:           
+                         for st in Muice.reply:
+                             if st == '' or st == ' ':
+                                 continue
+                             if not is_command:
+                                 time.sleep(len(st)*0.8)
+                             defqq.prmess(prid=sender_user_id, messages=st, port=self.port)        
+                             print(f'发送消息{sender_user_id}: {st}')
+                             time.sleep(3)
+
+                elif type(Muice.reply) == str and not Muice.reply in ['',' ']:
+                     if not is_command:
+                         time.sleep(len(st)*0.8)
+
+                     defqq.prmess(prid=sender_user_id, messages=Muice.reply, port=self.port)    
+                     print(f'回复{sender_user_id}: {Muice.reply}')
+                else:
+                     print(f'不支持的回复类型: {Muice.reply}')
+                #print(str(is_command)+"/////"+str(result)) 
+            
+                Muice.finish_ask(self=self,reply=Muice.reply,is_command=bool(is_command))
+                
+                
+
             except Exception as e:
                 print(e)
+        
+            
+            return Response(status=404)
         return self.app
