@@ -6,6 +6,7 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
+### 从四月九号开始静心高考，本仓库进入存档状态
 
 ### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
 
