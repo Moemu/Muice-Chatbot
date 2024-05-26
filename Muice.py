@@ -7,6 +7,7 @@ class Muice():
     Muice交互类
     '''
 
+
     def __init__(self, Model, read_memory_from_file:bool=True, known_topic_probability:float=0.003, time_topic_probability:float=0.75):
         self.model = Model
         self.read_memory_from_file = read_memory_from_file
@@ -18,15 +19,13 @@ class Muice():
         self.last_message_time = time.time()
 
 
-    def ask(self, text: str, user_qq:int) -> str:
+    def ask(self, text: str, user_qq:int) -> list:
         '''发送信息'''
         self.user_qq = str(user_qq)
         if self.read_memory_from_file:
             self.history = self.get_recent_chat_memory()
         else:
             self.history = []
-        if text == '':
-            return ''
 
         self.user_text = text
 
@@ -57,13 +56,13 @@ class Muice():
         if len(self.time_topic) <= 3 and not time.strftime("%H", time.localtime()) in self.time_topics.keys():
             self.time_topic = self.time_topics.copy()
         return ''
+    
 
-    def finish_ask(self, reply: list, is_command: bool):
+    def finish_ask(self, reply: list):
         '''结束对话并保存记忆'''
-        if (reply != [] and reply != [""]) and is_command == False:
-            reply = "".join(reply)
-            self.save_chat_memory(reply)
-            self.last_message_time = time.time()
+        reply = "".join(reply)
+        self.save_chat_memory(reply=reply)
+        self.last_message_time = time.time()
 
     def get_recent_chat_memory(self):
         '''

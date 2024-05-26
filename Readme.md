@@ -87,11 +87,11 @@ pip install auto-gptq
 
 ## bot服务配置
 
-现以提供onebot服务支持, 无需担心gocq的风控
+现以提供onebot服务支持, 无需担心gocq的风控(喜)
 
 本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
 
-注:请在安装好LLOneBot后, 于设置中开启HTTP服务, 监听端口填写`8010`, 开启HTTP事件上报, 上报地址填写`http://127.0.0.1:8020` 以正常运行
+注:请在安装好LLOneBot后, 于设置中开启HTTP服务, 监听端口填写`9654`, 开启HTTP事件上报, 上报地址填写`http://127.0.0.1:6542` 以正常运行
 
 ## 总结
 
@@ -106,7 +106,6 @@ Muice-Chatbot    <- 主路径
  │  └─ Muice
  ├─configs.json  <- 配置文件
  ├─onebot.py     <- onebot服务
- ├─defqq.py      <- onebot函数
  ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
@@ -122,19 +121,26 @@ Muice-Chatbot    <- 主路径
     "AutoCreateTopic": false,
     "read_memory_from_file": true,
     "known_topic_probability": "0.003",
-    "time_topic_probability": "0.75"
+    "time_topic_probability": "0.75",
+    "accept_post": 9654,
+    "send_post": 6542
 }
 ```
 
 `Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
 
 `AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+(目前onebot不可用)
 
 `read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
 
 `known_topic_probability`: 概率：随机发起一个已知的话题
 
 `time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+
+`accept_post`: 接受onebot服务的端口
+
+`send_post`: 发送onebot服务的端口
 
 # 使用🎉
 

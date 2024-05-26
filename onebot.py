@@ -1,93 +1,70 @@
-import time
-from flask import Flask, request ,Response   
-from command import Command  
-from apscheduler.schedulers.background import BackgroundScheduler  
-from apscheduler.triggers.interval import IntervalTrigger
-import defqq 
-from Muice import Muice  
+import logging
+from flask import Flask, request, Response
+import requests
 
-# Flask配置
-class flask():
-    def __init__(self, Muice: Muice, Trust_QQ_list: list, AutoCreateTopic: False):
-        self.Muice = Muice
-        self.Trust_QQ_list = Trust_QQ_list
-        self.AutoCreateTopic = AutoCreateTopic
-        self.port = 8010     #onebot-http监听端口
+from command import Command
+
+class QQBotFlaskApp:
+    def __init__(self, muice_app, trust_qq_list, auto_create_topic, send_post):
         self.app = Flask(__name__)
-        if self.AutoCreateTopic:
-            self.automess = Flask(__name__)
-            # 定时任务调度器 
-            scheduler = BackgroundScheduler()  
-            scheduler.start()
-            scheduler.add_job(self.CreateANewChat, IntervalTrigger(seconds=120))
-            self.automess.run(debug=True)
+        self.command = Command(muice_app) 
+        self.command.load_default_command()
 
-    def CreateANewChat(self):  
-        '''  
-        主动发起对话  
-        '''  
-        topic = Muice.CreateANewTopic()  
-        reply = Muice.ask(topic, self.Trust_QQ_list[0])  
-        if reply != '':
-            for st in reply:  
-                time.sleep(3)  
-                if st == '' or st == ' ':  
-                    continue  
-                defqq.prmess(prid=self.Trust_QQ_list[0], messages=st, port=self.port)        
-                print(f'主动发送消息{self.Trust_QQ_list[0]}: {st}') 
+        self.muice_app = muice_app
+        self.trust_qq_list = trust_qq_list
+        self.auto_create_topic = auto_create_topic
+        self.send_post = send_post
 
-    def load_app(self):
         @self.app.route('/', methods=['POST'])
-        def post():  
+        def qqbot():
             data = request.json
-            print(data)
-            if not data.get('message_type', {}) == "private":
-                return Response(status=404)
-            command = Command(Muice)
-            command.load_default_command()    
-            mess = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])  
-            #print(mess)
             sender_user_id = data.get('sender', {}).get('user_id')
-            if not sender_user_id in self.Trust_QQ_list:
-                return Response(status=404)
-            print(str(sender_user_id) + ": " + mess)
-            is_command, result = command.run(mess)
-            #print(str(is_command)+"*****"+str(result))  
-            if is_command and result:  
-                Muice.reply = result  
-            elif is_command:  
-                Muice.reply = "操作已完成"  
-            else:  
-                Muice.reply = self.Muice.ask(text=mess, user_qq=sender_user_id)
+            mess = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+            if data.get('message_type') == "private":  # 移除不必要的默认值
+                
+                if sender_user_id and 'message' in data:
+                    logging.info(f"{sender_user_id}: {mess}")
+
+                    if sender_user_id in trust_qq_list:
+                        self.reply_mess(mess, sender_user_id)
+                return Response(status=200)
+
+
+    def reply_mess(self, mess, sender_user_id):
+        if not mess.strip():
+            return
+        if mess.startswith('/'):
+            reply = self.command.run(mess)
+            self.prmess(prid=sender_user_id, messages=reply)
+        else:
+            reply = self.muice_app.ask(text=mess, user_qq=sender_user_id)
+            for reply_item in reply:
+                self.prmess(prid=sender_user_id, messages=reply_item)
 
             try:
-                if type(Muice.reply) == list:           
-                         for st in Muice.reply:
-                             if st == '' or st == ' ':
-                                 continue
-                             if not is_command:
-                                 time.sleep(len(st)*0.8)
-                             defqq.prmess(prid=sender_user_id, messages=st, port=self.port)        
-                             print(f'发送消息{sender_user_id}: {st}')
-                             time.sleep(3)
-
-                elif type(Muice.reply) == str and not Muice.reply in ['',' ']:
-                     if not is_command:
-                         time.sleep(len(st)*0.8)
-
-                     defqq.prmess(prid=sender_user_id, messages=Muice.reply, port=self.port)    
-                     print(f'回复{sender_user_id}: {Muice.reply}')
-                else:
-                     print(f'不支持的回复类型: {Muice.reply}')
-                #print(str(is_command)+"/////"+str(result)) 
-            
-                Muice.finish_ask(self=self,reply=Muice.reply,is_command=bool(is_command))
-                
-                
-
+                self.muice_app.finish_ask(str(reply))
             except Exception as e:
-                print(e)
-        
-            
-            return Response(status=404)
-        return self.app
+                logging.error(f"finish_ask_error: {e}") 
+                #这玩意,,留个报错吧,反正也没啥用(
+                
+
+    def run(self, host='0.0.0.0', port=8080, debug=False):
+        '''启动函数'''
+        self.app.run(host=host, port=port, debug=debug)  
+
+    def prmess( self,  prid , messages ):
+        '''发送私聊消息'''
+        url = "http://127.0.0.1:"+str(self.send_post)+"/send_private_msg"                      
+        headers = {"content-type":"application/json",'Connection':'close'}
+        mess = {"user_id":prid,"message":messages}
+        res = requests.post(url, json = mess,headers=headers)
+        return(res.text)              
+
+
+    
+
+
+  
+
+
+
