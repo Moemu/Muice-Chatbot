@@ -44,7 +44,7 @@ class Command():
         self.resister_command('/restart',self.restart)
         
     def default_help(self):
-        help_text = "/clean 清空本轮对话历史 \n /help 显示所有可用的命令列表 \n /refresh 刷新本次对话回复 \n /reset 重置所有对话数据(将存档对话数据) \n /undo 撤销上一次对话"
+        help_text = " /clean 清空本轮对话历史 \n /help 显示所有可用的命令列表 \n /refresh 刷新本次对话回复 \n /reset 重置所有对话数据(将存档对话数据) \n /undo 撤销上一次对话"
         return help_text
     
     def refresh(self):

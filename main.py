@@ -30,7 +30,8 @@ except:
     exit()
 
 configs = json.load(open('configs.json','r',encoding='utf-8'))
-
 muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
-qqbot_app = QQBotFlaskApp(muice_app, configs['Trust_QQ_list'], configs['AutoCreateTopic'], configs['send_post'])  
+qqbot_app = QQBotFlaskApp(muice_app, configs)
 qqbot_app.run(host = '127.0.0.1', port = configs['accept_post'])
+
+  
