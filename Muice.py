@@ -7,6 +7,7 @@ class Muice():
     Muice交互类
     '''
 
+
     def __init__(self, Model, read_memory_from_file:bool=True, known_topic_probability:float=0.003, time_topic_probability:float=0.75):
         self.model = Model
         self.read_memory_from_file = read_memory_from_file
@@ -15,22 +16,18 @@ class Muice():
         self.known_topic = ['（分享一下你的一些想法）','（创造一个新话题）']
         self.time_topic = {'07':'（发起一个早晨问候）','12':'（发起一个中午问候）','18':'（发起一个傍晚问候）','00':'（发起一个临睡问候）'}
         self.time_topics = self.time_topic.copy()
-        self.last_message_time = time.time()
 
 
-    def ask(self, text: str, user_qq:int) -> str:
+
+    def ask(self, text: str, user_qq:int) -> list:
         '''发送信息'''
         self.user_qq = str(user_qq)
         if self.read_memory_from_file:
             self.history = self.get_recent_chat_memory()
         else:
             self.history = []
-        if text == '':
-            return ''
 
         self.user_text = text
-
-        logging.info(f'收到消息: {text}')
         start_time = time.time()
         self.reply = self.model.ask(self.user_text, self.history)
         end_time = time.time()
@@ -38,14 +35,14 @@ class Muice():
         new_reply = divede_sentences(self.reply)
         return new_reply
 
-    def CreateANewTopic(self):
+    def CreateANewTopic(self , LastTime):
         '''
         主动发起对话
         '''
         current_time = time.strftime("%H:%M", time.localtime())
-        TimeDifference = time.time() - self.last_message_time
+        TimeDifference = time.time() - LastTime
         if TimeDifference < 60 * 60:
-            return ''
+            return None
         if random.random() < self.time_topic_probability:
             for hour,topic in self.time_topic.items():
                 event_time = hour + ':' + str(random.randint(0,59))
@@ -56,14 +53,13 @@ class Muice():
             return random.choice(self.known_topic)
         if len(self.time_topic) <= 3 and not time.strftime("%H", time.localtime()) in self.time_topics.keys():
             self.time_topic = self.time_topics.copy()
-        return ''
+        return None
+    
 
-    def finish_ask(self, reply: list, is_command: bool):
+    def finish_ask(self, reply: list):
         '''结束对话并保存记忆'''
-        if (reply != [] and reply != [""]) and is_command == False:
-            reply = "".join(reply)
-            self.save_chat_memory(reply)
-            self.last_message_time = time.time()
+        reply = "".join(reply)
+        self.save_chat_memory(reply=reply)
 
     def get_recent_chat_memory(self):
         '''
