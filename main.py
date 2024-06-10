@@ -2,8 +2,12 @@ from Muice import Muice
 from qqbot import qqbot
 import llm
 import json,logging
+  
+logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)  
+  
+logger = logging.getLogger(__name__)
 
-logging.warning('10.14更新：由于协议库问题, 机器人登录可能失效。若您无法登录,请使用chatglm2-6b下的web_demo.sh运行本微调模型')
+logging.warning('由于协议库问题, 机器人登录可能失效。若您无法登录,请使用chatglm2-6b下的web_demo.sh运行本微调模型')
 
 configs = json.load(open('configs.json','r',encoding='utf-8'))
 model_loader = configs["model_loader"]
