@@ -1,7 +1,7 @@
 from Muice import Muice
 from qqbot import qqbot
 import llm
-import json,logging,os,traceback
+import json,logging
 
 logging.warning('10.14更新：由于协议库问题, 机器人登录可能失效。若您无法登录,请使用chatglm2-6b下的web_demo.sh运行本微调模型')
 
