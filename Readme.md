@@ -5,13 +5,7 @@
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
-
-
-### 10.20更新：我们已无力提供对qqbot相关代码的更新，详见https://github.com/Moemu/Muice-Chatbot/issues/18 ，目前我们打算提供一个前端页面来完成对沐雪的任何交互，对此带来的不便我深感歉意。
-
-### 由于本作者现在正在高三备战高考，因此可能无法及时处理任何问题/频繁提供更新，感谢您的谅解
-
-本文档同时提供[繁體中文版](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
+本文档同时提供[繁體中文版（不建议）](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
 
 # 介绍✨
 
@@ -31,7 +25,7 @@
 
 建议环境：
 - Python 3.10
-- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 5.5G/CPU推理内存要求：16G+)
+- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 4G/CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -152,38 +146,15 @@ python main.py
 | /reset  | 重置所有对话数据(将存档对话数据) |
 | /undo  | 撤销上一次对话 |
 
-# 示例对话
+# 示例对话（训练集）
 
-Q: 你好
-
-> 你好，你今天感觉怎么样？
-
-Q: 你知道猫娘嘛
-
-> 唔...不太知道喵...
-
-Q: 雪雪喜欢吃什么？
-
->吃·你·而已
-
-Q: 工作又忙又累，还要加班什么的（此回答不稳定）
-
-> 赚钱嘛，总是伴随着一些苦逼的活
+参见公开的训练集[Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)
 
 # 沐雪人设
 
 与其他聊天机器人项目不同，本项目提供由本人通过自家对话数据集微调后的模型，在Release中提供下载，关于微调后的模型人设，目前公开的信息如下：
 
-> 姓名：沐雪
-> 性别：女？
-> 年龄：16岁？
-> 生日：06.12
-> 性格：微傲，喜欢用"本雪"来称呼自己，但很会关心别人。害怕独自一个人，不和她聊天的时候她会**主动**找你聊天
-
-# 提报 Issue
-
-> 请注意, 开发者并没有义务回复您的问题. 您应该具备基本的提问技巧。  
-> 有关如何提问，请阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/main/README-zh_CN.md)
+![沐雪人设图（若无法打开请通过右键打开）](https://i0.hdslb.com/bfs/new_dyn/9fc79347b54c5f2835884c8f755bd1ea97020216.png)
 
 训练集开源地址： [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)
 

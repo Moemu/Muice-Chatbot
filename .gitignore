@@ -2,4 +2,8 @@ dataset
 model
 qqbot
 webui
+setting
+memory
 *.pyc
+.vscode
+configs.json

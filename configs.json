@@ -1,4 +1,7 @@
 {
+    "model_loader": "llmtuner",
+    "model_name_or_path": "./model/Qwen2-1.5B-Instruct-GPTQ-Int4",
+    "adapter_name_or_path": "./model/LLaMA-Factory/saves/qwen/Muice",
     "Trust_QQ_list": [
         123456789,
         987654321
