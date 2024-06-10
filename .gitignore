@@ -2,4 +2,5 @@ dataset
 model
 qqbot
 webui
+setting
 *.pyc
