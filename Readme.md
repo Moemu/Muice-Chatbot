@@ -21,7 +21,7 @@
 
 ✔ 提供5条可用的命令
 
-# 安装💻
+# 快速开始💻
 
 建议环境：
 - Python 3.10
@@ -37,45 +37,44 @@ conda activate Muice
 pip install -r requirements.txt
 ```
 
-## 克隆原始模型
+## 模型下载和加载
 
-下面三个选一个就好了
+目前支持的基底模型如下表：
 
-```powershell
-mkdir model
-cd model
-git lfs install
-git clone https://huggingface.co/THUDM/chatglm2-6b
-cd ..
+| 基底模型                                                     | 对应微调模型版本号 | 额外依赖库  |
+| ------------------------------------------------------------ | ------------------ | ----------- |
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4            | cpm_kernels |
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3            |             |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                | llmtuner    |
+
+微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
+
+请将基底模型与微调模型放放入`model`文件夹中，并将微调模型命名为`Muice`（确保微调模型目录下存在.model文件而不是文件夹，部分微调模型由于疏忽还套了一层checkpoint文件夹）
+
+本仓库目前支持如下模型加载方式：
+
+1. 通过API加载(`llm/api.py`)
+2. 通过transformers的`AutoTokenizer`, `AutoModel`函数加载（`llm/chatglm.py`）
+3. 通过`llmtuner.chat`(`LLaMA-Factory`)的`ChatModel`类加载（`llm/llmtuner.py`）
+
+在已测试的模型中，我们建议以下模型通过对应的方式加载，其他模型亦可以通过类似的方式加载：
+
+| 基底模型 | 微调方式    | 加载方法     |
+| -------- | ----------- | ------------ |
+| ChatGLM  | P-tuning V2 | transformers |
+| Qwen     | sft         | llmtuner     |
+
+在配置文件中可调整模型的加载方式：
+
+```json
+"model_loader": "api/transformers/llmtuner",
+"model_name_or_path": "基底模型位置",
+"adapter_name_or_path": "沐雪微调模型位置"
 ```
 
-## 克隆原始模型（int4量化）
+（若是API加载，`model_name_or_path`填api地址）
 
-```powershell
-mkdir model
-cd model
-git lfs install
-git clone https://huggingface.co/THUDM/chatglm2-6b-int4
-cd ..
-pip install cpm_kernels
-```
 
-## 克隆Qwen-7B原始模型（int4量化）
-
-```powershell
-mkdir model
-cd model
-git lfs install
-git clone https://huggingface.co/Qwen/Qwen-7B-Chat-Int4
-cd ..
-pip install peft
-pip install optimum
-pip install auto-gptq
-```
-
-## 克隆沐雪微调模型
-
-在[Releases](https://github.com/Moemu/Muice-Chatbot/releases)上下载微调后的模型压缩包，解压后命名为`Muice`并放置于`model`文件夹中以使用我们的微调模型
 
 ## go-cqhttp配置
 
