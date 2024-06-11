@@ -1,4 +1,5 @@
 from Muice import Muice
+from onebot import QQBotFlaskApp
 import llm
 import json,logging
 
@@ -13,9 +14,9 @@ configs = json.load(open('configs.json','r',encoding='utf-8'))
 if configs["model_loader"] == "api":
     model = llm.api(configs["model_name_or_path"])
 elif configs["model_loader"] == "transformers":
-    model = llm.transformers(configs["model_name_or_path"],configs["adapter_name_or_path")
+    model = llm.transformers(configs["model_name_or_path"],configs["adapter_name_or_path"])
 elif configs["model_loader"] == "llmtuner":
-    model = llm.llmtuner(configs["model_name_or_path"],configs["adapter_name_or_path")
+    model = llm.llmtuner(configs["model_name_or_path"],configs["adapter_name_or_path"])
 
 muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
 qqbot_app = QQBotFlaskApp(muice_app, configs)
