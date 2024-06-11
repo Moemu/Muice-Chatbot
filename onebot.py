@@ -4,6 +4,7 @@ import requests
 import time
 from command import Command
 from apscheduler.schedulers.background import BackgroundScheduler  
+import onebot_def
 
 class QQBotFlaskApp:
     def __init__(self, muice_app,configs):
@@ -23,20 +24,23 @@ class QQBotFlaskApp:
         self.scheduler = BackgroundScheduler()  
         self.scheduler.add_job(self.timework, 'interval', minutes=1)  # 每分钟执行一次timework函数  
         self.scheduler.start()
-        print(self.time_dict)
         
 
         @self.app.route('/', methods=['POST'])
         def qqbot():
+            '''onebot链接'''
             data = request.json
-            sender_user_id = data.get('sender', {}).get('user_id')
-            mess = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
-            logging.info(f'{sender_user_id} say: {mess}')
-            if data.get('message_type') == "private" and sender_user_id and 'message' in data and sender_user_id in self.trust_qq_list: 
-                self.reply_mess(mess, sender_user_id)
-                return Response(status=200)
+            print(data)
+            if data.get('meta_event_type') == 'heartbeat':
+                return Response(status=404)
+            else:
+                self.sender_id = data.get('sender', {}).get('user_id')
+                self.mess = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+                logging.info(f'{self.sender_id} say: {self.mess}')
+                if data.get('message_type') == "private" and self.sender_id and 'message' in data and self.sender_id in self.trust_qq_list: 
+                    self.reply_mess()
+                    return Response(status=200)
             return Response(status=404)
-
 
     def reply_mess(self, mess, sender_user_id):
         self.store_time(time.time(),sender_user_id)
@@ -44,12 +48,12 @@ class QQBotFlaskApp:
                 return None
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
-            self.prmess(prid=sender_user_id, messages=reply)
+            onebot_def.prmess(prid=sender_user_id, messages=reply)
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id)
             for reply_item in reply:
                 time.sleep(len(reply_item)*0.8)
-                self.prmess(prid=sender_user_id, messages=reply_item)
+                onebot_def.prmess(prid=sender_user_id, messages=reply_item)
                 
             self.muice_app.finish_ask(str(reply))
         return None    
@@ -59,14 +63,6 @@ class QQBotFlaskApp:
         '''启动函数'''
         self.app.run(host=host, port=port, debug=debug)  
 
-
-    def prmess( self,  prid , messages ):
-        '''发送私聊消息'''
-        url = "http://127.0.0.1:"+str(self.send_post)+"/send_private_msg"                      
-        headers = {"content-type":"application/json",'Connection':'close'}
-        mess = {"user_id":prid,"message":messages}
-        res = requests.post(url, json = mess,headers=headers)
-        return(res.text)
     
     def store_time(self, time, id):  
         """ 存储time_dict """  

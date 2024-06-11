@@ -9,7 +9,7 @@ class Command():
         self.commands_function = []
         self.Muice = Muice
         
-    def resister_command(self,command:str,command_function):
+    def register_command(self,command:str,command_function):
         '''
         注册命令
         Args:
@@ -36,12 +36,16 @@ class Command():
         '''
         加载默认命令
         '''
-        self.resister_command('/help',self.default_help)
-        self.resister_command('/refresh',self.refresh)
-        self.resister_command('/clean',self.clean)
-        self.resister_command('/reset',self.reset)
-        self.resister_command('/undo',self.undo)
-        self.resister_command('/restart',self.restart)
+        default_commands = {
+            '/help': self.default_help,
+            '/refresh': self.refresh,
+            '/clean': self.clean,
+            '/reset': self.reset,
+            '/undo': self.undo
+        }
+        for command, function in default_commands.items():
+            self.register_command(command, function)
+
         
     def default_help(self):
         help_text = " /clean 清空本轮对话历史 \n /help 显示所有可用的命令列表 \n /refresh 刷新本次对话回复 \n /reset 重置所有对话数据(将存档对话数据) \n /undo 撤销上一次对话"
@@ -67,15 +71,6 @@ class Command():
         self.Muice.history = self.Muice.get_recent_chat_memory()
         return "undoed"
     
-    
-    def restart(self):
-        print("restarting...")
-        current_script = sys.argv[0]
-        # 使用os.execv来替换当前进程并重新执行main.py
-        # 注意：这将导致当前方法的剩余部分不会被执行
-        #os.execv(sys.executable, [sys.executable, current_script] + sys.argv[1:])
-        #重启逻辑,或许会有
-        return "restart"
 
     
     def execute(self, command: str) -> str:
