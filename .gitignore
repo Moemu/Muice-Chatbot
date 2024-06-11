@@ -1,5 +1,10 @@
 dataset
 model
 qqbot
+onebot
 webui
+setting
+memory
 *.pyc
+.vscode
+configs.json
