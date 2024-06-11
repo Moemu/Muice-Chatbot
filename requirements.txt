@@ -8,3 +8,5 @@ uvicorn==0.23.2
 cpm_kernels
 llmtuner
 auto_gptq
+flask
+apscheduler

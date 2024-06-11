@@ -5,7 +5,11 @@
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
+
 本文档同时提供[繁體中文版（不建议）](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
+
+###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行
+
 
 # 介绍✨
 
@@ -76,11 +80,13 @@ pip install -r requirements.txt
 
 
 
-## go-cqhttp配置
+## bot服务配置
 
-本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
+现以提供onebot服务支持, 无需担心gocq的风控(喜)
 
-有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)
+本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
+
+注:请在安装好LLOneBot后, 于设置中开启HTTP服务, 监听端口填写`9654`, 开启HTTP事件上报, 上报地址填写`http://127.0.0.1:6542` 以正常运行
 
 ## 总结
 
@@ -93,10 +99,8 @@ Muice-Chatbot    <- 主路径
  │  ├─ chatglm2-6b-int4 <- int4原始模型
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
- ├─qqbot
- │  ├─go-cqhttp.exe
- │  └─...
  ├─configs.json  <- 配置文件
+ ├─onebot.py     <- onebot服务
  ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
@@ -112,19 +116,26 @@ Muice-Chatbot    <- 主路径
     "AutoCreateTopic": false,
     "read_memory_from_file": true,
     "known_topic_probability": "0.003",
-    "time_topic_probability": "0.75"
+    "time_topic_probability": "0.75",
+    "accept_post": 9654,
+    "send_post": 6542
 }
 ```
 
 `Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
 
 `AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+(目前onebot不可用)
 
 `read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
 
 `known_topic_probability`: 概率：随机发起一个已知的话题
 
 `time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+
+`accept_post`: 接受onebot服务的端口
+
+`send_post`: 发送onebot服务的端口
 
 # 使用🎉
 
@@ -170,6 +181,8 @@ python main.py
 模型训练：[Moemu](https://github.com/Moemu)
 
 训练集编写：[Moemu](https://github.com/Moemu)
+
+OneBot服务支持: [MoeSnowyFox](https://github.com/MoeSnowyFox)
 
 代码贡献：
 
