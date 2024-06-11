@@ -4,6 +4,7 @@ import requests
 import time
 from command import Command
 from apscheduler.schedulers.background import BackgroundScheduler  
+import onebot_def
 
 class QQBotFlaskApp:
     def __init__(self, muice_app,configs):
@@ -47,12 +48,12 @@ class QQBotFlaskApp:
                 return None
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
-            self.prmess(prid=sender_user_id, messages=reply)
+            onebot_def.prmess(prid=sender_user_id, messages=reply)
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id)
             for reply_item in reply:
                 time.sleep(len(reply_item)*0.8)
-                self.prmess(prid=sender_user_id, messages=reply_item)
+                onebot_def.prmess(prid=sender_user_id, messages=reply_item)
                 
             self.muice_app.finish_ask(str(reply))
         return None    
@@ -62,14 +63,6 @@ class QQBotFlaskApp:
         '''启动函数'''
         self.app.run(host=host, port=port, debug=debug)  
 
-
-    def prmess( self,  prid , messages ):
-        '''发送私聊消息'''
-        url = "http://127.0.0.1:"+str(self.send_post)+"/send_private_msg"                      
-        headers = {"content-type":"application/json",'Connection':'close'}
-        mess = {"user_id":prid,"message":messages}
-        res = requests.post(url, json = mess,headers=headers)
-        return(res.text)
     
     def store_time(self, time, id):  
         """ 存储time_dict """  

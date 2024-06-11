@@ -21,5 +21,3 @@ def prAudio( prid , messages , send_post ):
     return(res.text)
 
 #base64 = 
-#print(prAudio(2236319712,base64,6542))
-#print(prAudio(2307804249,base64,1235))
