@@ -1,7 +1,6 @@
 from Muice import Muice
 from onebot import QQBotFlaskApp
-import llm
-import json,logging
+import json,logging,importlib
 
 logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)  
 
@@ -15,14 +14,8 @@ model_loader = configs["model_loader"]
 model_name_or_path = configs["model_name_or_path"]
 adapter_name_or_path = configs["adapter_name_or_path"]
 
-if model_loader == "api":
-    model = llm.api(model_name_or_path)
-elif model_loader == "transformers":
-    model = llm.transformers(model_name_or_path,adapter_name_or_path)
-elif model_loader == "llmtuner":
-    model = llm.llmtuner(model_name_or_path,adapter_name_or_path)
-elif model_loader == "rwkv-api":
-    model = llm.rwkv(model_name_or_path)
+model = importlib.import_module(f"llm.{model_loader}")
+model = model.llm(model_name_or_path,adapter_name_or_path)
 
 muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
 qqbot_app = QQBotFlaskApp(muice_app, configs)
