@@ -41,11 +41,12 @@ pip install -r requirements.txt
 
 目前支持的基底模型如下表：
 
-| 基底模型                                                     | 对应微调模型版本号 | 额外依赖库  |
-| ------------------------------------------------------------ | ------------------ | ----------- |
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4            | cpm_kernels |
-| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3            |             |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                | llmtuner    |
+| 基底模型                                                     | 对应微调模型版本号                         | 额外依赖库                  |
+| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                                        | llmtuner                    |
+| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
@@ -53,26 +54,28 @@ pip install -r requirements.txt
 
 本仓库目前支持如下模型加载方式：
 
-1. 通过API加载(`llm/api.py`)
-2. 通过transformers的`AutoTokenizer`, `AutoModel`函数加载（`llm/chatglm.py`）
-3. 通过`llmtuner.chat`(`LLaMA-Factory`)的`ChatModel`类加载（`llm/llmtuner.py`）
+1. 通过API加载
+2. 通过transformers的`AutoTokenizer`, `AutoModel`函数加载
+3. 通过`llmtuner.chat`(`LLaMA-Factory`)的`ChatModel`类加载
+4. 通过`RWKV-Runner`提供的API服务加载
 
 在已测试的模型中，我们建议以下模型通过对应的方式加载，其他模型亦可以通过类似的方式加载：
 
-| 基底模型 | 微调方式    | 加载方法     |
-| -------- | ----------- | ------------ |
-| ChatGLM  | P-tuning V2 | transformers |
-| Qwen     | sft         | llmtuner     |
+| 基底模型            | 微调方式    | 加载方法     |
+| ------------------- | ----------- | ------------ |
+| ChatGLM             | P-tuning V2 | transformers |
+| Qwen                | sft         | llmtuner     |
+| RWKV(Seikaijyu微调) | pissa       | rwkv-api     |
 
 在配置文件中可调整模型的加载方式：
 
 ```json
-"model_loader": "api/transformers/llmtuner",
+"model_loader": "api/transformers/llmtuner/rwkv-api",
 "model_name_or_path": "基底模型位置",
 "adapter_name_or_path": "沐雪微调模型位置"
 ```
 
-（若是API加载，`model_name_or_path`填api地址）
+（若是API/rwkv-api加载，`model_name_or_path`填api地址）
 
 
 
@@ -157,7 +160,7 @@ python main.py
 
 训练集开源地址： [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)
 
-原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)
+原始模型：[THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B) & [QwenLM/Qwen)](https://github.com/QwenLM/Qwen)
 
 本项目源码使用[MIT license](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE)，对于微调后的模型文件，不建议作为商业用途
 
@@ -165,9 +168,7 @@ python main.py
 
 代码编写：[Moemu](https://github.com/Moemu)
 
-安装及配置指南编写：[TurboHK](https://github.com/TurboHK)
-
-模型训练：[Moemu](https://github.com/Moemu)
+模型训练：[Moemu](https://github.com/Moemu) （RWKV训练：[Seikaijyu](https://github.com/Seikaijyu)）
 
 训练集编写：[Moemu](https://github.com/Moemu)
 

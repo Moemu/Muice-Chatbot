@@ -20,6 +20,8 @@ elif model_loader == "transformers":
     model = llm.transformers(model_name_or_path,adapter_name_or_path)
 elif model_loader == "llmtuner":
     model = llm.llmtuner(model_name_or_path,adapter_name_or_path)
+elif model_loader == "rwkv-api":
+    model = llm.rwkv(model_name_or_path)
 
 muice = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'], configs['time_topic_probability'])
 
