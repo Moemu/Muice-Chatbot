@@ -90,7 +90,7 @@ class QQBot:
   
     async def produce_reply(self, mess, sender_user_id):
         if self.auto_create_topic:
-            self.store_time(sender_user_id)
+            await self.store_time(sender_user_id)
         if not str(mess).strip():
                 return None
         if str(mess).startswith('/'):
