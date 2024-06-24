@@ -1,7 +1,7 @@
 {
-    "model_loader": "llmtuner",
-    "model_name_or_path": "./model/Qwen2-1.5B-Instruct-GPTQ-Int4",
-    "adapter_name_or_path": "./model/LLaMA-Factory/saves/qwen/Muice",
+    "model_loader": "transformers",
+    "model_name_or_path": "./model/chatglm2-6b",
+    "adapter_name_or_path": "./model/Muice",
     "Trust_QQ_list": [
         123456789,
         987654321
@@ -10,7 +10,6 @@
     "read_memory_from_file": true,
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
-    "accept_post": 9654,
-    "send_post": 6542
-
+    "port":21050,
+    "bot_qq_id":123456789
 }

@@ -4,5 +4,4 @@ requests
 torch
 transformers
 uvicorn
-flask
 apscheduler
