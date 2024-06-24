@@ -81,7 +81,7 @@ pip install -r requirements.txt
 
 （若是API/rwkv-api加载,`model_name_or_path`填api地址）
 
-
+_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[OpenShamrock](https://github.com/whitechi73/OpenShamrock)来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
 ## bot服务配置
 
@@ -90,6 +90,8 @@ pip install -r requirements.txt
 本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
 
 注:请在安装好LLOneBot后, 于设置中开启反向WebSocket服务, 填写`ws://127.0.0.1:21050/ws/api`, 以正常运行
+
+
 
 ## 总结
 
