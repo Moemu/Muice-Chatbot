@@ -23,8 +23,6 @@ class QQBot:
         self.trust_qq_list = self.configs['Trust_QQ_list']
         self.websocket_port = self.configs['port']
         self.auto_create_topic = self.configs['AutoCreateTopic']
-        self.send_post = self.configs['send_post']
-        self.auto_create_topic = self.configs['AutoCreateTopic']
         if self.auto_create_topic:
             self.time_dict = {qq_id: time.time() for qq_id in self.trust_qq_list}
             self.scheduler = BackgroundScheduler()  
@@ -43,10 +41,10 @@ class QQBot:
                 #链接请求 
                 while True:  
                     data = await websocket.receive_text()   
-                    reply = await self.processing_json(data)
-                    logging.info(f"回复{reply}") 
+                    reply = await self.processing_json(data) 
                     if reply is None:
                         continue 
+                    logging.info(f"回复{reply}")
                     await websocket.send_text(reply) 
             except WebSocketDisconnect:  
                 logging.info("WebSocket disconnected")   
