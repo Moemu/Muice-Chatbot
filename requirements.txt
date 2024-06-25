@@ -4,3 +4,4 @@ requests
 torch
 transformers
 uvicorn
+apscheduler
