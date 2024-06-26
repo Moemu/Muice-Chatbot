@@ -89,7 +89,9 @@ pip install -r requirements.txt
 
 本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
 
-注:请在安装好LLOneBot后, 于设置中开启HTTP服务, 监听端口填写`9654`, 开启HTTP事件上报, 上报地址填写`http://127.0.0.1:6542` 以正常运行
+注:请在安装好LLOneBot后, 于设置中开启反向WebSocket服务, 填写`ws://127.0.0.1:21050/ws/api`, 以正常运行
+
+_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[OpenShamrock](https://github.com/whitechi73/OpenShamrock)来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
 ## 总结
 
@@ -103,7 +105,7 @@ Muice-Chatbot    <- 主路径
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
  ├─configs.json  <- 配置文件
- ├─onebot.py     <- onebot服务
+ ├─ws.py     <- ws服务
  ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
@@ -120,15 +122,14 @@ Muice-Chatbot    <- 主路径
     "read_memory_from_file": true,
     "known_topic_probability": "0.003",
     "time_topic_probability": "0.75",
-    "accept_post": 9654,
-    "send_post": 6542
+    "port":21050,
+    "bot_qq_id":123456789
 }
 ```
 
-`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
+`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
 
 `AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
-(目前onebot不可用)
 
 `read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
 
@@ -136,9 +137,9 @@ Muice-Chatbot    <- 主路径
 
 `time_topic_probability`: 概率：早、中、傍、晚触发日常问候
 
-`accept_post`: 接受onebot服务的端口
+`post`: 反向WebSocket服务端口
 
-`send_post`: 发送onebot服务的端口
+`bot_qq_id`: 机器人QQ号
 
 # 使用🎉
 

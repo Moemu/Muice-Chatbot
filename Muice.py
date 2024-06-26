@@ -1,4 +1,3 @@
-from Tools import divede_sentences
 import logging,time,random,json,os
 
 
@@ -32,8 +31,7 @@ class Muice():
         self.reply = self.model.ask(self.user_text, self.history)
         end_time = time.time()
         logging.info(f'模型调用时长: {end_time - start_time} s')
-        new_reply = divede_sentences(self.reply)
-        return new_reply
+        return self.reply
 
     def CreateANewTopic(self , LastTime):
         '''
@@ -59,7 +57,7 @@ class Muice():
     def finish_ask(self, reply: list):
         '''结束对话并保存记忆'''
         reply = "".join(reply)
-        self.save_chat_memory(reply=reply)
+        self.save_chat_memory(reply)
 
     def get_recent_chat_memory(self):
         '''
