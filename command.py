@@ -5,9 +5,8 @@ class Command():
     指令类
     '''
     def __init__(self,Muice):
-        self.commands = []
-        self.commands_function = []
         self.Muice = Muice
+        self.commands = {}
         
     def register_command(self,command:str,command_function):
         '''
@@ -16,16 +15,15 @@ class Command():
             command: 命令字符串
             command_function: 所执行的函数
         '''
-        self.commands.append(command)
-        self.commands_function.append(command_function)
+        self.commands[command] = command_function
 
     def run(self,command:str) -> str:
         '''
         执行命令，返回命令命令执行结果或命令不存在的提示
         '''
-        for i in range(len(self.commands)):
-            if self.commands[i] == command:
-                return self.commands_function[i]()
+        if command in self.commands:  
+        # 调用与命令关联的函数  
+            return self.commands[command]()  
         return self.no_command()
     
     def no_command(self):
@@ -73,18 +71,3 @@ class Command():
     
 
     
-    def execute(self, command: str) -> str:
-        '''
-        执行命令或返回指定文本
-        Args:
-            command: 要执行的命令字符串
-        Returns:
-            如果命令存在并执行成功，返回文本"b"，否则返回文本"a"
-        '''
-        is_command,result = self.run(command)
-        if result[0]:  # 如果命令存在
-            # 执行命令并返回结果
-            return result[1]()  # 执行命令对应的函数
-        else:
-            # 命令不存在，返回"a"
-            return "未知命令"

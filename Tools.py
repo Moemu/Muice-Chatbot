@@ -1,7 +1,7 @@
 import re
 from typing import List
 
-def divede_sentences(text: str) -> list:
+def divide_sentences(text: str) -> list:
     '''
     切分一段句子
     '''

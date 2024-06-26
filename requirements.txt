@@ -1,8 +1,6 @@
 fastapi
-pycqBot
 requests
 torch
 transformers
 uvicorn
-flask
 apscheduler
