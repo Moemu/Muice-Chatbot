@@ -74,7 +74,6 @@ class Muice():
         '''
         保存至记忆数据库
         '''
-        self.history.append([self.user_text, reply])
         if not os.path.isdir('memory'):
             os.mkdir('memory')
         with open(f'./memory/{self.user_qq}.json', 'a', encoding='utf-8') as f:
