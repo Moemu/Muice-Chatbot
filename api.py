@@ -9,6 +9,8 @@ import torch
 DEVICE = "cuda"
 DEVICE_ID = "0"
 CUDA_DEVICE = f"{DEVICE}:{DEVICE_ID}" if DEVICE_ID else DEVICE
+MODEL_PATH = "./model/chatglm2-6b-int4"
+PT_PATH = "./model/Muice"
 
 
 def torch_gc():
@@ -53,10 +55,10 @@ async def create_item(request: Request):
 
 
 if __name__ == '__main__':
-    tokenizer = AutoTokenizer.from_pretrained("./model/chatglm2-6b", trust_remote_code=True)
-    config = AutoConfig.from_pretrained("./model/chatglm2-6b", trust_remote_code=True, pre_seq_len=128)
-    model = AutoModel.from_pretrained("./model/chatglm2-6b", config=config, trust_remote_code=True).cuda()
-    prefix_state_dict = torch.load(os.path.join("./model/Muice", "pytorch_model.bin"))
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH, trust_remote_code=True)
+    config = AutoConfig.from_pretrained(MODEL_PATH, trust_remote_code=True, pre_seq_len=128)
+    model = AutoModel.from_pretrained(MODEL_PATH, config=config, trust_remote_code=True).cuda()
+    prefix_state_dict = torch.load(os.path.join(PT_PATH, "pytorch_model.bin"))
     new_prefix_state_dict = {}
     for k, v in prefix_state_dict.items():
         if k.startswith("transformer.prefix_encoder."):

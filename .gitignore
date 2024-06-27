@@ -1,8 +1,5 @@
-dataset
 model
-qqbot
-webui
-setting
+onebot
 memory
 *.pyc
 .vscode

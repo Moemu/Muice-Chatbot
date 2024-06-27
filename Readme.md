@@ -5,11 +5,13 @@
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
-本文档同时提供[繁體中文版（不建议）](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
+
+###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行，感谢[@MoeSnowyFox](https://github.com/MoeSnowyFox)的贡献！
+
 
 # 介绍✨
 
-沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)微调而成，训练集长度1.3K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
+沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度1.8K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
 
 *：（训练集长度较低，但我们仍在收集对话数据）
 
@@ -17,7 +19,7 @@
 
 ✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
 
-✔ 主动发起聊天（局限于已有的Prompt）
+✔ 主动发起聊天
 
 ✔ 提供5条可用的命令
 
@@ -25,7 +27,7 @@
 
 建议环境：
 - Python 3.10
-- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 4G/CPU推理内存要求：16G+)
+- 一张拥有8GB+ 显存的显卡(int4量化最低要求: 4G ; CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -50,7 +52,7 @@ pip install -r requirements.txt
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
-请将基底模型与微调模型放放入`model`文件夹中，并将微调模型命名为`Muice`（确保微调模型目录下存在.model文件而不是文件夹，部分微调模型由于疏忽还套了一层checkpoint文件夹）
+请将基底模型与微调模型放放入`model`文件夹中（确保微调模型目录下存在.model文件而不是文件夹，部分微调模型由于疏忽还套了一层checkpoint文件夹）
 
 本仓库目前支持如下模型加载方式：
 
@@ -79,11 +81,15 @@ pip install -r requirements.txt
 
 
 
-## go-cqhttp配置
+## bot服务配置
 
-本项目使用[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)进行机器人交互，请从[Releases](https://github.com/Mrs4s/go-cqhttp/releases)下载相应平台的可执行程序，并放入 `qqbot` 目录中
+现以提供onebot服务支持, 无需担心gocq的风控(喜)
 
-有关go-cqhttp 的详细配置方法及问题，请访问 [go-cqhttp 主页](https://docs.go-cqhttp.org/) 及其 [Github 页面](https://github.com/Mrs4s/ go-cqhttp)
+本项目使用[onebotV11](https://github.com/botuniverse/onebot-11)协议, 若您希望于QQ使用, 推荐参考[LLOneBot](https://github.com/LLOneBot/LLOneBot)使用onebot服务
+
+注:请在安装好LLOneBot后, 于设置中开启反向WebSocket服务, 填写`ws://127.0.0.1:21050/ws/api`, 以正常运行
+
+_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[OpenShamrock](https://github.com/whitechi73/OpenShamrock)来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
 ## 总结
 
@@ -96,10 +102,8 @@ Muice-Chatbot    <- 主路径
  │  ├─ chatglm2-6b-int4 <- int4原始模型
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
- ├─qqbot
- │  ├─go-cqhttp.exe
- │  └─...
  ├─configs.json  <- 配置文件
+ ├─ws.py     <- ws服务
  ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
@@ -115,11 +119,13 @@ Muice-Chatbot    <- 主路径
     "AutoCreateTopic": false,
     "read_memory_from_file": true,
     "known_topic_probability": "0.003",
-    "time_topic_probability": "0.75"
+    "time_topic_probability": "0.75",
+    "port":21050,
+    "bot_qq_id":123456789
 }
 ```
 
-`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复（留空为全部处理）
+`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
 
 `AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
 
@@ -128,6 +134,10 @@ Muice-Chatbot    <- 主路径
 `known_topic_probability`: 概率：随机发起一个已知的话题
 
 `time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+
+`post`: 反向WebSocket服务端口
+
+`bot_qq_id`: 机器人QQ号
 
 # 使用🎉
 
@@ -171,6 +181,8 @@ python main.py
 模型训练：[Moemu](https://github.com/Moemu) （RWKV训练：[Seikaijyu](https://github.com/Seikaijyu)）
 
 训练集编写：[Moemu](https://github.com/Moemu)
+
+OneBot服务支持: [MoeSnowyFox](https://github.com/MoeSnowyFox)
 
 代码贡献：
 
