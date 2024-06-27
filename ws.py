@@ -1,12 +1,10 @@
 from fastapi import FastAPI, WebSocket  
 from starlette.websockets import WebSocketDisconnect 
-import json,time  
-from command import Command
+
+import json,time,asyncio,uvicorn,logging
+
 from Tools import divide_sentences
-from apscheduler.schedulers.background import BackgroundScheduler  
-import asyncio
-import uvicorn 
-import logging
+from command import Command
 
   
 
@@ -25,10 +23,10 @@ class QQBot:
         self.websocket_port = self.configs['port']
         self.auto_create_topic = self.configs['AutoCreateTopic']
         if self.auto_create_topic:
+            from  apscheduler.schedulers.asyncio import AsyncIOScheduler
             self.time_dict = {qq_id: time.time() for qq_id in self.trust_qq_list}
-            self.scheduler = BackgroundScheduler()  
+            self.scheduler = AsyncIOScheduler()  
             self.scheduler.add_job(self.timework, 'interval', minutes=1)  
-            self.scheduler.start()
             self.websocket = None
   
         
@@ -36,8 +34,11 @@ class QQBot:
         @self.app.websocket("/ws/api")  
         async def websocket_endpoint(websocket: WebSocket):  
             await websocket.accept() 
+            
             if self.auto_create_topic:
                 self.websocket = websocket
+                self.scheduler.start()
+
             try: 
                 #链接请求 
                 while True:  
@@ -114,26 +115,26 @@ class QQBot:
         else:   
             self.time_dict[id] = time.time()  
         return None   
-    def run(self): 
+    def run(self):  
         uvicorn.run(self.app, host="127.0.0.1", port=self.websocket_port)
-    def timework(self):
+
+    async def timework(self):
         '''定时任务函数'''
-        print(self.time_dict)
         for key,value in self.time_dict.items():  
             Topic = self.muice_app.CreateANewTopic(value)
             if Topic is None:
                 continue 
             else:
                 mess = self.muice_app.ask(Topic, key)
-                reply = self.produce_reply(mess, key)
-                self.websocket.send_text(reply)  
-                return None
-            
-     
+                reply = await self.build_reply_json(mess, key)
+                await self.websocket.send_text(reply)  
+                
 
-  
+
   
 if __name__ == '__main__':
     Muice_app = None
     ws = QQBot(Muice_app)
     ws.run()
+    
+    
