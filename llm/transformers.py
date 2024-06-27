@@ -7,8 +7,6 @@ class llm():
     '''
     def __init__(self,chatglm_model_path:str, pt_model_path:str):
         model_path = chatglm_model_path
-        if 'checkpoint-3000' in os.listdir(pt_model_path):
-            pt_model_path = os.path.join(pt_model_path, 'checkpoint-3000')
         config = AutoConfig.from_pretrained(model_path, trust_remote_code=True, pre_seq_len=128)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         if torch.cuda.is_available():

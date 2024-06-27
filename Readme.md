@@ -6,14 +6,12 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
-本文档同时提供[繁體中文版（不建议）](https://github.com/Moemu/Muice-Chatbot/blob/main/Readme_zh-tw.md)
-
-###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行
+###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行，感谢[@MoeSnowyFox](https://github.com/MoeSnowyFox)的贡献！
 
 
 # 介绍✨
 
-沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)微调而成，训练集长度1.3K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
+沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度1.8K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
 
 *：（训练集长度较低，但我们仍在收集对话数据）
 
@@ -21,7 +19,7 @@
 
 ✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
 
-✔ 主动发起聊天（局限于已有的Prompt）
+✔ 主动发起聊天
 
 ✔ 提供5条可用的命令
 
@@ -29,7 +27,7 @@
 
 建议环境：
 - Python 3.10
-- 一张拥有13GB+ 显存的显卡(int4量化最低要求: 4G/CPU推理内存要求：16G+)
+- 一张拥有8GB+ 显存的显卡(int4量化最低要求: 4G ; CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -54,7 +52,7 @@ pip install -r requirements.txt
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
-请将基底模型与微调模型放放入`model`文件夹中，并将微调模型命名为`Muice`（确保微调模型目录下存在.model文件而不是文件夹，部分微调模型由于疏忽还套了一层checkpoint文件夹）
+请将基底模型与微调模型放放入`model`文件夹中（确保微调模型目录下存在.model文件而不是文件夹，部分微调模型由于疏忽还套了一层checkpoint文件夹）
 
 本仓库目前支持如下模型加载方式：
 
