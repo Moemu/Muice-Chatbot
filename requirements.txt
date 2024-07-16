@@ -1,6 +1,7 @@
 fastapi
 requests
 torch
-transformers
+transformers=4.32.0
 uvicorn
 apscheduler
+sentencepiece
