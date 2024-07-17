@@ -1,6 +1,6 @@
-'''
+"""
 引用自：https://github.com/THUDM/ChatGLM2-6B/blob/main/api.py
-'''
+"""
 from fastapi import FastAPI, Request
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import uvicorn, json, datetime, os
