@@ -57,7 +57,7 @@ class QQBot:
                     reply = await self.processing_json(data)
                     if reply is None:
                         continue
-                    logging.info(f"回复{reply}")
+                    logging.debug(f"回复{reply}")
                     await websocket.send_text(reply)
             except WebSocketDisconnect:
                 logging.info("WebSocket disconnected")
@@ -84,7 +84,7 @@ class QQBot:
             '''消息处理'''
             sender_user_id = data.get('sender', {}).get('user_id')
             message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
-            logging.info(f"收到{sender_user_id}的消息：{message}")
+            logging.info(f"收到QQ{sender_user_id}的消息：{message}")
             reply_message = await self.produce_reply(message, sender_user_id)
             reply = await build_reply_json(reply_message, sender_user_id)
             return reply
@@ -102,6 +102,7 @@ class QQBot:
             return reply
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id)
+            logging.info(f"回复消息：{reply}")
             reply_list = divide_sentences(reply)
             self.muice_app.finish_ask(reply_list)
             for reply_item in reply_list:
@@ -134,6 +135,8 @@ class QQBot:
 
 
 if __name__ == '__main__':
+    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
     Muice_app = None
     ws = QQBot(Muice_app)
     ws.run()
+
