@@ -85,9 +85,12 @@ class QQBot:
             sender_user_id = data.get('sender', {}).get('user_id')
             message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
             logging.info(f"收到QQ{sender_user_id}的消息：{message}")
-            reply_message = await self.produce_reply(message, sender_user_id)
-            reply = await build_reply_json(reply_message, sender_user_id)
-            return reply
+            if sender_user_id in self.trust_qq_list:
+                reply_message = await self.produce_reply(message, sender_user_id)
+                reply = await build_reply_json(reply_message, sender_user_id)
+                return reply
+            else:
+                return None
         else:
             return None
 
