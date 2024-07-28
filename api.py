@@ -1,10 +1,13 @@
-'''
+"""
 引用自：https://github.com/THUDM/ChatGLM2-6B/blob/main/api.py
-'''
+"""
+import datetime
+import json
+import os
+import torch
+import uvicorn
 from fastapi import FastAPI, Request
 from transformers import AutoTokenizer, AutoModel, AutoConfig
-import uvicorn, json, datetime, os
-import torch
 
 DEVICE = "cuda"
 DEVICE_ID = "0"
