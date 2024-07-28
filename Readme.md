@@ -11,13 +11,13 @@
 
 # 介绍✨
 
-沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度1.8K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
+沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度2.4K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
 
 *：（训练集长度较低，但我们仍在收集对话数据）
 
 # 功能🪄
 
-✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
+✔ 提供本人由2.4k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B lora微调模型
 
 ✔ 主动发起聊天
 
@@ -45,9 +45,10 @@ pip install -r requirements.txt
 
 | 基底模型                                                     | 对应微调模型版本号                         | 额外依赖库                  |
 | ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
 | [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
 | [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                                        | llmtuner                    |
+| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.4-2.5.3                                  | llmtuner                    |
 | [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
@@ -194,3 +195,8 @@ Star History：
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
 
+# 联系✉️
+
+建议通过QQ频道来与开发者和各位沐雪爱好者取得联系
+
+![QQ频道二维码](https://i0.hdslb.com/bfs/new_dyn/391f83ca0101f1e4dc2082b26c20bef297020216.jpg@256w_!web-dynamic.avif)
