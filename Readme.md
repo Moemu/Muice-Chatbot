@@ -1,5 +1,5 @@
 ![](src/Cover.png)
-<p align="center">
+<p style="text-align:center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
 <img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
@@ -11,13 +11,13 @@
 
 # 介绍✨
 
-沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度2.4K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
+沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度1.8K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
 
 *：（训练集长度较低，但我们仍在收集对话数据）
 
 # 功能🪄
 
-✔ 提供本人由2.4k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B lora微调模型
+✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
 
 ✔ 主动发起聊天
 
@@ -43,13 +43,12 @@ pip install -r requirements.txt
 
 目前支持的基底模型如下表：
 
-| 基底模型                                                     | 对应微调模型版本号                         | 额外依赖库                  |
-| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
-| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                                        | llmtuner                    |
-| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.4-2.5.3                                  | llmtuner                    |
-| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
+| 基底模型                                                                                  | 对应微调模型版本号                                | 额外依赖库               |
+|---------------------------------------------------------------------------------------|------------------------------------------|---------------------|
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                  | cpm_kernels         |
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary)           | 2.0-2.3                                  |                     |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary)  | 2.3                                      | llmtuner            |
+| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)                                 | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
@@ -64,10 +63,10 @@ pip install -r requirements.txt
 
 在已测试的模型中，我们建议以下模型通过对应的方式加载，其他模型亦可以通过类似的方式加载：
 
-| 基底模型            | 微调方式    | 加载方法     |
-| ------------------- | ----------- | ------------ |
-| ChatGLM             | P-tuning V2 | transformers |
-| Qwen                | sft         | llmtuner     |
+| 基底模型              | 微调方式        | 加载方法         |
+|-------------------|-------------|--------------|
+| ChatGLM           | P-tuning V2 | transformers |
+| Qwen              | sft         | llmtuner     |
 | RWKV(Seikaijyu微调) | pissa       | rwkv-api     |
 
 在配置文件中可调整模型的加载方式：
@@ -95,20 +94,23 @@ _您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)
 ## 总结
 
 在完成这些操作后，你应该得到类似如下所示的文件结构：
+
+
 ```
-Muice-Chatbot    <- 主路径
+Muice-Chatbot     <- 主路径
  ├─llm
  ├─model
- │  ├─ chatglm2-6b <- 原始模型 (三者三选一)
- │  ├─ chatglm2-6b-int4 <- int4原始模型
+ │  ├─ chatglm2-6b       <- 原始模型 (三者三选一)
+ │  ├─ chatglm2-6b-int4  <- int4原始模型
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
  ├─configs.json  <- 配置文件
- ├─ws.py     <- ws服务
+ ├─ws.py         <- ws服务
  ├─main.py       <- 主函数
  ├─requirements.txt
  └─...
 ```
+
 
 # 配置⚒️
 
@@ -116,29 +118,38 @@ Muice-Chatbot    <- 主路径
 
 ```json
 {
+    "model_loader": "transformers",
+    "model_name_or_path": "./model/chatglm2-6b",
+    "adapter_name_or_path": "./model/Muice",
     "Trust_QQ_list": [],
     "AutoCreateTopic": false,
     "read_memory_from_file": true,
-    "known_topic_probability": "0.003",
-    "time_topic_probability": "0.75",
+    "known_topic_probability": 0.003,
+    "time_topic_probability": 0.75,
     "port":21050,
     "bot_qq_id":123456789
 }
 ```
 
-`Trust_QQ_list`: 信任QQ号列表，只有在列表的QQ号，沐雪才会回复
+`model_loader`: 指定模型加载器的类型，当前支持`api/transformers/llmtuner/rwkv-api`。
 
-`AutoCreateTopic`: 是否自动发起新对话，默认以Trust_QQ_list的第0项作为发起新对话对象
+`model_name_or_path`: 指定基底模型的名称或路径，例如`./model/chatglm2-6b`。
 
-`read_memory_from_file`: 从文件中读取记忆，用于项目重启后加载原来的记忆
+`adapter_name_or_path`: 指定预训练模型的名称或路径， 例如`./model/Muice`。
 
-`known_topic_probability`: 概率：随机发起一个已知的话题
+`Trust_QQ_list`: 信任QQ号列表，只有在此列表中的QQ号发送的消息，机器人才会回复。
 
-`time_topic_probability`: 概率：早、中、傍、晚触发日常问候
+`AutoCreateTopic`: 是否自动发起新对话。如果启用，将默认以Trust_QQ_list中的第一个QQ号作为对话发起对象。
 
-`post`: 反向WebSocket服务端口
+`read_memory_from_file`: 是否从文件中读取记忆。这对于项目重启后恢复之前的对话状态非常有用。
 
-`bot_qq_id`: 机器人QQ号
+`known_topic_probability`: 随机发起已知话题的概率。
+
+`time_topic_probability`: 根据时间（早、中、傍、晚）触发日常问候的概率。
+
+`port`: 反向WebSocket服务的端口号，默认`21050`。
+
+`bot_qq_id`: 机器人的QQ号。
 
 # 使用🎉
 
@@ -151,15 +162,15 @@ python main.py
 
 # 命令🕹️
 
-|  命令   | 释义  |
-|  ----  | ----  |
-| /clean  | 清空本轮对话历史 |
-| /refresh  | 刷新本次对话 |
-| /help  | 显示所有可用的命令列表 |
-| /reset  | 重置所有对话数据(将存档对话数据) |
-| /undo  | 撤销上一次对话 |
+| 命令       | 释义                |
+|----------|-------------------|
+| /clean   | 清空本轮对话历史          |
+| /refresh | 刷新本次对话            |
+| /help    | 显示所有可用的命令列表       |
+| /reset   | 重置所有对话数据(将存档对话数据) |
+| /undo    | 撤销上一次对话           |
 
-# 示例对话（训练集）
+# 示例对话（训练集）📑
 
 参见公开的训练集[Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)
 
@@ -188,15 +199,10 @@ OneBot服务支持: [MoeSnowyFox](https://github.com/MoeSnowyFox)
 代码贡献：
 
 <a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
-  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot" />
+  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="图片加载中..."/>
 </a>
 
 Star History：
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
 
-# 联系✉️
-
-建议通过QQ频道来与开发者和各位沐雪爱好者取得联系
-
-![QQ频道二维码](https://i0.hdslb.com/bfs/new_dyn/391f83ca0101f1e4dc2082b26c20bef297020216.jpg@256w_!web-dynamic.avif)
