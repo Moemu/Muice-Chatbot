@@ -91,6 +91,8 @@ pip install -r requirements.txt
 
 _您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock)等来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
+_能使用请勿随意更新ntQQ, 若无法使用请尝试降级ntQQ_
+
 ## 总结
 
 在完成这些操作后，你应该得到类似如下所示的文件结构：
