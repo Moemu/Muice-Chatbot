@@ -89,7 +89,7 @@ pip install -r requirements.txt
 
 注:请在安装好LLOneBot后, 于设置中开启反向WebSocket服务, 填写`ws://127.0.0.1:21050/ws/api`, 以正常运行
 
-_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[OpenShamrock](https://github.com/whitechi73/OpenShamrock)来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
+_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及~~[OpenShamrock](https://github.com/whitechi73/OpenShamrock)~~等来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
 ## 总结
 
