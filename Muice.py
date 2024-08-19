@@ -15,7 +15,7 @@ class Muice:
         self.reply = None
         self.user_text = None
         self.history = None
-        self.user_qq = None
+        self.user_id = None
         self.model = model
         self.read_memory_from_file = read_memory_from_file
         self.known_topic_probability = known_topic_probability
@@ -25,9 +25,13 @@ class Muice:
                            '00': '（发起一个临睡问候）'}
         self.time_topics = self.time_topic.copy()
 
-    def ask(self, text: str, user_qq: int) -> list:
+    def ask(self, text: str, user_qq: int, group_id: int) -> list:
         """发送信息"""
-        self.user_qq = str(user_qq)
+        if group_id == -1:
+            self.user_id = str(user_qq)
+        else:
+            self.user_id = "group_" + str(group_id)
+
         if self.read_memory_from_file:
             self.history = self.get_recent_chat_memory()
         else:
@@ -65,6 +69,7 @@ class Muice:
         """
         结束对话并保存记忆
         """
+        logging.debug(f'Muice.py->finish_ask->{reply}')
         reply = "".join(reply)
         self.save_chat_memory(reply)
 
@@ -73,10 +78,16 @@ class Muice:
         获取最近一条记忆
         """
         try:
-            with open(f'./memory/{self.user_qq}.json', 'r', encoding='utf-8') as f:
+            with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                 data = f.readlines()
+                logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
                 return json.loads(data[-1])['history']
-        except:
+
+        except FileNotFoundError as e:
+            logging.error(f"文件未找到: {e}")
+            return []
+        except Exception as e:
+            logging.error(f"发生了一个错误: {e}")
             return []
 
     def save_chat_memory(self, reply: str):
@@ -85,7 +96,8 @@ class Muice:
         """
         if not os.path.isdir('memory'):
             os.mkdir('memory')
-        with open(f'./memory/{self.user_qq}.json', 'a', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
+            logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
             f.write('\n')
 
@@ -93,10 +105,10 @@ class Muice:
         """
         删除最后一条记忆
         """
-        with open(f'./memory/{self.user_qq}.json', 'r', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
             data = f.readlines()
             del data[-1]
-        with open(f'./memory/{self.user_qq}.json', 'w', encoding='utf-8') as f:
+        with open(f'./memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
     def refresh(self):
@@ -106,5 +118,6 @@ class Muice:
         logging.info("Start refresh")
         self.remove_last_chat_memory()
         self.history = self.get_recent_chat_memory()
+        logging.debug(f'刷新后历史记录:{self.history}')
         response = self.model.ask(self.user_text, self.history)
         return response
