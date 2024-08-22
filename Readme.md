@@ -131,6 +131,7 @@ Muice-Chatbot     <- 主路径
     "port":21050,
     "bot_qq_id":123456789,
     "Is_OneBot_Plugin": false,
+    "Group_Message_Reply_Only_To_Trusted": true
 }
 ```
 
@@ -155,6 +156,8 @@ Muice-Chatbot     <- 主路径
 `bot_qq_id`: 机器人的QQ号。
 
 `Is_OneBot_Plugin`: 当抛出错误`data['message'] 不是列表`时将此选项设置为true。
+
+`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的群聊回复。
 
 # 使用🎉
 

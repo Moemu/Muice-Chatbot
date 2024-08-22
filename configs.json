@@ -17,8 +17,8 @@
     "Group_Message_Reply": true,
     "Trust_QQ_Group_list": [
         114514,
-        191918,
+        191918
     ],
     "Is_OneBot_Plugin": false,
-    "Group_Reply_Only_to_Trusted": true
+    "Group_Message_Reply_Only_To_Trusted": true
 }
