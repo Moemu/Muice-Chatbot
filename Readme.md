@@ -129,7 +129,8 @@ Muice-Chatbot     <- 主路径
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
     "port":21050,
-    "bot_qq_id":123456789
+    "bot_qq_id":123456789,
+    "Is_OneBot_Plugin": false,
 }
 ```
 
@@ -152,6 +153,8 @@ Muice-Chatbot     <- 主路径
 `port`: 反向WebSocket服务的端口号，默认`21050`。
 
 `bot_qq_id`: 机器人的QQ号。
+
+`Is_OneBot_Plugin`: 当抛出错误`data['message'] 不是列表`时将此选项设置为true。
 
 # 使用🎉
 
