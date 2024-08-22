@@ -157,7 +157,7 @@ Muice-Chatbot     <- 主路径
 
 `Is_OneBot_Plugin`: 当抛出错误`data['message'] 不是列表`时将此选项设置为true。
 
-`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的群聊回复。
+`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的qq回复。
 
 # 使用🎉
 
