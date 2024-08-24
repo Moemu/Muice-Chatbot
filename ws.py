@@ -51,6 +51,7 @@ class QQBot:
         self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
         self.trust_qq_list = self.configs.get('Trust_QQ_list', [])
         self.websocket_port = self.configs.get('port')
+        self.is_onebot_plugin = self.configs.get('Is_OneBot_Plugin', False)
         # 主动对话
         self.auto_create_topic = self.configs.get('AutoCreateTopic', False)
         if self.auto_create_topic:
@@ -110,49 +111,68 @@ class QQBot:
 
     async def processing_reply(self, data):
         """解析消息json并返回需发送的消息"""
-        data = json.loads(data)
-        logging.debug(f"收到{data}")
+        try:
+            data = json.loads(data)
+            logging.debug(f"收到{data}")
 
-        if 'post_type' in data and data['post_type'] == 'meta_event':
-            if data['meta_event_type'] == 'lifecycle':
-                if data['sub_type'] == 'connect':
-                    logging.info(f"已链接")
+            if 'post_type' in data and data['post_type'] == 'meta_event':
+                if data['meta_event_type'] == 'lifecycle':
+                    if data['sub_type'] == 'connect':
+                        logging.info(f"已链接")
+                        return None
+                elif data['meta_event_type'] == 'heartbeat':
                     return None
-            elif data['meta_event_type'] == 'heartbeat':
-                return None
 
-        elif 'post_type' in data and data['post_type'] == 'message':
-            '''消息处理'''
-            sender_user_id = data.get('sender', {}).get('user_id')
-            message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
-            
-            if data['message_type'] == 'private':
-                logging.info(f"收到QQ{sender_user_id}的消息：{message}")
-                if sender_user_id in self.trust_qq_list:
-                    reply_message_list = await self.produce_reply(message, sender_user_id)
-                    logging.debug(f"回复list{reply_message_list}")
-                    return reply_message_list, sender_user_id, -1
+            elif 'post_type' in data and data['post_type'] == 'message':
+                '''消息处理'''
+                sender_user_id = data.get('sender', {}).get('user_id')
 
-            elif data['message_type'] == 'group' and self.group_message_reply:
-                group_id = data.get('group_id')
-                logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
-                if group_id in self.group_message_reply_list:
-                    if self.group_reply_only_to_trusted:
-                        if sender_user_id in self.trust_qq_list:
+                if self.is_onebot_plugin:
+                    '''对于某些基于 OneBot 协议的插件输出的消息为字符串的情况'''
+                    message = data['message']
+
+                else:
+                    ''' 检查 data['message'] 是否为列表'''
+                    if not isinstance(data['message'], list):
+                        logging.error("消息格式错误: data['message'] 不是列表")
+                        logging.error(f"接收到的数据: {json.dumps(data, ensure_ascii=False, indent=4)}")
+                        return None
+
+                    message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+
+                if data['message_type'] == 'private':
+                    logging.info(f"收到QQ{sender_user_id}的消息：{message}")
+                    if sender_user_id in self.trust_qq_list:
+                        reply_message_list = await self.produce_reply(message, sender_user_id)
+                        logging.debug(f"回复list{reply_message_list}")
+                        return reply_message_list, sender_user_id, -1
+
+                elif data['message_type'] == 'group' and self.group_message_reply:
+                    group_id = data.get('group_id')
+                    logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
+                    if group_id in self.group_message_reply_list:
+                        if self.group_reply_only_to_trusted:
+                            if sender_user_id in self.trust_qq_list:
+                                reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
+                                logging.debug(f"回复list{reply_message_list}")
+                                return reply_message_list, sender_user_id, group_id
+                            else:
+                                return None
+                        else:
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
                             return reply_message_list, sender_user_id, group_id
-                        else:
-                            return None
                     else:
-                        reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
-                        logging.debug(f"回复list{reply_message_list}")
-                        return reply_message_list, sender_user_id, group_id
+                        return None
                 else:
                     return None
             else:
                 return None
-        else:
+        except json.JSONDecodeError:
+            logging.error("JSON解析错误")
+            return None
+        except Exception as e:
+            logging.error(f"处理消息时发生错误: {e}")
             return None
 
     async def produce_reply(self, mess, sender_user_id):
