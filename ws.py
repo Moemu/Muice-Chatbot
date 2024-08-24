@@ -7,7 +7,11 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
+from ofa_image_process import ImageCaptioningPipeline
 from Tools import divide_sentences
+from Tools import process_at_message
+from Tools import is_reply_message
+from Tools import is_image_message
 from command import Command
 
 
@@ -52,6 +56,11 @@ class QQBot:
         self.trust_qq_list = self.configs.get('Trust_QQ_list', [])
         self.websocket_port = self.configs.get('port')
         self.is_onebot_plugin = self.configs.get('Is_OneBot_Plugin', False)
+        self.bot_qq_id = self.configs.get('bot_qq_id')
+        self.reply_rate = self.configs.get('Reply_Rate', 100)
+        self.at_reply = self.configs.get('At_Reply', False)
+        self.nonreply_prefix = self.configs.get('NonReply_Prefix', [])
+        self.enable_ofa_image = self.configs.get('enable_ofa_image', False)
         # 主动对话
         self.auto_create_topic = self.configs.get('AutoCreateTopic', False)
         if self.auto_create_topic:
@@ -69,6 +78,9 @@ class QQBot:
             logging.debug(f"group_message_reply_list = {self.group_message_reply_list}"
                           f"group_reply_only_to_trusted = {self.group_reply_only_to_trusted}"
                           f"TEST_New_Group_Memory = {self.TEST_New_Group_Memory}")
+
+        # 定义公共变量
+        self.is_at_message = False
 
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
@@ -140,9 +152,16 @@ class QQBot:
 
                     message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
 
+                '''检查是否为图片消息并输出URL'''
+                if self.enable_ofa_image:
+                    is_image,image_url = is_image_message(message)
+                else:
+                    is_image = False
+
                 if data['message_type'] == 'private':
                     logging.info(f"收到QQ{sender_user_id}的消息：{message}")
                     if sender_user_id in self.trust_qq_list:
+                        if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                         reply_message_list = await self.produce_reply(message, sender_user_id)
                         logging.debug(f"回复list{reply_message_list}")
                         return reply_message_list, sender_user_id, -1
@@ -150,15 +169,31 @@ class QQBot:
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
                     logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
+
+                    ''' 对消息中的 at 信息进行处理过滤 '''
+                    self.is_at_message,at_matches,message = process_at_message(message)
+                    if at_matches:
+                        if str(self.bot_qq_id) not in at_matches:
+                            logging.info(f"消息中@不是机器人，已过滤")
+                            return None
+                    else:
+                        if self.at_reply:
+                            logging.info(f"消息中未@机器人，已过滤")
+                            return None
+
                     if group_id in self.group_message_reply_list:
                         if self.group_reply_only_to_trusted:
                             if sender_user_id in self.trust_qq_list:
+                                if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
+                                if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                                 reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                                 logging.debug(f"回复list{reply_message_list}")
                                 return reply_message_list, sender_user_id, group_id
                             else:
                                 return None
                         else:
+                            if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
+                            if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
                             return reply_message_list, sender_user_id, group_id
@@ -180,7 +215,11 @@ class QQBot:
         if self.auto_create_topic:
             await self.store_time(sender_user_id)
         if not str(mess).strip():
-            return None
+            return [] #None会导致reply_list为空，导致TypeError: 'NoneType' object is not iterable
+        '''检测是否匹配前缀'''
+        for prefix in self.nonreply_prefix:
+            if str(mess).startswith(prefix):
+                return []
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
             return reply
@@ -194,7 +233,14 @@ class QQBot:
     async def produce_group_reply(self, mess, sender_user_id, group_id):
         """ 回复消息群聊 """
         if not str(mess).strip():
-            return None
+            if self.is_at_message:
+                mess="在吗"#待定，中文语境中单at含义与在吗相似
+            else:
+                return []
+        '''检测是否匹配前缀'''
+        for prefix in self.nonreply_prefix:
+            if str(mess).startswith(prefix):
+                return []
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
             return reply

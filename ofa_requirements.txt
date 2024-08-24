@@ -1,0 +1,15 @@
+addict
+modelscope
+oss2
+simplejson
+sortedcontainers
+librosa
+pyproject
+fairseq
+opencv-python
+opencv-python-headless
+timm
+unicodedata2
+zhconv
+decord>=0.6.0
+aiohttp

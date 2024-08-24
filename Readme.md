@@ -79,6 +79,21 @@ pip install -r requirements.txt
 
 （若是API/rwkv-api加载，`model_name_or_path`填api地址）
 
+## OFA图像识别
+
+若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
+
+OFA使用到的依赖需要额外安装：
+
+```powershell
+pip install -r ofa_requirements.txt
+```
+
+目前建议的基底模型如下表：
+
+| 基底模型                                                                                                                  |
+|---------------------------------------------------------------------------------------------------------------------------------|
+| [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) |
 
 
 ## bot服务配置
@@ -131,7 +146,10 @@ Muice-Chatbot     <- 主路径
     "port":21050,
     "bot_qq_id":123456789,
     "Is_OneBot_Plugin": false,
-    "Group_Message_Reply_Only_To_Trusted": true
+    "Group_Message_Reply_Only_To_Trusted": true,
+    "Reply_Rate": 50,
+    "At_Reply": false,
+    "NonReply_Prefix": []
 }
 ```
 
@@ -140,6 +158,10 @@ Muice-Chatbot     <- 主路径
 `model_name_or_path`: 指定基底模型的名称或路径，例如`./model/chatglm2-6b`。
 
 `adapter_name_or_path`: 指定预训练模型的名称或路径， 例如`./model/Muice`。
+
+`enable_ofa_image`: 是否使用OFA图像识别。
+
+`ofa_image_model_name_or_path`: OFA图像识别模型的名称或路径。
 
 `Trust_QQ_list`: 信任QQ号列表，只有在此列表中的QQ号发送的消息，机器人才会回复。
 
@@ -157,7 +179,13 @@ Muice-Chatbot     <- 主路径
 
 `Is_OneBot_Plugin`: 当抛出错误`data['message'] 不是列表`时将此选项设置为true。
 
-`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的qq回复。
+`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的群聊回复。
+
+`Reply_Rate`: （群聊）机器人回复的概率，取值范围为0-100。
+
+`At_Reply`: （群聊）是否只回复@机器人的消息。
+
+`NonReply_Prefix`: 消息前缀，机器人不会回复以这些前缀开头的消息。
 
 # 使用🎉
 
