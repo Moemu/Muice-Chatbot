@@ -21,10 +21,12 @@ def process_at_message(message: str) -> tuple[bool, list, str]:
         - at_matches (list): 有匹配的 @ 提及集合。
         - processed_message (str): 处理后的消息字符串。
     """
-    at_pattern = re.compile(r'\[CQ:at,qq=(\d+)\]')
+    # at_pattern = re.compile(r'\[CQ:at,qq=(\d+)\]')
+    at_pattern = re.compile(r'\[CQ:at,qq=(\d+)(?:,name=\w+)?\]')
     at_matches = at_pattern.findall(message)
     if at_matches:
-        processed_message = at_pattern.sub('', message)
+        #processed_message = at_pattern.sub('', message)
+        processed_message = at_pattern.sub(lambda m: '', message)
         return True, at_matches, processed_message
     else:
         return False,at_matches, message
@@ -58,10 +60,23 @@ def is_image_message(message: str) -> tuple[bool, str]:
         - is_image (bool): 是否是图片消息。
         - image_url (str): 图片 URL。
     """
-    url_pattern = r"url=(http[^,]+)"
+    url_pattern = r"url=(https?[^,]+)"
     image_match = re.search(url_pattern, message)
     if image_match:
         image_url = image_match.group(1)
         return True, image_url
     else:
         return False, ''
+    
+def voice_message_reply(voice_rate: str) -> bool:
+    """
+    判断是否回复语音消息。
+    Args:
+    - voice_rate (str): 语音回复率。
+    Returns:
+    - bool: 是否回复语音消息。
+    """
+    if random.randint(1, 100) <= int(voice_rate):
+        return True
+    else:
+        return False

@@ -95,6 +95,73 @@ pip install -r ofa_requirements.txt
 |---------------------------------------------------------------------------------------------------------------------------------|
 | [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) |
 
+## 语音回复
+
+若您希望使用语音回复，请在配置文件中设置`Voice_Reply_Rate`为大于0的整数，机器人将会以一定概率回复语音消息。
+
+语音回复使用到的项目：[fishaudio/fish-speech](https://github.com/fishaudio/fish-speech)
+
+在fish-speech的api启动后，更改`fish_speech_api.py`中的`Client`、`reference_audio`、`reference_text`即可。
+
+## 启动实时语音聊天
+
+1.安装依赖：
+
+```powershell
+pip install -r audio_requirements.txt
+```
+
+2.安装配置语音回复（详见上文）
+
+3.获取语音识别模型
+
+目前建议的基底模型如下表：
+
+| 基底模型                                                                                                                  |
+|---------------------------------------------------------------------------------------------------------------------------------|
+| [SenseVoice多语言语音理解模型Small](https://www.modelscope.cn/models/iic/SenseVoiceSmall) |
+
+你可以通过以下命令下载并解压模型：
+
+```powershell
+modelscope download --model iic/SenseVoiceSmall --local_path ./SenseVoice
+```
+
+下载完成后，在配置文件中设置`audio_name_or_path`为模型文件夹的路径。
+
+4.配置信息和设备
+
+你可以通过以下命令查看输入输出设备信息：
+
+```powershell
+python test_device_info.py
+```
+在`realtime_refence.py`中配置输入输出设备信息：
+
+```python
+
+CHUNK = 1024  # 每次读取的音频块大小
+FORMAT = pyaudio.paFloat32  # 音频格式
+CHANNELS = 1  # 输入设备声道
+RATE = 22050  # 采样率（16000/22050/44100）
+THRESHOLD = 75  # 声音响度阈值（60-150左右）
+SILENCE_THRESHOLD_MS = 1500  # 静音持续时间阈值（毫秒）
+SILENCE_COUNT = int(SILENCE_THRESHOLD_MS / (1000 * CHUNK / RATE))  # 静音计数器阈值
+use_virtual_device = False  # 是否使用虚拟设备（当你需要通过语音通话时，请设置为True）
+if use_virtual_device:
+    speaker_device_index = 3  # 输入设备索引
+    mic_device_index = 10  # 输出设备索引
+    device_index = speaker_device_index
+else:
+    device_index = 1  # 录音设备索引
+
+```
+
+4.启动实时语音聊天
+
+```powershell
+python realtime_refence.py
+```
 
 ## bot服务配置
 
@@ -138,6 +205,8 @@ Muice-Chatbot     <- 主路径
     "model_loader": "transformers",
     "model_name_or_path": "./model/chatglm2-6b",
     "adapter_name_or_path": "./model/Muice",
+    "enable_ofa_image": false,
+    "ofa_image_model_name_or_path": "",
     "Trust_QQ_list": [],
     "AutoCreateTopic": false,
     "read_memory_from_file": true,
@@ -145,11 +214,12 @@ Muice-Chatbot     <- 主路径
     "time_topic_probability": 0.75,
     "port":21050,
     "bot_qq_id":123456789,
-    "Is_OneBot_Plugin": false,
+    "Is_CQ_Code": false,
     "Group_Message_Reply_Only_To_Trusted": true,
     "Reply_Rate": 50,
     "At_Reply": false,
-    "NonReply_Prefix": []
+    "NonReply_Prefix": [],
+    "Voice_Reply_Rate": 0
 }
 ```
 
@@ -177,15 +247,17 @@ Muice-Chatbot     <- 主路径
 
 `bot_qq_id`: 机器人的QQ号。
 
-`Is_OneBot_Plugin`: 当抛出错误`data['message'] 不是列表`时将此选项设置为true。
+`Is_CQ_Code`: 是否启用CQ码处理信息。
 
-`Group_Message_Reply_Only_To_Trusted`: 是否仅对信任的群聊回复。
+`Group_Message_Reply_Only_To_Trusted`: （群聊）是否仅对信任的qq回复。
 
 `Reply_Rate`: （群聊）机器人回复的概率，取值范围为0-100。
 
 `At_Reply`: （群聊）是否只回复@机器人的消息。
 
 `NonReply_Prefix`: 消息前缀，机器人不会回复以这些前缀开头的消息。
+
+`Voice_Reply_Rate`: 语音回复的概率，取值范围为0-100。
 
 # 使用🎉
 

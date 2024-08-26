@@ -5,7 +5,6 @@ simplejson
 sortedcontainers
 librosa
 pyproject
-fairseq
 opencv-python
 opencv-python-headless
 timm

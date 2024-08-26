@@ -1,0 +1,4 @@
+funasr==1.1.6
+pydub
+simpleaudio
+sounddevice

@@ -8,10 +8,12 @@ from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 from ofa_image_process import ImageCaptioningPipeline
+from fish_speech_api import fish_speech_api
 from Tools import divide_sentences
 from Tools import process_at_message
 from Tools import is_reply_message
 from Tools import is_image_message
+from Tools import voice_message_reply
 from command import Command
 
 
@@ -55,12 +57,13 @@ class QQBot:
         self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
         self.trust_qq_list = self.configs.get('Trust_QQ_list', [])
         self.websocket_port = self.configs.get('port')
-        self.is_onebot_plugin = self.configs.get('Is_OneBot_Plugin', False)
+        self.is_cq_code = self.configs.get('Is_CQ_Code', False)
         self.bot_qq_id = self.configs.get('bot_qq_id')
         self.reply_rate = self.configs.get('Reply_Rate', 100)
         self.at_reply = self.configs.get('At_Reply', False)
         self.nonreply_prefix = self.configs.get('NonReply_Prefix', [])
         self.enable_ofa_image = self.configs.get('enable_ofa_image', False)
+        self.voice_reply_rate = self.configs.get('Voice_Reply_Rate', 0)
         # 主动对话
         self.auto_create_topic = self.configs.get('AutoCreateTopic', False)
         if self.auto_create_topic:
@@ -98,7 +101,7 @@ class QQBot:
 
                         if group_id == -1:
                             for reply_item in reply_list:
-                                await asyncio.sleep(len(reply_item) * 0.8)
+                                # await asyncio.sleep(len(reply_item) * 0.8)
                                 if reply_item is None:
                                     continue
                                 logging.debug(f"回复{reply_item}")
@@ -139,7 +142,7 @@ class QQBot:
                 '''消息处理'''
                 sender_user_id = data.get('sender', {}).get('user_id')
 
-                if self.is_onebot_plugin:
+                if self.is_cq_code:
                     '''对于某些基于 OneBot 协议的插件输出的消息为字符串的情况'''
                     message = data['message']
 
@@ -228,6 +231,13 @@ class QQBot:
             logging.info(f"回复消息：{reply}")
             reply_list = divide_sentences(reply)
             self.muice_app.finish_ask(reply_list)
+            if voice_message_reply(self.voice_reply_rate):
+                logging.info(f"尝试回复语音消息")
+                try:
+                    voice_file = await fish_speech_api(reply)
+                    reply_list = [f'[CQ:record,file=file:///{voice_file}]']
+                except Exception as e:
+                    logging.error(f"回复语音消息失败: {e}")
             return reply_list
 
     async def produce_group_reply(self, mess, sender_user_id, group_id):
@@ -249,6 +259,13 @@ class QQBot:
             logging.info(f"回复消息：{reply}")
             reply_list = divide_sentences(reply)
             self.muice_app.finish_ask(reply_list)
+            if voice_message_reply(self.voice_reply_rate):
+                logging.info(f"尝试回复语音消息")
+                try:
+                    voice_file = await fish_speech_api(reply)
+                    reply_list = [f'[CQ:record,file=file:///{voice_file}]']
+                except Exception as e:
+                    logging.error(f"回复语音消息失败: {e}")
             return reply_list
 
     async def store_time(self, user_id):
