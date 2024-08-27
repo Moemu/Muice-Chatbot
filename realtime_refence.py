@@ -81,6 +81,11 @@ model = model.llm(model_name_or_path, adapter_name_or_path)
 muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'],
                   configs['time_topic_probability'])
 
+
+# 检查并创建临时文件夹
+if not os.path.exists('./audio_tmp'):
+    os.makedirs('./audio_tmp')
+
 # 开始录音
 logging.info("开始录音...")
 
