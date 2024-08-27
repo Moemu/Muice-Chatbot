@@ -170,6 +170,10 @@ class QQBot:
                     
                     if not is_image:
                         message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+                    else:
+                        if not self.enable_ofa_image:
+                            logging.info("收到图片消息，但未开启图片回复功能")
+                            return None
 
                 if data['message_type'] == 'private':
                     logging.info(f"收到QQ{sender_user_id}的消息：{message}")
