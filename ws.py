@@ -183,17 +183,33 @@ class QQBot:
                     group_id = data.get('group_id')
                     logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
 
-                    ''' 对消息中的 at 信息进行处理过滤 '''
-                    self.is_at_message,at_matches,message = process_at_message(message)
-                    if at_matches:
-                        if str(self.bot_qq_id) not in at_matches:
+                    if self.is_cq_code:
+                        ''' 对消息中的 at 信息进行处理过滤 '''
+                        self.is_at_message,at_matches,message = process_at_message(message)
+                        if at_matches:
+                            if str(self.bot_qq_id) not in at_matches:
+                                logging.info(f"消息中@不是机器人，已过滤")
+                                return None
+                        else:
+                            if self.at_reply:
+                                logging.info(f"消息中未@机器人，已过滤")
+                                return None
+                    else:
+                        at_qq_list = []
+                        for msg in data.get('message', []):
+                            if msg.get('type') == 'at':
+                                at_qq_list.append(msg['data']['qq'])
+                                if msg['data']['qq'] == str(self.bot_qq_id):
+                                    self.is_at_message = True
+                                    break
+                        if at_qq_list and str(self.bot_qq_id) not in at_qq_list:
                             logging.info(f"消息中@不是机器人，已过滤")
                             return None
-                    else:
-                        if self.at_reply:
-                            logging.info(f"消息中未@机器人，已过滤")
-                            return None
-
+                        if not self.is_at_message:
+                            if self.at_reply:
+                                logging.info(f"消息中未@机器人，已过滤")
+                                return None
+                            
                     if group_id in self.group_message_reply_list:
                         if self.group_reply_only_to_trusted:
                             if sender_user_id in self.trust_qq_list:
