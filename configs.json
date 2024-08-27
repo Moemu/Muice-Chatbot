@@ -2,14 +2,23 @@
     "model_loader": "transformers",
     "model_name_or_path": "./model/chatglm2-6b",
     "adapter_name_or_path": "./model/Muice",
-    "Trust_QQ_list": [
-        123456789,
-        987654321
-    ],
-    "AutoCreateTopic": false,
     "read_memory_from_file": true,
+
+    "AutoCreateTopic": false,
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
+
+    "Trust_QQ_list": [
+        123456789,
+        2236319712
+    ],
     "port":21050,
-    "bot_qq_id":123456789
+
+    "Group_Message_Reply": true,
+    "Trust_QQ_Group_list": [
+        114514,
+        191918
+    ],
+    "Is_OneBot_Plugin": false,
+    "Group_Message_Reply_Only_To_Trusted": true
 }
