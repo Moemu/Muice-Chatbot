@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 import asyncio
 from process_message import process_message
-from Tools import build_reply_json
+from Tools import build_msg_reply_json
 
 
 async def send_message(websocket, data):
@@ -13,21 +13,21 @@ async def send_message(websocket, data):
         return None
     group_id = data.get('group_id', -1)
     reply_list = data.get('message_list', [])
+    reply_type = data.get('type', 'msg')
     logging.debug(f'发送列表:{reply_list}')
     if reply_list is None:
         return None
-
-    if group_id == -1:
-        qq_id = data['sender_user_id']
-        is_group_or_private = "send_private_msg"
-    else:
-        qq_id = data['group_id']
-        is_group_or_private = "send_group_msg"
-
-    for key in reply_list:
-        message_json = await build_reply_json(key, qq_id, is_group_or_private)
-        logging.info(f'发送消息{key}')
-        await websocket.send_text(message_json)
+    if reply_type == 'msg':
+        if group_id == -1:
+            qq_id = data['sender_user_id']
+            is_group_or_private = "send_private_msg"
+        else:
+            qq_id = data['group_id']
+            is_group_or_private = "send_group_msg"
+        for key in reply_list:
+            message_json = await build_msg_reply_json(key, qq_id, is_group_or_private)
+            logging.info(f'发送消息{key}')
+            await websocket.send_text(message_json)
     return None
 
 
@@ -45,6 +45,7 @@ class BotWebSocket:
             await websocket.accept()
             asyncio.create_task(self.reply_messages())
             asyncio.create_task(self.produce_messages(websocket))
+            # 这里 不要 await!!
 
             try:
                 async for message in websocket.iter_text():

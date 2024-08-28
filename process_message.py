@@ -34,6 +34,7 @@ class process_message:
                     return await self.handle_private_message(data)
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     return await self.handle_group_message(data)
+                # 用不了 根本是没用的
 
         return None
 
@@ -88,13 +89,15 @@ class process_message:
                 else:
                     command = message[:space_index][1:]
                 return self.command.run(command,data)
+                # 啊 是的 我没写完
             else:
                 reply_message_list = await self.produce_reply(message, sender_user_id)
                 logging.debug(f"回复list{reply_message_list}")
-                return {"message_list": reply_message_list, "sender_user_id": sender_user_id, "group_id": -1}
+                return {"message_list": reply_message_list, "sender_user_id": sender_user_id, "group_id": -1, "type":"msg"}
         return None
 
     async def handle_meta_event(self, data):
+        # 啊 没写呢 还准备处理心跳的
         if 'meta_event_type' in data:
             if data['meta_event_type'] == 'lifecycle':
                 if data['sub_type'] == 'connect':
@@ -113,6 +116,7 @@ class process_message:
 
     async def produce_group_reply(self, mess, sender_user_id, group_id):
         """ 回复消息群聊 """
+        # 啊 没写
         if not str(mess).strip():
             return None
         if str(mess).startswith('/'):
