@@ -5,7 +5,7 @@ import logging
 from Muice import Muice
 from ws import QQBot
 
-logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
+logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
 
