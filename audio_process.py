@@ -12,12 +12,28 @@ class SpeechRecognitionPipeline:
         logging.info("Loading speech recognition model...")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         logging.info("Using device: {}".format(device))
-        cls._model = AutoModel(
-                               model=model_path,
-                               trust_remote_code=True,
-                               device=str(device),
-                               disable_update=True
-                               )   
+        try:
+            cls._model = AutoModel(
+                                   model=model_path,
+                                   trust_remote_code=True,
+                                   device=str(device),
+                                   disable_update=True
+                                   )
+        except Exception as e:
+            if "Loading remote code failed: model, No module named 'model'" in str(e):
+                try:
+                    cls._model = AutoModel(
+                                           model=model_path,
+                                           trust_remote_code=False,
+                                           device=str(device),
+                                           disable_update=True
+                                           )
+                except Exception as e2:
+                    logging.error("Failed to load speech recognition model: {}".format(e2))
+                    raise e2 from e
+            else:
+                logging.error("Failed to load speech recognition model: {}".format(e))
+                raise e
         logging.info("Model loaded successfully.")
 
     async def generate_speech(self, file_path):
@@ -25,7 +41,7 @@ class SpeechRecognitionPipeline:
         rec_result = self._model.generate(
                                           input=file_path,
                                           cache={},
-                                          language="zn", # "zn", "en", "yue", "ja", "ko", "nospeech"
+                                          language="zh", # "auto", "zh", "en", "yue", "ja", "ko", "nospeech"
                                           batch_size_s=60,
                                           merge_vad=True,
                                           merge_length_s=15
