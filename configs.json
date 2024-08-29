@@ -2,7 +2,7 @@
     "model_loader": "transformers",
     "model_name_or_path": "./model/chatglm2-6b",
     "adapter_name_or_path": "./model/Muice",
-    "enable_ofa_image": true,
+    "enable_ofa_image": false,
     "ofa_image_model_name_or_path": "./ofa_image",
     "audio_name_or_path": "./SenseVoice",
     "read_memory_from_file": true,
@@ -14,7 +14,7 @@
 
     "Trust_QQ_list": [
         123456789,
-        2236319712
+        987654321
     ],
     "port":21050,
 
@@ -24,12 +24,12 @@
         191918
     ],
     "Group_Message_Reply_Only_To_Trusted": false,
-    "Is_CQ_Code": true,
+    "Is_CQ_Code": false,
     "bot_qq_id":12345678,
     "Reply_Rate": 50,
     "At_Reply": true,
     "NonReply_Prefix": [
         "#"
     ],
-    "Voice_Reply_Rate": 50
+    "Voice_Reply_Rate": 0
 }
