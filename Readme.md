@@ -101,7 +101,13 @@ pip install -r ofa_requirements.txt
 
 语音回复使用到的项目：[fishaudio/fish-speech](https://github.com/fishaudio/fish-speech)
 
-在fish-speech的api启动后，更改`fish_speech_api.py`中的`Client`、`reference_audio`、`reference_text`即可。
+在fish-speech的webui启动（使用--infer参数）后，更改`fish_speech_api.py`中的`Client`、`reference_audio`、`reference_text`即可。
+
+- `Client`为fish-speech的webui地址
+
+- `reference_audio`为参考音频文件路径，此音频用于变声效果。
+
+- `reference_text`为参考音频文件的参考文本。
 
 ## 启动实时语音聊天
 
@@ -144,7 +150,7 @@ CHUNK = 1024  # 每次读取的音频块大小
 FORMAT = pyaudio.paFloat32  # 音频格式
 CHANNELS = 1  # 输入设备声道
 RATE = 22050  # 采样率（16000/22050/44100）
-THRESHOLD = 75  # 声音响度阈值（60-150左右）
+THRESHOLD = 75  # 声音响度阈值（60-150左右，请根据实际情况调节）
 SILENCE_THRESHOLD_MS = 1500  # 静音持续时间阈值（毫秒）
 SILENCE_COUNT = int(SILENCE_THRESHOLD_MS / (1000 * CHUNK / RATE))  # 静音计数器阈值
 use_virtual_device = False  # 是否使用虚拟设备（当你需要通过语音通话时，请设置为True）
