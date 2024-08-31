@@ -83,10 +83,14 @@ class Muice:
             try:
                 with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                     data = f.readlines()
-                    logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
-                    return json.loads(data[-1])['history']
+                logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
+                memory = json.loads(data[-1])
+                memory['history'].append([memory['prompt'],memory['completion']])
+                return memory['history']
             except Exception as e:
                 logging.error(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
+                if os.path.isfile(f'./memory/{self.user_id}.json.bak'):
+                    os.remove(f'./memory/{self.user_id}.json.bak')
                 os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
                 return []
 
