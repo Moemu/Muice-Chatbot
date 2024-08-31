@@ -146,6 +146,8 @@ class QQBot:
                         reply_message_list = await self.produce_reply(message, sender_user_id)
                         if reply_message_list:
                             logging.debug(f"回复list{reply_message_list}")
+                            if reply_message_list is None:
+                                return None
                             return reply_message_list, sender_user_id, -1
                         else:
                             return None
@@ -158,12 +160,16 @@ class QQBot:
                             if sender_user_id in self.trust_qq_list:
                                 reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                                 logging.debug(f"回复list{reply_message_list}")
+                                if reply_message_list is None:
+                                    return None
                                 return reply_message_list, sender_user_id, group_id
                             else:
                                 return None
                         else:
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
+                            if reply_message_list is None:
+                                return None
                             return reply_message_list, sender_user_id, group_id
                     else:
                         return None
