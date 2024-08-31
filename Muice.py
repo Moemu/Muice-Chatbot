@@ -77,18 +77,18 @@ class Muice:
         """
         获取最近一条记忆
         """
-        try:
-            with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
-                data = f.readlines()
-                logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
-                return json.loads(data[-1])['history']
-
-        except FileNotFoundError as e:
-            logging.error(f"文件未找到: {e}")
+        if not os.path.isfile(f'./memory/{self.user_id}.json'):
             return []
-        except Exception as e:
-            logging.error(f"发生了一个错误: {e}")
-            return []
+        else:
+            try:
+                with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
+                    data = f.readlines()
+                    logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
+                    return json.loads(data[-1])['history']
+            except Exception as e:
+                logging.error(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
+                os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
+                return []
 
     def save_chat_memory(self, reply: str):
         """
