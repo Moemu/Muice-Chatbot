@@ -217,7 +217,7 @@ class QQBot:
     async def time_work(self):
         """定时任务函数"""
         for key, value in self.time_dict.items():
-            topic = self.muice_app.CreateANewTopic(value)
+            topic = self.muice_app.create_a_new_topic(value)
             if topic is None:
                 continue
             else:
