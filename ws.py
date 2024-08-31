@@ -144,8 +144,11 @@ class QQBot:
                     logging.info(f"收到QQ{sender_user_id}的消息：{message}")
                     if sender_user_id in self.trust_qq_list:
                         reply_message_list = await self.produce_reply(message, sender_user_id)
-                        logging.debug(f"回复list{reply_message_list}")
-                        return reply_message_list, sender_user_id, -1
+                        if reply_message_list:
+                            logging.debug(f"回复list{reply_message_list}")
+                            return reply_message_list, sender_user_id, -1
+                        else:
+                            return None
 
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
