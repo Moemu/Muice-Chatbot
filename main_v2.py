@@ -23,5 +23,6 @@ model = model.llm(model_name_or_path, adapter_name_or_path)
 # QQBot
 muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'],
                   configs['time_topic_probability'])
-ws = BotWebSocket(muice_app)
+
+ws = BotWebSocket(model)
 ws.run()

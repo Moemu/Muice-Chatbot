@@ -27,37 +27,32 @@ def build_memory_list(file_path):
     bot_msg_num = 0
     memory_list = []
     one_turn_reply_list = []
-    last_user_id = -1
-    reply = ""
+    last_user_id = '-1'
+    reply = ''
     try:
         with open(f'./memory/{file_path}.json', 'r', encoding='utf-8', ) as file:
-            file.seek(0, 2)  # 移动到文件末尾
-            position = file.tell()  # 获取当前位置
-            while position > 0:
-                file.seek(position - 1, 0)  # 向前移动一位
-                position = file.tell()
-                while position > 0 and file.read(1) != '\n':  # 找到换行符
-                    position -= 1
-                    file.seek(position, 0)
-                if position > 0:
-                    data = file.readline().strip()
-                    if ":" not in data:
-                        logging.warning(f"无效的数据格式: {data}")
-                        continue
-                    user, message = data.split(":", 1)
-                    if (last_user_id == -1 and user == -1) or (last_user_id != -1 and user != -1):
-                        reply = message + reply
-                    else:
-                        last_user_id = user
-                        if user == -1:
-                            bot_msg_num += 1
-                            if bot_msg_num >= 6:
-                                logging.debug(f'构建记忆列表完成{memory_list}')
-                                return memory_list
-                            memory_list = one_turn_reply_list + memory_list
-                            one_turn_reply_list = []
-                        one_turn_reply_list = [reply] + one_turn_reply_list
-                        reply = ""
+            lines = file.readlines()
+
+            # 从最后一行开始遍历到第一行
+            for data in reversed(lines):
+                if ":" not in data:
+                    logging.warning(f"无效的数据格式: {data}")
+                    continue
+                user, message = data.split(":", 1)
+                message = message.replace('\n', ' ')
+                if (last_user_id == '-1' and user == '-1') or (last_user_id != '-1' and user != '-1'):
+                    reply = message + reply
+                else:
+                    last_user_id = user
+                    if user == '-1':
+                        bot_msg_num += 1
+                        if bot_msg_num >= 6:
+                            logging.debug(f'构建记忆列表完成{memory_list}')
+                            return memory_list
+                        memory_list = [one_turn_reply_list] + memory_list
+                        one_turn_reply_list = []
+                    one_turn_reply_list = [reply] + one_turn_reply_list
+                    reply = message
         logging.debug(f'构建记忆列表完成{memory_list}')
         return memory_list
     except Exception as e:

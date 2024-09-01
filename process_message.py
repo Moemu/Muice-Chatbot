@@ -71,14 +71,15 @@ class process_message:
         sender_user_id = data.get('sender', {}).get('user_id')
         # 解析消息文本
         if self.is_onebot_plugin:
-            message = data['message']
+            message = data['message'].replace('\n', ' ')
 
         else:
             if not isinstance(data['message'], list):
                 logging.error("消息格式错误: data['message'] 不是列表")
                 logging.error(f"接收到的数据: {json.dumps(data, ensure_ascii=False, indent=4)}")
                 return None
-            message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+            message = ' '.join([item['data']['text'].replace('\n', ' ') for item in data['message'] if item['type'] == 'text'])
+
 
         if not message:
             return None

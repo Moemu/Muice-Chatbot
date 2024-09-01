@@ -17,7 +17,7 @@ class llm:
         if torch.cuda.is_available():
             model = AutoModel.from_pretrained(model_path, config=config, trust_remote_code=True).cuda()
         else:
-            logging.warning("未检测到GPU,将使用CPU进行推理")
+            logging.info("未检测到GPU,将使用CPU进行推理")
             model = AutoModel.from_pretrained(model_path, config=config, trust_remote_code=True).float()
         prefix_state_dict = torch.load(os.path.join(pt_model_path, "pytorch_model.bin"), map_location='cpu')
         new_prefix_state_dict = {}
@@ -28,6 +28,9 @@ class llm:
         model.transformer.prefix_encoder.float()
         self.model = model.eval()
 
-    def ask(self, user_text: str, history: list, ):
+    def ask(self, user_text: str, history: list, ) -> str:
         response, _ = self.model.chat(self.tokenizer, user_text, history=history)
         return response
+
+    def doc(self):
+        return {"is_Agent":False,"doc":"使用transformers方案加载, 适合通过P-tuning V2方式微调的模型加载"}

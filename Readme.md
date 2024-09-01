@@ -7,7 +7,7 @@
 </p>
 
 ###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行，感谢[@MoeSnowyFox](https://github.com/MoeSnowyFox)的贡献！
-
+###  当前分支为测试分支, 不保证文档最新, 可能有破坏性更新, 请优先使用main分支
 
 # 介绍✨
 
@@ -89,9 +89,7 @@ pip install -r requirements.txt
 
 注:请在安装好LLOneBot后, 于设置中开启反向WebSocket服务, 填写`ws://127.0.0.1:21050/ws/api`, 以正常运行
 
-_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock)等来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
-
-_能使用请勿随意更新ntQQ, 若无法使用请尝试降级ntQQ_
+_您也可以使用[Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)以及[~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock)来链接QQ, 或其他适配器链接其他软件,详见[onebotV11适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)_
 
 ## 总结
 
