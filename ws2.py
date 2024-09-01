@@ -32,11 +32,11 @@ async def send_message(websocket, data):
 
 
 class BotWebSocket:
-    def __init__(self, muice_app):
+    def __init__(self, model):
         self.app = FastAPI()
         self.received_messages_queue = asyncio.Queue()
         self.messages_to_send_queue = asyncio.Queue()
-        self.process_message_func = process_message(muice_app)
+        self.process_message_func = process_message(model)
         self.max_send_times = 3
 
         @self.app.websocket("/ws/api")
@@ -44,7 +44,7 @@ class BotWebSocket:
 
             await websocket.accept()
             asyncio.create_task(self.reply_messages())
-            asyncio.create_task(self.produce_messages(websocket))
+            asyncio.create_task(self.create_messages(websocket))
             # 这里 不要 await!!
 
             try:
@@ -69,7 +69,7 @@ class BotWebSocket:
             except:
                 continue
 
-    async def produce_messages(self, websocket: WebSocket):
+    async def create_messages(self, websocket: WebSocket):
         """从发送队列取出消息发送"""
         while True:
             try:
@@ -88,6 +88,8 @@ class BotWebSocket:
 
 if __name__ == '__main__':
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
+    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
+    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
     logging.warning("用户请勿直接运行此文件，请使用main.py运行")
     muice = None
     ws = BotWebSocket(muice)
