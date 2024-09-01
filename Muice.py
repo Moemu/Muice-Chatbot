@@ -3,7 +3,7 @@ import logging
 import os
 import random
 import time
-
+import re
 
 class Muice:
     """
@@ -100,6 +100,15 @@ class Muice:
         """
         if not os.path.isdir('memory'):
             os.mkdir('memory')
+        image_pattern = r"收到图片描述：([^)]+)"
+        image_matches = re.search(image_pattern,self.user_text)
+        if image_matches:
+            image_caption = image_matches.group(1)
+            with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
+                logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
+                json.dump({'prompt': image_caption, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
+                f.write('\n')
+            return
         with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
             logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
