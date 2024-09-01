@@ -180,8 +180,13 @@ class QQBot:
                     if sender_user_id in self.trust_qq_list:
                         if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                         reply_message_list = await self.produce_reply(message, sender_user_id)
-                        logging.debug(f"回复list{reply_message_list}")
-                        return reply_message_list, sender_user_id, -1
+                        if reply_message_list:
+                            logging.debug(f"回复list{reply_message_list}")
+                            if reply_message_list is None:
+                                return None
+                            return reply_message_list, sender_user_id, -1
+                        else:
+                            return None
 
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
@@ -221,6 +226,8 @@ class QQBot:
                                 if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                                 reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                                 logging.debug(f"回复list{reply_message_list}")
+                                if reply_message_list is None:
+                                    return None
                                 return reply_message_list, sender_user_id, group_id
                             else:
                                 return None
@@ -229,6 +236,8 @@ class QQBot:
                             if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
+                            if reply_message_list is None:
+                                return None
                             return reply_message_list, sender_user_id, group_id
                     else:
                         return None
@@ -311,7 +320,7 @@ class QQBot:
     async def time_work(self):
         """定时任务函数"""
         for key, value in self.time_dict.items():
-            topic = self.muice_app.CreateANewTopic(value)
+            topic = self.muice_app.create_a_new_topic(value)
             if topic is None:
                 continue
             else:
