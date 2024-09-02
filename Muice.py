@@ -77,13 +77,15 @@ class Muice:
         """
         获取最近一条记忆
         """
-        if not os.path.isfile(f'./memory/{self.user_id}.json'):
+        if not os.path.isfile(f'./memory/{self.user_id}.json') or self.user_id == None:
             return []
         else:
             try:
                 with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                     data = f.readlines()
                 logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
+                if len(data) == 0:
+                    return []
                 memory = json.loads(data[-1])
                 memory['history'].append([memory['prompt'],memory['completion']])
                 return memory['history']
@@ -100,6 +102,8 @@ class Muice:
         """
         if not os.path.isdir('memory'):
             os.mkdir('memory')
+        if not self.user_id:
+            return
         with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
             logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
@@ -109,9 +113,14 @@ class Muice:
         """
         删除最后一条记忆
         """
+        if not os.path.isfile(f'./memory/{self.user_id}.json'):
+            return
         with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
             data = f.readlines()
-            del data[-1]
+            if len(data) > 1:
+                del data[-1]
+            else:
+                data = []
         with open(f'./memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
@@ -120,6 +129,8 @@ class Muice:
         刷新对话
         """
         logging.info("Start refresh")
+        if not self.user_text:
+            return "本雪一句话都没有和你说！你在玩我呢？"
         self.remove_last_chat_memory()
         self.history = self.get_recent_chat_memory()
         logging.debug(f'刷新后历史记录:{self.history}')
