@@ -25,7 +25,7 @@ class Muice:
                            '00': '（发起一个临睡问候）'}
         self.time_topics = self.time_topic.copy()
 
-    def ask(self, text: str, user_qq: int, group_id: int) -> list:
+    def ask(self, text: str, user_qq: int, group_id: int) -> str:
         """发送信息"""
         if group_id == -1:
             self.user_id = str(user_qq)
@@ -115,7 +115,7 @@ class Muice:
         with open(f'./memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
-    def refresh(self):
+    def refresh(self) -> str:
         """
         刷新对话
         """
