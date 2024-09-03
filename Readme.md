@@ -222,6 +222,7 @@ Muice-Chatbot     <- 主路径
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
     "port":21050,
+    "Reply_Wait": true,
     "bot_qq_id":123456789,
     "Is_CQ_Code": false,
     "Group_Message_Reply_Only_To_Trusted": true,
@@ -253,6 +254,8 @@ Muice-Chatbot     <- 主路径
 `time_topic_probability`: 根据时间（早、中、傍、晚）触发日常问候的概率。
 
 `port`: 反向WebSocket服务的端口号，默认`21050`。
+
+`Reply_Wait`: （私聊）是否回复时等待一段时间。
 
 `bot_qq_id`: 机器人的QQ号。
 

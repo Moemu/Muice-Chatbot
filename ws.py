@@ -64,6 +64,7 @@ class QQBot:
         self.nonreply_prefix = self.configs.get('NonReply_Prefix', [])
         self.enable_ofa_image = self.configs.get('enable_ofa_image', False)
         self.voice_reply_rate = self.configs.get('Voice_Reply_Rate', 0)
+        self.reply_wait = self.configs.get('Reply_Wait', True)
         # 主动对话
         self.auto_create_topic = self.configs.get('AutoCreateTopic', False)
         if self.auto_create_topic:
@@ -101,7 +102,8 @@ class QQBot:
 
                         if group_id == -1:
                             for reply_item in reply_list:
-                                # await asyncio.sleep(len(reply_item) * 0.8)
+                                if self.reply_wait:
+                                    await asyncio.sleep(len(reply_item) * 0.6)
                                 if reply_item is None:
                                     continue
                                 logging.debug(f"回复{reply_item}")

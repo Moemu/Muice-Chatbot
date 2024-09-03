@@ -18,6 +18,7 @@
     ],
     "port":21050,
 
+    "Reply_Wait": true,
     "Group_Message_Reply": true,
     "Trust_QQ_Group_list": [
         114514,
