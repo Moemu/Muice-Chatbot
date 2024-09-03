@@ -2,11 +2,15 @@
     "model_loader": "transformers",
     "model_name_or_path": "./model/chatglm2-6b",
     "adapter_name_or_path": "./model/Muice",
+    "enable_ofa_image": false,
+    "ofa_image_model_name_or_path": "./ofa_image",
+    "audio_name_or_path": "./SenseVoice",
     "read_memory_from_file": true,
 
     "AutoCreateTopic": false,
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
+
 
     "Trust_QQ_list": [
         123456789,
@@ -14,11 +18,19 @@
     ],
     "port":21050,
 
+    "Reply_Wait": true,
     "Group_Message_Reply": true,
     "Trust_QQ_Group_list": [
         114514,
         191918
     ],
-    "Is_OneBot_Plugin": false,
-    "Group_Message_Reply_Only_To_Trusted": true
+    "Group_Message_Reply_Only_To_Trusted": false,
+    "Is_CQ_Code": false,
+    "bot_qq_id":12345678,
+    "Reply_Rate": 50,
+    "At_Reply": true,
+    "NonReply_Prefix": [
+        "#"
+    ],
+    "Voice_Reply_Rate": 0
 }
