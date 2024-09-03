@@ -81,19 +81,21 @@ pip install -r requirements.txt
 
 ## OFA图像识别
 
-若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
+本项目支持OFA图像识别，即对聊天图片进行特征提取，并通过OFA模型进行描述生成。若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
 
 OFA使用到的依赖需要额外安装：
 
 ```powershell
+conda activate Muice
 pip install -r ofa_requirements.txt
 ```
 
-目前建议的基底模型如下表：
+目前支持的OFA模型如下表：
 
-| 基底模型                                                                                                                  |
+| OFA模型                                                                                                                  |
 |---------------------------------------------------------------------------------------------------------------------------------|
-| [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) |
+|*建议*[OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) |
+|[ofa_image-caption_muge_base_zh](https://www.modelscope.cn/models/iic/ofa_image-caption_muge_base_zh) |
 
 ## 语音回复
 
@@ -114,6 +116,7 @@ pip install -r ofa_requirements.txt
 1.安装依赖：
 
 ```powershell
+conda activate Muice
 pip install -r audio_requirements.txt
 ```
 
@@ -121,9 +124,9 @@ pip install -r audio_requirements.txt
 
 3.获取语音识别模型
 
-目前建议的基底模型如下表：
+目前支持的模型如下表：
 
-| 基底模型                                                                                                                  |
+| 语音识别模型                                                                                                                  |
 |---------------------------------------------------------------------------------------------------------------------------------|
 | [SenseVoice多语言语音理解模型Small](https://www.modelscope.cn/models/iic/SenseVoiceSmall) |
 
