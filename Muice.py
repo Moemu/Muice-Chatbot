@@ -25,7 +25,7 @@ class Muice:
                            '00': '（发起一个临睡问候）'}
         self.time_topics = self.time_topic.copy()
 
-    def ask(self, text: str, user_qq: int, group_id: int) -> list:
+    def ask(self, text: str, user_qq: int, group_id: int) -> str:
         """发送信息"""
         if group_id == -1:
             self.user_id = str(user_qq)
@@ -77,13 +77,15 @@ class Muice:
         """
         获取最近一条记忆
         """
-        if not os.path.isfile(f'./memory/{self.user_id}.json'):
+        if not os.path.isfile(f'./memory/{self.user_id}.json') or self.user_id == None:
             return []
         else:
             try:
                 with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                     data = f.readlines()
                 logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
+                if len(data) == 0:
+                    return []
                 memory = json.loads(data[-1])
                 memory['history'].append([memory['prompt'],memory['completion']])
                 return memory['history']
@@ -100,6 +102,8 @@ class Muice:
         """
         if not os.path.isdir('memory'):
             os.mkdir('memory')
+        if not self.user_id:
+            return
         image_pattern = r"收到图片描述：([^)]+)"
         image_matches = re.search(image_pattern,self.user_text)
         if image_matches:
@@ -118,17 +122,24 @@ class Muice:
         """
         删除最后一条记忆
         """
+        if not os.path.isfile(f'./memory/{self.user_id}.json'):
+            return
         with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
             data = f.readlines()
-            del data[-1]
+            if len(data) > 1:
+                del data[-1]
+            else:
+                data = []
         with open(f'./memory/{self.user_id}.json', 'w', encoding='utf-8') as f:
             f.writelines(data)
 
-    def refresh(self):
+    def refresh(self) -> str:
         """
         刷新对话
         """
         logging.info("Start refresh")
+        if not self.user_text:
+            return "本雪一句话都没有和你说！你在玩我呢？"
         self.remove_last_chat_memory()
         self.history = self.get_recent_chat_memory()
         logging.debug(f'刷新后历史记录:{self.history}')

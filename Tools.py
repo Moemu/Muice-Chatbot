@@ -8,6 +8,8 @@ def divide_sentences(text: str) -> list:
     sentences = re.findall(r'.*?[~。！？…]+', text)
     if len(sentences) == 0:
         return [text]
+    if len(''.join(sentences)) < len(text):
+        sentences.append(text.lstrip(''.join(sentences))) # 避免当句子后面没句号时被忽略的情况
     return sentences
 
 def process_at_message(message: str) -> tuple[bool, list, str]:
@@ -80,3 +82,4 @@ def voice_message_reply(voice_rate: str) -> bool:
         return True
     else:
         return False
+

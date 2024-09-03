@@ -29,7 +29,7 @@ class Command:
             return self.commands[command]()
         return self.no_command()
 
-    def no_command(self):
+    def no_command(self) -> str:
         return "没有当前命令"
 
     # 用于后期其他功能扩展
@@ -56,22 +56,26 @@ class Command:
                      "/undo 撤销上一次对话")
         return help_text
 
-    def refresh(self):
+    def refresh(self) -> str:
         reply = self.Muice.refresh()
         self.Muice.save_chat_memory(reply)
         return reply
 
-    def clean(self):
+    def clean(self) -> str:
         self.Muice.history = []
         return "cleaned"
 
-    def reset(self):
-        shutil.copy(f'./memory/{self.Muice.user_qq}.json', './memory/chat_memory_backup.json')
+    def reset(self) -> str:
+        if os.path.isfile(f'./memory/{self.Muice.user_qq}_backup.json'):
+            os.remove(f'./memory/{self.Muice.user_qq}_backup.json')
+        if not os.path.isfile(f'./memory/{self.Muice.user_qq}.json'):
+            return "你说得对，但是本雪和你没有说过一句话噢"
+        shutil.copy(f'./memory/{self.Muice.user_qq}.json', f'./memory/{self.Muice.user_qq}_backup.json')
         os.remove(f'./memory/{self.Muice.user_qq}.json')
         self.Muice.history = []
         return "reseted"
 
-    def undo(self):
+    def undo(self) -> str:
         self.Muice.remove_last_chat_memory()
         self.Muice.history = self.Muice.get_recent_chat_memory()
         return "undoed"

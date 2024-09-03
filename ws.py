@@ -253,7 +253,7 @@ class QQBot:
             logging.error(f"接收到的数据: {json.dumps(data, ensure_ascii=False, indent=4)}")
             return None
 
-    async def produce_reply(self, mess, sender_user_id):
+    async def produce_reply(self, mess, sender_user_id) -> list | None:
         """ 回复消息 """
         if self.auto_create_topic:
             await self.store_time(sender_user_id)
@@ -265,7 +265,8 @@ class QQBot:
                 return []
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
-            return reply
+            reply_list = divide_sentences(reply)
+            return reply_list
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
             logging.info(f"回复消息：{reply}")
@@ -280,7 +281,7 @@ class QQBot:
                     logging.error(f"回复语音消息失败: {e}")
             return reply_list
 
-    async def produce_group_reply(self, mess, sender_user_id, group_id):
+    async def produce_group_reply(self, mess, sender_user_id, group_id) -> list | None:
         """ 回复消息群聊 """
         if not str(mess).strip():
             if self.is_at_message:
@@ -293,7 +294,8 @@ class QQBot:
                 return []
         if str(mess).startswith('/'):
             reply = self.command.run(mess)
-            return reply
+            reply_list = divide_sentences(reply)
+            return reply_list
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
             logging.info(f"回复消息：{reply}")
