@@ -6,28 +6,34 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
-###  3.31更新: 现以提供onebot服务, 您可以使用当前方式来运行，感谢[@MoeSnowyFox](https://github.com/MoeSnowyFox)的贡献！
-
 
 # 介绍✨
 
-沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度1.8K+ *，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
-
-*：（训练集长度较低，但我们仍在收集对话数据）
+沐雪，一只会**主动**找你聊天的AI女孩子，其对话模型基于[ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B)与[Qwen](https://github.com/QwenLM)微调而成，训练集长度3K+ ，具有二次元女孩子的说话风格，比较傲娇，但乐于和你分享生活的琐碎，每天会给你不一样的问候。
 
 # 功能🪄
 
-✔ 提供本人由1.5k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen-7B Qlora微调模型（回答原创率：98%+）
+✅ 提供本人由3k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen Qlora微调模型	
 
-✔ 主动发起聊天
+✅ 主动发起聊天（随机和每天早中晚固定时间）
 
-✔ 提供5条可用的命令
+✅ 提供5条命令以便在聊天中进行刷新回复等操作
+
+✅ OFA图像识别：精确识别表情包中的文本
+
+✅ 支持通过[fishaudio/fish-speech](https://github.com/fishaudio/fish-speech)进行语言合成（沐雪tts模型尚未发布）
+
+✅ 在群聊中聊天（支持被 @ 回复或不被 @ 随机回复）
+
+✅ 在控制台中实时对话（暂不支持打QQ电话）
+
+⬜ 对记忆模块进行优化，实现长期记忆与短期记忆
 
 # 快速开始💻
 
 建议环境：
 - Python 3.10
-- 一张拥有8GB+ 显存的显卡(int4量化最低要求: 4G ; CPU推理内存要求：16G+)
+- 一张拥有6GB+ 显存的显卡(int4量化最低要求: 4G ; CPU推理内存要求：16G+)
 
 ## 使用 conda
 
@@ -43,12 +49,13 @@ pip install -r requirements.txt
 
 目前支持的基底模型如下表：
 
-| 基底模型                                                                                  | 对应微调模型版本号                                | 额外依赖库               |
-|---------------------------------------------------------------------------------------|------------------------------------------|---------------------|
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                  | cpm_kernels         |
-| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary)           | 2.0-2.3                                  |                     |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary)  | 2.3                                      | llmtuner            |
-| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)                                 | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
+| 基底模型                                                     | 对应微调模型版本号                         | 额外依赖库                  |
+| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                                        | llmtuner                    |
+| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3                                      | llmtuner                    |
+| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
@@ -79,6 +86,8 @@ pip install -r requirements.txt
 
 （若是API/rwkv-api加载，`model_name_or_path`填api地址）
 
+如果你没有合适的显卡，需要通过CPU加载模型，请安装配置gcc环境并勾选openmp.
+
 ## OFA图像识别
 
 本项目支持OFA图像识别，即对聊天图片进行特征提取，并通过OFA模型进行描述生成。若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
@@ -92,10 +101,10 @@ pip install -r ofa_requirements.txt
 
 目前支持的OFA模型如下表：
 
-| OFA模型                                                                                                                  |
-|---------------------------------------------------------------------------------------------------------------------------------|
-|*建议*[OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) |
-|[ofa_image-caption_muge_base_zh](https://www.modelscope.cn/models/iic/ofa_image-caption_muge_base_zh) |
+| OFA模型                                                      |
+| ------------------------------------------------------------ |
+| [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) （建议） |
+| [ofa_image-caption_muge_base_zh](https://www.modelscope.cn/models/iic/ofa_image-caption_muge_base_zh) |
 
 ## 语音回复
 
@@ -308,15 +317,11 @@ python main.py
 
 # 关于🎗️
 
-代码编写：[Moemu](https://github.com/Moemu)
+代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)
 
-模型训练：[Moemu](https://github.com/Moemu) （RWKV训练：[Seikaijyu](https://github.com/Seikaijyu)）
+训练集编写与模型微调：[Moemu](https://github.com/Moemu) （RWKV微调：[Seikaijyu](https://github.com/Seikaijyu)）
 
-训练集编写：[Moemu](https://github.com/Moemu)
-
-OneBot服务支持: [MoeSnowyFox](https://github.com/MoeSnowyFox)
-
-代码贡献：
+总代码贡献：
 
 <a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
   <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="图片加载中..."/>
