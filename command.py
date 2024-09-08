@@ -1,9 +1,10 @@
 import os
 import shutil
+import logging
 
 
 def no_command():
-    return "没有当前命令"
+    return {"data":["没有当前命令"],"type":"msg"}
 
 
 class Command:
@@ -12,7 +13,7 @@ class Command:
     """
 
     def __init__(self, muice):
-        self.Muice = muice
+        self.Muice = None
         self.commands = {}
 
     def register_command(self, command: str, command_function):
@@ -24,55 +25,54 @@ class Command:
         """
         self.commands[command] = command_function
 
-    def run(self, command: str, raw_data) -> str:
+    def run(self, command: str, raw_data) -> dict[str,list[str]|str]:
         """
         执行命令，返回命令命令执行结果或命令不存在的提示
         """
+        logging.debug(f"运行指令: {command}")
         if command in self.commands:
             # 调用与命令关联的函数
             return self.commands[command](raw_data)
         return no_command()
-
 
     def load_default_command(self):
         """
         加载默认命令
         """
         default_commands = {
-            '/help': self.default_help,
-            '/refresh': self.refresh,
-            '/clean': self.clean,
-            '/reset': self.reset,
-            '/undo': self.undo
+            'help': self.default_help,
+            'refresh': self.refresh,
+            'clean': self.clean,
+            'reset': self.reset,
+            'undo': self.undo
         }
         for command, function in default_commands.items():
             self.register_command(command, function)
 
-    def default_help(self,message):
+    def default_help(self, message):
         help_text = ("/clean 清空本轮对话历史 \n "
                      "/help 显示所有可用的命令列表 \n "
                      "/refresh 刷新本次对话回复 \n "
                      "/reset 重置所有对话数据(将存档对话数据) \n "
                      "/undo 撤销上一次对话")
-        return help_text
+        return {"data":[help_text],"type":"msg"}
 
-    def refresh(self,message):
+    def refresh(self, message):
         reply = self.Muice.refresh()
         self.Muice.save_chat_memory(reply)
-        return reply
+        return {"data":[reply],"type":"msg"}
 
-    def clean(self,message):
+    def clean(self, message):
         self.Muice.history = []
-        return "cleaned"
+        return {"data":["cleaned"],"type":"msg"}
 
-    def reset(self,message):
+    def reset(self, message):
         shutil.copy(f'./memory/{self.Muice.user_id}.json', './memory/chat_memory_backup.json')
         os.remove(f'./memory/{self.Muice.user_id}.json')
         self.Muice.history = []
-        return "reseted"
+        return {"data":["reseted"],"type":"msg"}
 
-    def undo(self,message):
+    def undo(self, message):
         self.Muice.remove_last_chat_memory()
         self.Muice.history = self.Muice.get_recent_chat_memory()
-        return "undoed"
-
+        return {"data":["undoed"],"type":"msg"}

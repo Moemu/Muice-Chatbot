@@ -6,6 +6,7 @@ from fastapi import FastAPI, WebSocket
 import asyncio
 from process_message import process_message
 from Tools import build_msg_reply_json
+from Tools import configs_tool
 
 
 async def send_message(websocket, data):
@@ -13,6 +14,8 @@ async def send_message(websocket, data):
         return None
     group_id = data.get('group_id', -1)
     reply_list = data.get('message_list', [])
+    if not reply_list:
+        return None
     reply_type = data.get('type', 'msg')
     logging.debug(f'发送列表:{reply_list}')
     if reply_list is None:
@@ -28,6 +31,7 @@ async def send_message(websocket, data):
             message_json = await build_msg_reply_json(key, qq_id, is_group_or_private)
             logging.info(f'发送消息{key}')
             await websocket.send_text(message_json)
+    # 在此拓展type类型发送
     return None
 
 
@@ -38,6 +42,10 @@ class BotWebSocket:
         self.messages_to_send_queue = asyncio.Queue()
         self.process_message_func = process_message(model)
         self.max_send_times = 3
+
+        self.configs_tool = configs_tool()
+        self.ws_host = self.configs_tool.get('Ws_Host')
+        self.ws_port = self.configs_tool.get('Ws_Port')
 
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
@@ -83,7 +91,7 @@ class BotWebSocket:
                 continue
 
     def run(self):
-        uvicorn.run(self.app, host="127.0.0.1", port=22050)
+        uvicorn.run(self.app, host=self.ws_host, port=self.ws_port)
 
 
 if __name__ == '__main__':

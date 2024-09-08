@@ -2,7 +2,6 @@ import json
 import logging
 import os
 
-
 async def get_pr_memory_old(user_id, time):
     try:
         with open(f'./memory/{user_id}.json', 'r', encoding='utf-8') as f:
@@ -32,7 +31,6 @@ def build_memory_list(file_path):
     try:
         with open(f'./memory/{file_path}.json', 'r', encoding='utf-8', ) as file:
             lines = file.readlines()
-
             # 从最后一行开始遍历到第一行
             for data in reversed(lines):
                 if ":" not in data:
@@ -44,6 +42,8 @@ def build_memory_list(file_path):
                     reply = message + reply
                 else:
                     last_user_id = user
+                    one_turn_reply_list = [reply] + one_turn_reply_list
+                    reply = message
                     if user == '-1':
                         bot_msg_num += 1
                         if bot_msg_num >= 6:
@@ -51,8 +51,6 @@ def build_memory_list(file_path):
                             return memory_list
                         memory_list = [one_turn_reply_list] + memory_list
                         one_turn_reply_list = []
-                    one_turn_reply_list = [reply] + one_turn_reply_list
-                    reply = message
         logging.debug(f'构建记忆列表完成{memory_list}')
         return memory_list
     except Exception as e:

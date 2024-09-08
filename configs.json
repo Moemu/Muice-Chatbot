@@ -10,19 +10,22 @@
 
     "Trust_QQ_list": [
         123456789,
-        13241234134
+        2236319712
     ],
-    "port":21060,
+
 
     "Group_Message_Reply": false,
     "Trust_QQ_Group_list": [
         114514,
         191918,
-        134134
+        829296181
     ],
     "Group_Reply_Only_to_Trusted": true,
     "TEST_New_Group_Memory": true,
     "Is_OneBot_Plugin": false,
     "Command_Prefixes": ["/","#"],
-    "No_Reply_Prefixes": ["111"]
+    "No_Reply_Prefixes": ["111"],
+    "Ws_Host": "127.0.0.1",
+    "Ws_Port": 21050,
+    "Memory_Prefix": [["你是谁","我是轻雪喵~"]]
 }
