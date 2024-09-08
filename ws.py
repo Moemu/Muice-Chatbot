@@ -7,7 +7,6 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
-from ofa_image_process import ImageCaptioningPipeline
 from fish_speech_api import fish_speech_api
 from Tools import divide_sentences
 from Tools import process_at_message
@@ -85,6 +84,9 @@ class QQBot:
 
         # 定义公共变量
         self.is_at_message = False
+        if self.enable_ofa_image:
+            from ofa_image_process import ImageCaptioningPipeline
+            self.image_captioning_pipeline = ImageCaptioningPipeline()
 
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
@@ -180,7 +182,7 @@ class QQBot:
                 if data['message_type'] == 'private':
                     logging.info(f"收到QQ{sender_user_id}的消息：{message}")
                     if sender_user_id in self.trust_qq_list:
-                        if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
+                        if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
                         reply_message_list = await self.produce_reply(message, sender_user_id)
                         if reply_message_list:
                             logging.debug(f"回复list{reply_message_list}")
@@ -225,7 +227,7 @@ class QQBot:
                         if self.group_reply_only_to_trusted:
                             if sender_user_id in self.trust_qq_list:
                                 if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                                if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
+                                if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
                                 reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                                 logging.debug(f"回复list{reply_message_list}")
                                 if reply_message_list is None:
@@ -235,7 +237,7 @@ class QQBot:
                                 return None
                         else:
                             if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                            if is_image: message = await ImageCaptioningPipeline().generate_caption(image_url)
+                            if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
                             if reply_message_list is None:
