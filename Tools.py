@@ -14,10 +14,15 @@ async def build_msg_reply_json(reply_message, user_id, action):
     """构建回复的消息的json"""
     if reply_message is None:
         return None
+    if action == 'send_private_msg':
+        send_id = "user_id"
+    else:
+        send_id = "group_id"
+
     data = {
         "action": action,
         "params": {
-            "user_id": user_id,
+            send_id: user_id,
             "message": reply_message
         }
     }
