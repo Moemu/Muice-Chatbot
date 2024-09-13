@@ -53,7 +53,7 @@ pip install -r requirements.txt
 | ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
 | [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
 | [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3                                        | llmtuner                    |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3、2.6.2                                 | llmtuner                    |
 | [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3                                      | llmtuner                    |
 | [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见[HF](https://huggingface.co/Seikaijyu) | （需要下载配置RWKV-Runner） |
 
