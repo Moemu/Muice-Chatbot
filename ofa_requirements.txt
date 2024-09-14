@@ -1,6 +1,9 @@
 addict
+datasets==2.21.0
 modelscope
+modelscope[framework]
 oss2
+rapidfuzz
 simplejson
 sortedcontainers
 librosa
@@ -12,3 +15,4 @@ unicodedata2
 zhconv
 decord>=0.6.0
 aiohttp
+fairseq
