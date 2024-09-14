@@ -23,7 +23,7 @@ model = model.llm(model_name_or_path, adapter_name_or_path)
 # OFA图像模型
 enable_ofa_image = configs["enable_ofa_image"]
 if enable_ofa_image:
-    from ofa_image_process import ImageCaptioningPipeline
+    from utils.ofa_image_process import ImageCaptioningPipeline
     ofa_image_model_name_or_path = configs["ofa_image_model_name_or_path"]
     ImageCaptioningPipeline.load_model(ofa_image_model_name_or_path)
 

@@ -11,8 +11,8 @@ from pydub.playback import play
 import sounddevice as sd
 
 from Muice import Muice
-from fish_speech_api import fish_speech_api
-from audio_process import SpeechRecognitionPipeline
+from utils.fish_speech_api import fish_speech_api
+from utils.audio_process import SpeechRecognitionPipeline
 import threading
 
 CHUNK = 1024  # 每次读取的音频块大小
@@ -22,7 +22,7 @@ RATE = 22050  # 采样率
 THRESHOLD = 75  # 声音响度阈值
 SILENCE_THRESHOLD_MS = 1500  # 静音持续时间阈值（毫秒）
 SILENCE_COUNT = int(SILENCE_THRESHOLD_MS / (1000 * CHUNK / RATE))  # 静音计数器阈值
-use_virtual_device = True  # 是否使用虚拟设备
+use_virtual_device = False  # 是否使用虚拟设备
 if use_virtual_device:
     speaker_device_index = 3  # 输入设备索引
     mic_device_index = 10  # 输出设备索引

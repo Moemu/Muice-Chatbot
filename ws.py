@@ -7,12 +7,12 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
-from fish_speech_api import fish_speech_api
-from Tools import divide_sentences
-from Tools import process_at_message
-from Tools import is_reply_message
-from Tools import is_image_message
-from Tools import voice_message_reply
+from utils.fish_speech_api import fish_speech_api
+from utils.Tools import divide_sentences
+from utils.Tools import process_at_message
+from utils.Tools import is_reply_message
+from utils.Tools import is_image_message
+from utils.Tools import voice_message_reply
 from command import Command
 
 
@@ -85,7 +85,7 @@ class QQBot:
         # 定义公共变量
         self.is_at_message = False
         if self.enable_ofa_image:
-            from ofa_image_process import ImageCaptioningPipeline
+            from utils.ofa_image_process import ImageCaptioningPipeline
             self.image_captioning_pipeline = ImageCaptioningPipeline()
 
         @self.app.websocket("/ws/api")
