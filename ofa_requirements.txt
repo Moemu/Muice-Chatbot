@@ -16,5 +16,4 @@ zhconv
 decord>=0.6.0
 aiohttp
 fairseq
-sqlite3
 jieba
