@@ -68,7 +68,13 @@ def is_image_message(message: str) -> tuple[bool, str]:
         image_url = image_match.group(1)
         return True, image_url
     else:
-        return False, ''
+        url_pattern = r"url=(file[^,]+)"
+        image_match = re.search(url_pattern, message)
+        if image_match:
+            image_url = image_match.group(1)
+            return True, image_url
+        else:
+            return False, ''
     
 def voice_message_reply(voice_rate: str) -> bool:
     """

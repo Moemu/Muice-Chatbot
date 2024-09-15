@@ -44,6 +44,6 @@ class ImageCaptioningPipeline:
         result = self._model(image)
         caption = result[OutputKeys.CAPTION][0]
         logging.info(f"[ofa_image_process]: 生成的图片描述: {caption}")
-        caption = f"(收到图片描述：{caption})"
+        # caption = f"(收到图片描述：{caption})"
         return caption
 

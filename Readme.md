@@ -21,7 +21,7 @@
 
 ✅ 提供5条命令以便在聊天中进行刷新回复等操作
 
-✅ OFA图像识别：精确识别表情包中的文本
+✅ OFA图像识别：识别表情包、理解表情包、发送表情包
 
 ✅ 支持通过[fishaudio/fish-speech](https://github.com/fishaudio/fish-speech)进行语言合成（沐雪tts模型尚未发布）
 
@@ -104,9 +104,11 @@ pip install -r requirements.txt
 
 如果你没有合适的显卡，需要通过CPU加载模型，请安装配置gcc环境并勾选openmp.
 
-## OFA图像识别
+## OFA图像识别（识别/发送表情包）
 
-本项目支持OFA图像识别，即对聊天图片进行特征提取，并通过OFA模型进行描述生成。若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
+本项目支持OFA图像识别，即对聊天图片进行特征提取，并通过OFA模型进行描述生成。发送信息时，会检索本地图片库，若存在匹配的图片，则会发送图片。
+
+若您希望使用OFA图像识别，请在配置文件中设置`enable_ofa_image`为`true`，并设置`ofa_image_model_name_or_path`为OFA图像识别模型的路径。
 
 OFA使用到的依赖需要额外安装：
 
@@ -121,6 +123,10 @@ pip install -r ofa_requirements.txt
 | ------------------------------------------------------------ |
 | [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) （建议） |
 | [ofa_image-caption_muge_base_zh](https://www.modelscope.cn/models/iic/ofa_image-caption_muge_base_zh) |
+
+本地图片数据库位于`image_data`文件夹中，程序会每五分钟备份一次数据库，默认保留5个备份槽位。
+
+若您想要回退数据库到某个时间点，请将`image_data`文件夹中的`image_data.db`删除，并将备份槽位文件`image_data.db.backup_xxx_xxx`修改为`image_data.db`。
 
 ## 语音回复
 

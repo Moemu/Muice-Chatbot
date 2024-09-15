@@ -87,6 +87,8 @@ class QQBot:
         if self.enable_ofa_image:
             from utils.ofa_image_process import ImageCaptioningPipeline
             self.image_captioning_pipeline = ImageCaptioningPipeline()
+            from utils.image_database import ImageDatabase
+            self.image_db = ImageDatabase()
 
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
@@ -105,7 +107,8 @@ class QQBot:
                         if group_id == -1:
                             for reply_item in reply_list:
                                 if self.reply_wait:
-                                    await asyncio.sleep(len(reply_item) * 0.6)
+                                    if not is_image_message(reply_item)[0]:
+                                        await asyncio.sleep(len(reply_item) * 0.6)
                                 if reply_item is None:
                                     continue
                                 logging.debug(f"回复{reply_item}")
@@ -182,7 +185,10 @@ class QQBot:
                 if data['message_type'] == 'private':
                     logging.info(f"收到QQ{sender_user_id}的消息：{message}")
                     if sender_user_id in self.trust_qq_list:
-                        if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
+                        if is_image: 
+                            message = await self.image_captioning_pipeline.generate_caption(image_url)
+                            await self.image_db.insert_data(message, image_url)
+                            message = f"(收到图片描述：{message})"
                         reply_message_list = await self.produce_reply(message, sender_user_id)
                         if reply_message_list:
                             logging.debug(f"回复list{reply_message_list}")
@@ -227,7 +233,10 @@ class QQBot:
                         if self.group_reply_only_to_trusted:
                             if sender_user_id in self.trust_qq_list:
                                 if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                                if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
+                                if is_image: 
+                                    message = await self.image_captioning_pipeline.generate_caption(image_url)
+                                    await self.image_db.insert_data(message, image_url)
+                                    message = f"(收到图片描述：{message})"
                                 reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                                 logging.debug(f"回复list{reply_message_list}")
                                 if reply_message_list is None:
@@ -237,7 +246,10 @@ class QQBot:
                                 return None
                         else:
                             if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                            if is_image: message = await self.image_captioning_pipeline.generate_caption(image_url)
+                            if is_image: 
+                                message = await self.image_captioning_pipeline.generate_caption(image_url)
+                                await self.image_db.insert_data(message, image_url)
+                                message = f"(收到图片描述：{message})"
                             reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
                             logging.debug(f"回复list{reply_message_list}")
                             if reply_message_list is None:
@@ -274,6 +286,17 @@ class QQBot:
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
             logging.info(f"回复消息：{reply}")
+            if self.enable_ofa_image:
+                similar_image = await self.image_db.find_similar_content(reply)
+                if similar_image is not None and similar_image[1] is not None:
+                    if similar_image[1] > 0.6:
+                        logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                        try:
+                            url = similar_image[0].replace('&', '&amp;')
+                        except:
+                            pass
+                        reply_list = [f"[CQ:image,url={url}]"]
+                        return reply_list
             reply_list = divide_sentences(reply)
             self.muice_app.finish_ask(reply_list)
             if voice_message_reply(self.voice_reply_rate):
@@ -303,6 +326,17 @@ class QQBot:
         else:
             reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
             logging.info(f"回复消息：{reply}")
+            if self.enable_ofa_image:
+                similar_image = await self.image_db.find_similar_content(reply)
+                if similar_image is not None and similar_image[1] is not None:
+                    if similar_image[1] > 0.6:
+                        logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                        try:
+                            url = similar_image[0].replace('&', '&amp;')
+                        except:
+                            pass
+                        reply_list = [f"[CQ:image,url={url}]"]
+                        return reply_list
             reply_list = divide_sentences(reply)
             self.muice_app.finish_ask(reply_list)
             if voice_message_reply(self.voice_reply_rate):
