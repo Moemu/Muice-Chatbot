@@ -1,145 +1,107 @@
-import asyncio
-import json
 import logging
-import time
+
 import uvicorn
-
 from fastapi import FastAPI, WebSocket
-from starlette.websockets import WebSocketDisconnect
+import asyncio
+from process_message import process_message
+from Tools import build_msg_reply_json
 
-from Tools import divide_sentences
-from command import Command
 
-
-async def build_reply_json(reply_message, sender_user_id):
-    """构建回复的消息的json"""
-    if reply_message is None:
+async def send_message(websocket, data):
+    if data is None:
         return None
-    data = {
-        "action": "send_private_msg",
-        "params": {
-            "user_id": sender_user_id,
-            "message": reply_message
-        }
-    }
-    return json.dumps(data, ensure_ascii=False)
+    group_id = data.get('group_id', -1)
+    reply_list = data.get('message_list', [])
+    if not reply_list:
+        return None
+    reply_type = data.get('type', 'msg')
+    logging.debug(f'发送列表:{reply_list}')
+    if reply_list is None:
+        return None
+    if reply_type == 'msg':
+        if group_id == -1:
+            qq_id = data['sender_user_id']
+            is_group_or_private = "send_private_msg"
+        else:
+            qq_id = data['group_id']
+            is_group_or_private = "send_group_msg"
+        for key in reply_list:
+            message_json = await build_msg_reply_json(key, qq_id, is_group_or_private)
+            logging.info(f'发送消息{key}')
+            await websocket.send_text(message_json)
+    # 在此拓展type类型发送
+    return None
 
 
-class QQBot:
-    def __init__(self, muice_app):
+class BotWebSocket:
+    def __init__(self, configs_tool):
+        """获取配置"""
+        self.configs_tool = configs_tool
+        self.ws_host = self.configs_tool.get('Ws_Host')
+        self.ws_port = self.configs_tool.get('Ws_Port')
+
+        self.process_message_func = None
         self.app = FastAPI()
-        self.muice_app = muice_app
-
-        self.command = Command(muice_app)
-        self.command.load_default_command()
-
-        self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
-        self.trust_qq_list = self.configs['Trust_QQ_list']
-        self.websocket_port = self.configs['port']
-        self.auto_create_topic = self.configs['AutoCreateTopic']
-        if self.auto_create_topic:
-            from apscheduler.schedulers.asyncio import AsyncIOScheduler
-            self.time_dict = {qq_id: time.time() for qq_id in self.trust_qq_list}
-            self.scheduler = AsyncIOScheduler()
-            self.scheduler.add_job(self.time_work, 'interval', minutes=1)
-            self.websocket = None
+        self.received_messages_queue = asyncio.Queue()
+        self.messages_to_send_queue = asyncio.Queue()
 
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
+
             await websocket.accept()
-            if self.auto_create_topic:
-                self.websocket = websocket
-                self.scheduler.start()
+            asyncio.create_task(self.reply_messages())
+            asyncio.create_task(self.create_messages(websocket))
+            # 这里 不要 await!!
+
             try:
-                # 链接请求
-                while True:
-                    data = await websocket.receive_text()
-                    reply = await self.processing_json(data)
-                    if reply is None:
-                        continue
-                    logging.debug(f"回复{reply}")
-                    await websocket.send_text(reply)
-            except WebSocketDisconnect:
-                logging.info("WebSocket disconnected")
+                async for message in websocket.iter_text():
+                    await self.received_messages_queue.put(message)
+                    print(f"Received: {message}")
+            except Exception as e:
+                print(f"WebSocket disconnected: {e}")
 
-        @self.app.on_event("shutdown")
-        async def shutdown():
-            if self.scheduler is not None and self.scheduler.running:
-                self.scheduler.shutdown()
+    def initialize_model(self, chat_model, other):
+        """在此传入模型"""
+        self.process_message_func = process_message(chat_model)
+        pass
 
-    async def processing_json(self, data):
-        """解析消息json并返回需发送的消息"""
-        data = json.loads(data)
-        logging.debug(f"收到{data}")
+    async def reply_messages(self):
+        """从消息队列取出消息传入处理,处理后加入发送队列"""
+        while True:
+            try:
+                print("reply_messages")
+                data = await self.received_messages_queue.get()
+                # data格式如下:{"group_id": -1, "message_list": ["1", "2"], "sender_user_id": 114514}
+                processed_message = await self.process_message_func.reply_message(data)
+                if processed_message is not None:
+                    await self.messages_to_send_queue.put(processed_message)
 
-        if 'post_type' in data and data['post_type'] == 'meta_event':
-            if data['meta_event_type'] == 'lifecycle':
-                if data['sub_type'] == 'connect':
-                    logging.info(f"已链接")
-                    return None
-            elif data['meta_event_type'] == 'heartbeat':
-                return None
-
-        elif 'post_type' in data and data['post_type'] == 'message':
-            '''消息处理'''
-            sender_user_id = data.get('sender', {}).get('user_id')
-            message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
-            logging.info(f"收到QQ{sender_user_id}的消息：{message}")
-            if sender_user_id in self.trust_qq_list:
-                reply_message = await self.produce_reply(message, sender_user_id)
-                reply = await build_reply_json(reply_message, sender_user_id)
-                return reply
-            else:
-                return None
-        else:
-            return None
-
-    async def produce_reply(self, mess, sender_user_id):
-        """ 回复消息 """
-        if self.auto_create_topic:
-            await self.store_time(sender_user_id)
-        if not str(mess).strip():
-            return None
-        if str(mess).startswith('/'):
-            reply = self.command.run(mess)
-            return reply
-        else:
-            reply = self.muice_app.ask(text=mess, user_qq=sender_user_id)
-            logging.info(f"回复消息：{reply}")
-            reply_list = divide_sentences(reply)
-            self.muice_app.finish_ask(reply_list)
-            for reply_item in reply_list:
-                await asyncio.sleep(len(reply_item) * 0.8)
-                return reply_item
-        return None
-
-    async def store_time(self, user_id):
-        """ 存储time_dict """
-        if user_id in self.time_dict:
-            if self.time_dict[user_id] < time.time():
-                self.time_dict[user_id] = time.time()
-        else:
-            self.time_dict[user_id] = time.time()
-        return None
-
-    async def time_work(self):
-        """定时任务函数"""
-        for key, value in self.time_dict.items():
-            topic = self.muice_app.CreateANewTopic(value)
-            if topic is None:
+                self.received_messages_queue.task_done()
+            except:
                 continue
-            else:
-                mess = self.muice_app.ask(topic, key)
-                reply = await build_reply_json(mess, key)
-                await self.websocket.send_text(reply)
+
+    async def create_messages(self, websocket: WebSocket):
+        """从发送队列取出消息发送"""
+        while True:
+            try:
+                print("send_messages")
+                data = await self.messages_to_send_queue.get()
+                logging.debug(f'data:{data}')
+
+                await send_message(websocket, data)  # 分类发送消息
+                self.messages_to_send_queue.task_done()
+            except:
+                continue
 
     def run(self):
-        uvicorn.run(self.app, host="127.0.0.1", port=self.websocket_port)
+        uvicorn.run(self.app, host=self.ws_host, port=self.ws_port)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.DEBUG)
     logging.warning("用户请勿直接运行此文件，请使用main.py运行")
-    Muice_app = None
-    ws = QQBot(Muice_app)
+    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
+    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
+    muice = None
+    ws = BotWebSocket(muice)
     ws.run()
-

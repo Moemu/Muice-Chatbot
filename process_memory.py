@@ -2,6 +2,7 @@ import json
 import logging
 import os
 
+
 async def get_pr_memory_old(user_id, time):
     try:
         with open(f'./memory/{user_id}.json', 'r', encoding='utf-8') as f:

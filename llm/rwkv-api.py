@@ -32,3 +32,6 @@ class llm:
 
         response = json.loads(response.text)
         return response['choices'][0]["message"]["content"].lstrip()
+
+    def doc(self):
+        return {"is_Agent":False,"doc":"rwkv加载"}

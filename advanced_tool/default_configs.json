@@ -1,0 +1,25 @@
+{
+    "model_loader": "",
+    "model_name_or_path": "",
+    "adapter_name_or_path": "",
+    "read_memory_from_file": false,
+
+    "AutoCreateTopic": false,
+    "known_topic_probability": 0.003,
+    "time_topic_probability": 0.75,
+
+    "Trust_QQ_list": [],
+
+
+    "Group_Message_Reply": false,
+    "Trust_QQ_Group_list": [],
+    "Group_Reply_Only_to_Trusted": true,
+    "TEST_New_Group_Memory": true,
+    "Is_OneBot_Plugin": false,
+
+    "Command_Prefixes": ["/"],
+    "No_Reply_Prefixes": [],
+    "Ws_Host": "127.0.0.1",
+    "Ws_Port": 21050,
+    "Memory_Prefix": []
+}

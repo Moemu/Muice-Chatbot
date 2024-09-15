@@ -1,13 +1,34 @@
 import json
+import logging
 import re
 
 
 class configs_tool:
-    def __init__(self):
+    def __init__(self, level=3):
         self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
+        self.default_configs = json.load(open('.advanced_tool/default_configs.json', 'r', encoding='utf-8'))
+        self.level = level
 
     def get(self, key):
-        return self.configs.get(key)
+        if self.level == 1:
+            logging.debug(f"获取键：{key},值为：{self.configs.get(key)}")
+
+        if key in self.configs:
+            value = self.configs.get(key)
+            if self.level >= 4:
+                if self.check_key(key, value):
+                    return value
+                return None
+        elif key in self.default_configs:
+            logging.debug(f"获取默认参数：{key},值为：{self.default_configs.get(key)}")
+            return self.default_configs.get(key)
+        else:
+            logging.error(f"请求了错误的键：{key},请确认您的配置文件是否正确")
+            return None
+
+    def check_key(self, key, value):
+        if key not in self.configs:
+            logging.error(f"配置文件缺少键：{key}")
 
 
 async def build_msg_reply_json(reply_message, user_id, action):

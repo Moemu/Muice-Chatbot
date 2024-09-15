@@ -22,3 +22,6 @@ class llm:
         messages.append({"role": "user", "content": user_text})
         response = self.model.chat(messages)
         return response[0].response_text
+
+    def doc(self):
+        return {"is_Agent":False,"doc":"llmtuner加载"}

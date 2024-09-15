@@ -1,5 +1,6 @@
 import requests as r
 import json
+import logging
 
 
 class llm:
@@ -14,3 +15,7 @@ class llm:
         response = r.post(self.url, json={"prompt": user_text, "history": history})
         response = json.loads(response.text)
         return response['response']
+
+    def doc(self):
+        logging.warning("当前为api加载,请确定使用当前方法")
+        return {"is_Agent":False,"doc":"api加载"}

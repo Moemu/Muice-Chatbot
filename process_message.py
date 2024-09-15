@@ -8,7 +8,6 @@ from process_memory import *
 
 class process_message:
     def __init__(self, model):
-        self.muice = None  # 已弃用!!!!!!!!!!
         self.model = model
 
         self.configs_tool = configs_tool()
@@ -27,9 +26,7 @@ class process_message:
         # self.model_ask_test = self.model.ask()
         self.is_agent = self.model_doc["is_Agent"]
 
-        self.command = Command(self.muice)  # 修改
-
-        self.command.load_default_command()
+        self.command = Command(model)  # 修改
 
     async def reply_message(self, data):
         data = json.loads(data)
@@ -86,7 +83,7 @@ class process_message:
                         else:
                             command = message_without_prefix[:space_index]
 
-                        reply = self.command.run(command, data)
+                        reply = self.command.run(command, data, message)
                         if reply:
                             reply_message_list = reply["data"]
                             reply_type = reply["type"]
@@ -135,7 +132,7 @@ class process_message:
                         else:
                             command = message_without_prefix[:space_index]
 
-                        reply = self.command.run(command, data)
+                        reply = self.command.run(command, data, message)
                         if reply:
                             reply_message_list = reply["data"]
                             reply_type = reply["type"]
