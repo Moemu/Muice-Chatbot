@@ -13,6 +13,8 @@
 
 # 功能🪄
 
+✅ 支持近乎全自动安装环境
+
 ✅ 提供本人由3k+对话数据微调的ChatGLM2-6B P-Tuning V2模型与Qwen Qlora微调模型	
 
 ✅ 主动发起聊天（随机和每天早中晚固定时间）
@@ -35,7 +37,21 @@
 - Python 3.10
 - 一张拥有6GB+ 显存的显卡(int4量化最低要求: 4G ; CPU推理内存要求：16G+)
 
-## 使用 conda
+## 自动安装
+
+目前已做到自动安装所有软件、依赖，通过code->download zip下载解压最新源码。
+
+双击`install_env.bat`安装（**不能启用旧版控制台**），或在命令行中运行以下命令：
+
+```powershell
+.\install_env.bat
+```
+
+自动安装可能需要较长时间，请耐心等待，安装完成后，你仍需手动下载模型。
+
+**请注意，自动安装脚本使用的是python的虚拟环境，不需要conda，留意安装脚本的提示。**
+
+## 手动安装（使用 conda）
 
 ```powershell
 git clone https://github.com/Moemu/Muice-Chatbot
