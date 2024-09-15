@@ -109,7 +109,8 @@ echo.
 install_env\sleepx -p "如果要停止安装，请在10秒内按下任意键..." -k 10
 if errorlevel 1 (
     echo %RD%[ERROR]%WT% 已停止安装。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
 )
 echo %GN%[INFO]%WT% 开始安装...
@@ -162,13 +163,15 @@ nvcc --version|findstr /r /i "12.1" > NUL && set cudaver=cu121
 nvcc --version|findstr /r /i "12.4" > NUL && set cudaver=cu124
 if "%cudaver%"=="" (
     echo %RD%[ERROR]%WT% 未知或不支持的CUDA版本，请卸载并安装11.8/12.1/12.4版本的CUDA。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
 )
 pip install torch==2.4.1+%cudaver% torchvision torchaudio -i %pip_source% --extra-index-url https://download.pytorch.org/whl/%cudaver%
 if errorlevel 1 (
     echo %RD%[ERROR]%WT% 安装PyTorch失败。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
 )
 goto :eof
@@ -177,21 +180,24 @@ goto :eof
 pip install -r requirements.txt -i %pip_source%
 if errorlevel 1 (
     echo %RD%[ERROR]%WT% 安装依赖失败。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
     )
 if %enable_ofa%==0 goto :eof
 pip install -r ofa_requirements.txt -i %pip_source%
 if errorlevel 1 (
     echo %RD%[ERROR]%WT% 安装ofa依赖失败。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
     )
 if %enable_audio%==0 goto :eof
 pip install -r audio_requirements.txt -i %pip_source%
 if errorlevel 1 (
     echo %RD%[ERROR]%WT% 安装音频处理依赖失败。
-    ping -n 3 127.1 > nul
+    echo %WT%按任意键退出。
+    pause>nul
     exit
     )
 goto :eof
