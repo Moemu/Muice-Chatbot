@@ -168,7 +168,7 @@ modelscope download --model iic/SenseVoiceSmall --local_path ./SenseVoice
 你可以通过以下命令查看输入输出设备信息：
 
 ```powershell
-python get_device_info.py
+python realtime_refence.py --get_device
 ```
 在`realtime_refence.py`中配置输入输出设备信息：
 

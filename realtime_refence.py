@@ -3,6 +3,7 @@ import numpy as np
 import wave
 import logging
 import os
+import sys
 import importlib
 import json
 import asyncio
@@ -31,6 +32,15 @@ else:
     device_index = 1  # 录音设备索引
 
 p = pyaudio.PyAudio()
+
+cmd_args = sys.argv
+if len(cmd_args) > 1 and cmd_args[1]=='--get_device':
+    device_count = p.get_device_count()
+    for i in range(device_count):
+        device_info = p.get_device_info_by_index(i)
+        print(f"Device {i}: {device_info['name']}")
+    p.terminate()
+    sys.exit(0)
 
 def play_audio(file_path):
     if not use_virtual_device:
