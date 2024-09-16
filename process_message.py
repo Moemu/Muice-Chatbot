@@ -11,7 +11,7 @@ class process_message:
         self.model = model
 
         self.configs_tool = configs_tool()
-        self.group_message_reply_list = self.configs_tool.get('Trust_QQ_Group_list')
+
         self.trust_qq_list = self.configs_tool.get('Trust_QQ_list')
 
         self.is_onebot_plugin = self.configs_tool.get('Is_OneBot_Plugin')
@@ -20,7 +20,12 @@ class process_message:
         self.memory_prefix = self.configs_tool.get('Memory_Prefix')
 
         self.group_message_reply = self.configs_tool.get('Group_Message_Reply')
-        self.group_reply_only_to_trusted = self.configs_tool.get('Group_Message_Reply_Only_To_Trusted')
+        if self.group_message_reply:
+            self.group_message_reply_list = self.configs_tool.get('Trust_QQ_Group_list')
+            self.group_reply_only_to_trusted = self.configs_tool.get('Group_Message_Reply_Only_to_Trusted')
+        else:
+            self.group_message_reply_list = []
+            self.group_reply_only_to_trusted = True
 
         self.model_doc = self.model.doc()
         # self.model_ask_test = self.model.ask()

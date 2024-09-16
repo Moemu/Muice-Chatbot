@@ -7,51 +7,30 @@ from process_message import process_message
 from Tools import build_msg_reply_json
 
 
-async def send_message(websocket, data):
-    if data is None:
-        return None
-    group_id = data.get('group_id', -1)
-    reply_list = data.get('message_list', [])
-    if not reply_list:
-        return None
-    reply_type = data.get('type', 'msg')
-    logging.debug(f'发送列表:{reply_list}')
-    if reply_list is None:
-        return None
-    if reply_type == 'msg':
-        if group_id == -1:
-            qq_id = data['sender_user_id']
-            is_group_or_private = "send_private_msg"
-        else:
-            qq_id = data['group_id']
-            is_group_or_private = "send_group_msg"
-        for key in reply_list:
-            message_json = await build_msg_reply_json(key, qq_id, is_group_or_private)
-            logging.info(f'发送消息{key}')
-            await websocket.send_text(message_json)
-    # 在此拓展type类型发送
-    return None
-
-
 class BotWebSocket:
     def __init__(self, configs_tool):
         """获取配置"""
         self.configs_tool = configs_tool
         self.ws_host = self.configs_tool.get('Ws_Host')
         self.ws_port = self.configs_tool.get('Ws_Port')
+        self.wait_time = self.configs_tool.get('reply_wait_time')
 
         self.process_message_func = None
         self.app = FastAPI()
         self.received_messages_queue = asyncio.Queue()
         self.messages_to_send_queue = asyncio.Queue()
 
+        self.ws = None
+
         @self.app.websocket("/ws/api")
         async def websocket_endpoint(websocket: WebSocket):
 
             await websocket.accept()
+            self.ws = websocket
             asyncio.create_task(self.reply_messages())
-            asyncio.create_task(self.create_messages(websocket))
+            asyncio.create_task(self.create_messages())
             # 这里 不要 await!!
+            # 啊 pyc的警告请忽略
 
             try:
                 async for message in websocket.iter_text():
@@ -80,7 +59,7 @@ class BotWebSocket:
             except:
                 continue
 
-    async def create_messages(self, websocket: WebSocket):
+    async def create_messages(self):
         """从发送队列取出消息发送"""
         while True:
             try:
@@ -88,10 +67,36 @@ class BotWebSocket:
                 data = await self.messages_to_send_queue.get()
                 logging.debug(f'data:{data}')
 
-                await send_message(websocket, data)  # 分类发送消息
+                await self.send_message(data)  # 分类发送消息
                 self.messages_to_send_queue.task_done()
             except:
                 continue
+
+    async def send_message(self, data):
+        if data is None:
+            return None
+        group_id = data.get('group_id', -1)
+        reply_list = data.get('message_list', [])
+        if not reply_list:
+            return None
+        reply_type = data.get('type', 'msg')
+        logging.debug(f'发送列表:{reply_list}')
+        if reply_list is None:
+            return None
+        if reply_type == 'msg':
+            if group_id == -1:
+                qq_id = data['sender_user_id']
+                is_group_or_private = "send_private_msg"
+            else:
+                qq_id = data['group_id']
+                is_group_or_private = "send_group_msg"
+            for key in reply_list:
+                await asyncio.sleep(len(key) * self.wait_time)
+                message_json = await build_msg_reply_json(key, qq_id, is_group_or_private)
+                logging.info(f'发送消息{key}')
+                await self.ws.send_text(message_json)
+        # 在此拓展type类型发送
+        return None
 
     def run(self):
         uvicorn.run(self.app, host=self.ws_host, port=self.ws_port)

@@ -6,7 +6,8 @@ import re
 class configs_tool:
     def __init__(self, level=3):
         self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
-        self.default_configs = json.load(open('.advanced_tool/default_configs.json', 'r', encoding='utf-8'))
+        self.default_configs = json.load(open('./advanced_tool/default_configs.json', 'r', encoding='utf-8'))
+        self.check_configs = json.load(open('./advanced_tool/check_configs.json', 'r', encoding='utf-8'))
         self.level = level
 
     def get(self, key):
@@ -15,10 +16,11 @@ class configs_tool:
 
         if key in self.configs:
             value = self.configs.get(key)
-            if self.level >= 4:
+            if self.level <= 4:
                 if self.check_key(key, value):
                     return value
                 return None
+            return value
         elif key in self.default_configs:
             logging.debug(f"获取默认参数：{key},值为：{self.default_configs.get(key)}")
             return self.default_configs.get(key)
@@ -27,8 +29,17 @@ class configs_tool:
             return None
 
     def check_key(self, key, value):
-        if key not in self.configs:
-            logging.error(f"配置文件缺少键：{key}")
+        if key not in self.check_configs:
+            logging.error(f"无法检查{key}类型，请检查您的配置文件是否正确")
+            return True
+        value_type = self.check_configs.get(key)
+        actual_type = type(value).__name__
+        # logging.debug(f"检查{key}类型，期望类型为{value_type},实际类型为{actual_type}")
+        if value_type == actual_type:
+            return True
+        else:
+            logging.error(f"配置文件参数{key}的值类型为{actual_type},但期望类型为{value_type}")
+            return False
 
 
 async def build_msg_reply_json(reply_message, user_id, action):
@@ -62,3 +73,6 @@ def divide_sentences(text: str) -> list:
     if len(sentences) == 0:
         return [text]
     return sentences
+
+
+
