@@ -21,7 +21,6 @@
         829296181
     ],
     "Group_Reply_Only_to_Trusted": true,
-    "TEST_New_Group_Memory": true,
     "Is_OneBot_Plugin": false,
     "Command_Prefixes": ["/","#"],
     "No_Reply_Prefixes": ["111"],

@@ -28,6 +28,5 @@ muice_app = Muice(chat_model, configs.get('read_memory_from_file'), configs.get(
 
 other_model = None
 
-ws = BotWebSocket(configs)
-ws.initialize_model(chat_model, other_model)
+ws = BotWebSocket(configs, chat_model, other_model)
 ws.run()

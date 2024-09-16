@@ -1,16 +1,17 @@
 import json
 import logging
-from Tools import configs_tool
+import time
+
 from Tools import divide_sentences
 from command import Command
 from process_memory import *
 
 
 class process_message:
-    def __init__(self, model):
+    def __init__(self, model, configs_tool):
         self.model = model
 
-        self.configs_tool = configs_tool()
+        self.configs_tool = configs_tool
 
         self.trust_qq_list = self.configs_tool.get('Trust_QQ_list')
 
@@ -27,11 +28,15 @@ class process_message:
             self.group_message_reply_list = []
             self.group_reply_only_to_trusted = True
 
+        self.auto_create_topic = self.configs_tool.get('AutoCreateTopic')
+        if self.auto_create_topic:
+            self.time_dict = {qq_id: time.time() for qq_id in self.trust_qq_list}
+
         self.model_doc = self.model.doc()
         # self.model_ask_test = self.model.ask()
         self.is_agent = self.model_doc["is_Agent"]
 
-        self.command = Command(model)  # 修改
+        self.command = Command(model, self.configs_tool)  # 修改
 
     async def reply_message(self, data):
         data = json.loads(data)
@@ -192,3 +197,15 @@ class process_message:
         logging.info(f"回复{group_id}消息：{reply}")
         reply_list = divide_sentences(reply)
         return reply_list
+
+    async def auto_create_topic(self):
+        result = []
+        for key, value in self.time_dict.items():
+            topic = self.command.create_a_new_topic(value)
+            if topic is None:
+                continue
+            else:
+                self.time_dict[key] = time.time()
+                msg = self.model.ask(topic, [])
+                result.append({key: msg})
+        return result

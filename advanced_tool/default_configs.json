@@ -8,6 +8,9 @@
     "AutoCreateTopic": false,
     "known_topic_probability": 0.003,
     "time_topic_probability": 0.75,
+    "known_topic": ["（分享一下你的一些想法）", "（创造一个新话题）"],
+    "time_topic": {"07": "（发起一个早晨问候）", "12": "（发起一个中午问候）", "18": "（发起一个傍晚问候）",
+                           "00": "（发起一个临睡问候）"},
 
     "Trust_QQ_list": [],
 

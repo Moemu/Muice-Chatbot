@@ -8,6 +8,8 @@
     "AutoCreateTopic": "bool",
     "known_topic_probability": "float",
     "time_topic_probability": "float",
+    "known_topic": "list",
+    "time_topic": "dict",
 
     "Trust_QQ_list": "list",
 
