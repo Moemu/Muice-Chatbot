@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import time
@@ -37,6 +38,8 @@ class process_message:
         self.is_agent = self.model_doc["is_Agent"]
 
         self.command = Command(model, self.configs_tool)  # 修改
+        self.last_heartbeat_time = 0
+        self.interval = 0
 
     async def reply_message(self, data):
         data = json.loads(data)
@@ -173,17 +176,6 @@ class process_message:
         reply_list = divide_sentences(reply)
         return reply_list
 
-    # 以下内容 没写呢 看啥看 看到了就帮我写!
-    async def handle_meta_event(self, data):
-        # 啊 没写呢 还准备处理心跳的
-        if 'meta_event_type' in data:
-            if data['meta_event_type'] == 'lifecycle':
-                if data['sub_type'] == 'connect':
-                    logging.info("已链接")
-            elif data['meta_event_type'] == 'heartbeat':
-                pass
-        return None
-
     async def produce_group_reply(self, message, group_id, msg_time):
         """ 调用模型 回复消息 """
         if self.is_agent:
@@ -197,6 +189,23 @@ class process_message:
         logging.info(f"回复{group_id}消息：{reply}")
         reply_list = divide_sentences(reply)
         return reply_list
+
+    async def handle_meta_event(self, data):
+        if 'meta_event_type' in data:
+            if data['meta_event_type'] == 'lifecycle':
+                if data['sub_type'] == 'connect':
+                    logging.info("已链接")
+            elif data['meta_event_type'] == 'heartbeat':
+                logging.info("收到心跳")
+                self.last_heartbeat_time = data.get('time')
+                self.interval = data.get('interval')/1000
+                asyncio.create_task(self.handle_heartbeat(self.last_heartbeat_time))
+        return None
+
+    async def handle_heartbeat(self, last_heartbeat_time):
+        await asyncio.sleep(2.1*self.interval)
+        if time.time() - self.last_heartbeat_time < 2*self.interval:
+            logging.warning("心跳超时")
 
     async def auto_create_topic(self):
         result = []

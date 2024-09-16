@@ -115,6 +115,7 @@ if __name__ == '__main__':
     logging.warning("用户请勿直接运行此文件，请使用main.py运行")
     logging.warning("用户请勿直接运行此文件，请使用main.py运行")
     logging.warning("用户请勿直接运行此文件，请使用main.py运行")
-    muice = None
-    ws = BotWebSocket(muice)
+    from Tools import configs_tool
+    configs = configs_tool(5)
+    ws = BotWebSocket(configs,None,None)
     ws.run()
