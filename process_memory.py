@@ -5,7 +5,7 @@ import os
 
 async def get_pr_memory_old(user_id, time):
     try:
-        with open(f'./memory/{user_id}.json', 'r', encoding='utf-8') as f:
+        with open(f'./memory/{user_id}.txt', 'r', encoding='utf-8') as f:
             data = f.readlines()
             logging.debug(f'Muice.py->get_recent_chat_memory->{user_id}')
             return json.loads(data[-2])['history']
@@ -19,10 +19,10 @@ async def get_pr_memory_old(user_id, time):
 
 
 def build_memory_list(file_path):
-    if not os.path.exists(f'./memory/{file_path}.json'):
+    if not os.path.exists(f'./memory/{file_path}.txt'):
         logging.error(f"文件未找到: {file_path}")
         logging.info(f"创建文件: {file_path}")
-        with open(f'./memory/{file_path}.json', 'w', encoding='utf-8') as file:
+        with open(f'./memory/{file_path}.txt', 'w', encoding='utf-8') as file:
             file.write('')
     bot_msg_num = 0
     memory_list = []
@@ -30,7 +30,7 @@ def build_memory_list(file_path):
     last_user_id = '-1'
     reply = ''
     try:
-        with open(f'./memory/{file_path}.json', 'r', encoding='utf-8', ) as file:
+        with open(f'./memory/{file_path}.txt', 'r', encoding='utf-8', ) as file:
             lines = file.readlines()
             # 从最后一行开始遍历到第一行
             for data in reversed(lines):
@@ -62,7 +62,7 @@ def build_memory_list(file_path):
 def save_memory(file_path, data):
     logging.debug(f'保存记忆列表完成{data}')
     try:
-        with open(f'./memory/{file_path}.json', 'a', encoding='utf-8') as file:
+        with open(f'./memory/{file_path}.txt', 'a', encoding='utf-8') as file:
             file.write(data + '\n')
     except Exception as e:
         logging.error(f"发生了一个错误: {e}")
