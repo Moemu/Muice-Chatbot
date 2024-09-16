@@ -107,7 +107,7 @@ class QQBot:
                         if group_id == -1:
                             for reply_item in reply_list:
                                 if self.reply_wait:
-                                    if not is_image_message(reply_item)[0]:
+                                    if not is_image_message(True,reply_item)[0]:
                                         await asyncio.sleep(len(reply_item) * 0.6)
                                 if reply_item is None:
                                     continue
@@ -149,41 +149,28 @@ class QQBot:
                 '''消息处理'''
                 sender_user_id = data.get('sender', {}).get('user_id')
 
-                if self.is_cq_code:
-                    '''对于某些基于 OneBot 协议的插件输出的消息为字符串的情况'''
-                    message = data['message']
-
-                    '''检查是否为图片消息并输出URL'''
-                    if self.enable_ofa_image:
-                        is_image,image_url = is_image_message(message)
-                    else:
-                        is_image = False
-
-                else:
-                    ''' 检查 data['message'] 是否为列表'''
-                    if not isinstance(data['message'], list):
-                        logging.error("消息格式错误: data['message'] 不是列表")
+                is_image,image_url = is_image_message(self.is_cq_code, data)
+                if is_image: 
+                    if not self.enable_ofa_image:
+                        logging.info("收到图片消息，但未开启图片回复功能")
                         return None
-                    
-                    ''' 处理图片消息 '''
-                    image_url = None
-                    is_image = False
-                    for msg in data.get('message', []):
-                        if msg.get('type') == 'image':
-                            image_url = msg['data'].get('url')
-                            is_image = True
-                            message = data['raw_message']
-                            break
-                    
-                    if not is_image:
-                        message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+                else:
+                    if self.is_cq_code:
+                        '''对于CQ码消息处理'''
+                        message = data['message']
                     else:
-                        if not self.enable_ofa_image:
-                            logging.info("收到图片消息，但未开启图片回复功能")
+                        ''' 检查 data['message'] 是否为列表'''
+                        if not isinstance(data['message'], list):
+                            logging.error("消息格式错误: data['message'] 不是列表，疑似CQ码消息")
                             return None
+                        message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+
 
                 if data['message_type'] == 'private':
-                    logging.info(f"收到QQ{sender_user_id}的消息：{message}")
+                    if not is_image:
+                        logging.info(f"收到QQ{sender_user_id}的消息：{message}")
+                    else:
+                        logging.info(f"收到QQ{sender_user_id}的图片消息")
                     if sender_user_id in self.trust_qq_list:
                         if is_image: 
                             message = await self.image_captioning_pipeline.generate_caption(image_url)
@@ -200,35 +187,23 @@ class QQBot:
 
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
-                    logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
-
-                    if self.is_cq_code:
-                        ''' 对消息中的 at 信息进行处理过滤 '''
-                        self.is_at_message,at_matches,message = process_at_message(message)
-                        if at_matches:
-                            if str(self.bot_qq_id) not in at_matches:
-                                logging.info(f"消息中@不是机器人，已过滤")
-                                return None
-                        else:
-                            if self.at_reply:
-                                logging.info(f"消息中未@机器人，已过滤")
-                                return None
+                    if not is_image:
+                        logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
                     else:
-                        at_qq_list = []
-                        for msg in data.get('message', []):
-                            if msg.get('type') == 'at':
-                                at_qq_list.append(msg['data']['qq'])
-                                if msg['data']['qq'] == str(self.bot_qq_id):
-                                    self.is_at_message = True
-                                    break
-                        if at_qq_list and str(self.bot_qq_id) not in at_qq_list:
+                        logging.info(f"收到群{group_id}QQ{sender_user_id}的图片消息")
+                        
+                    ''' 对消息中的 at 信息进行处理过滤 '''
+                    self.is_at_message = False
+                    self.is_at_message,at_matches,message = process_at_message(self.is_cq_code, data)
+                    if at_matches:
+                        if str(self.bot_qq_id) not in at_matches:
                             logging.info(f"消息中@不是机器人，已过滤")
                             return None
-                        if not self.is_at_message:
-                            if self.at_reply:
-                                logging.info(f"消息中未@机器人，已过滤")
-                                return None
-                            
+                    else:
+                        if self.at_reply:
+                            logging.info(f"消息中未@机器人，已过滤")
+                            return None
+       
                     if group_id in self.group_message_reply_list:
                         if self.group_reply_only_to_trusted:
                             if sender_user_id in self.trust_qq_list:
