@@ -104,6 +104,38 @@ pip install -r requirements.txt
 
 如果你没有合适的显卡，需要通过CPU加载模型，请安装配置gcc环境并勾选openmp.
 
+## Faiss 长期记忆（实验性内容）
+
+本项目支持Faiss向量记忆，即将聊天记录保存至Faiss中，以便长期记忆。
+
+若您希望使用Faiss向量记忆，请在配置文件中设置`enable_faiss`为`true`，并设置`sentence_transformer_model_name_or_path`为sentence-transformers模型的路径。
+
+faiss记忆用到的sentence-transformers模型需要额外下载（理论所有sentence-transformers模型都可以）：
+
+| 推荐sentence-transformers模型                                                      |
+| ------------------------------------------------------------ |
+| [distiluse-base-multilingual-cased-v1](https://hf-mirror.com/sentence-transformers/distiluse-base-multilingual-cased-v1)|
+
+Faiss向量库位于`memory`文件夹中，一共三个文件：`faiss_index.faiss`、`faiss_index.faiss.docstore`、`faiss_index.faiss.mapping`，三者一一对应，改动前请注意备份。
+
+### 导入csv记忆
+
+下载csv记忆文件，确保其内部格式(**utf-8**)为：
+
+```csv
+topic1\tcontent1
+topic2\tontent2
+...
+```
+
+将文件放入根目录，运行导入程序：
+
+```powershell
+python import_csv_memory.py
+```
+
+输入文件名（**包括.csv后缀**），程序将自动导入Faiss向量库中。
+
 ## OFA图像识别（识别/发送表情包）
 
 本项目支持OFA图像识别，即对聊天图片进行特征提取，并通过OFA模型进行描述生成。发送信息时，会检索本地图片库，若存在匹配的图片，则会发送图片。

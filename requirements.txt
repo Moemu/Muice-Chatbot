@@ -6,3 +6,8 @@ uvicorn
 apscheduler
 sentencepiece
 websockets
+faiss-cpu
+sentence_transformers
+langchain
+langchain_community
+alive-progress

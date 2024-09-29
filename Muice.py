@@ -10,13 +10,14 @@ class Muice:
     Muice交互类
     """
 
-    def __init__(self, model, read_memory_from_file: bool = True, known_topic_probability: float = 0.003,
+    def __init__(self, model, memory, read_memory_from_file: bool = True, known_topic_probability: float = 0.003,
                  time_topic_probability: float = 0.75):
         self.reply = None
         self.user_text = None
         self.history = None
         self.user_id = None
         self.model = model
+        self.memory = memory
         self.read_memory_from_file = read_memory_from_file
         self.known_topic_probability = known_topic_probability
         self.time_topic_probability = time_topic_probability
@@ -32,14 +33,24 @@ class Muice:
         else:
             self.user_id = "group_" + str(group_id)
 
+        history = []
+        self.user_text = text
+        if self.memory is not None:
+            variables = self.memory.search_memory({"input": self.user_text})
+            if variables is not None:
+                faiss_inputs = variables.get('input', [])
+                if faiss_inputs is not None:
+                    faiss_outputs = variables.get('output', [])
+                    history = list(zip(faiss_inputs, faiss_outputs))
+
         if self.read_memory_from_file:
             self.history = self.get_recent_chat_memory()
+            history.extend(self.history)
         else:
             self.history = []
 
-        self.user_text = text
         start_time = time.time()
-        self.reply = self.model.ask(self.user_text, self.history)
+        self.reply = self.model.ask(self.user_text, history)
         end_time = time.time()
         logging.info(f'模型调用时长: {end_time - start_time} s')
         return self.reply
@@ -117,6 +128,8 @@ class Muice:
             logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
             f.write('\n')
+        if self.memory is not None:
+            self.memory.insert_memory({"input": self.user_text}, {"output": reply})
 
     def remove_last_chat_memory(self):
         """

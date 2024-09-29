@@ -1,6 +1,7 @@
 import importlib
 import json
 import logging
+import sys
 
 from Muice import Muice
 from ws import QQBot
@@ -17,8 +18,25 @@ model_name_or_path = configs["model_name_or_path"]
 adapter_name_or_path = configs["adapter_name_or_path"]
 
 # 模型加载
-model = importlib.import_module(f"llm.{model_loader}")
-model = model.llm(model_name_or_path, adapter_name_or_path)
+model_adapter = importlib.import_module(f"llm.{model_loader}")
+model = model_adapter.llm(model_name_or_path, adapter_name_or_path)
+
+# Faiss配置
+enable_faiss = configs["enable_faiss"]
+if enable_faiss:
+    from llm.faiss_memory import FAISSMemory
+    import signal
+    memory = FAISSMemory(model_path=configs["sentence_transformer_model_name_or_path"],db_path="./memory/faiss_index.faiss",top_k=2)
+    def handle_interrupt(faiss_memory: FAISSMemory):
+        """处理中断信号"""
+        logging.info("接收到中断信号，正在保存数据...")
+        faiss_memory.save_all_data()
+        sys.exit(0)
+    signal.signal(signal.SIGINT, lambda sig, frame: handle_interrupt(memory))
+else:
+    memory = None
+
+
 
 # OFA图像模型
 enable_ofa_image = configs["enable_ofa_image"]
@@ -28,7 +46,7 @@ if enable_ofa_image:
     ImageCaptioningPipeline.load_model(ofa_image_model_name_or_path)
 
 # QQBot
-muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'],
+muice_app = Muice(model,memory,configs['read_memory_from_file'], configs['known_topic_probability'],
                   configs['time_topic_probability'])
 qqbot_app = QQBot(muice_app)
 qqbot_app.run()
