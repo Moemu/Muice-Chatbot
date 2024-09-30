@@ -1,6 +1,8 @@
 import os
 import shutil
 
+import threading
+from utils.auto_prompt import AutoPrompt
 
 class Command:
     """
@@ -47,6 +49,7 @@ class Command:
         }
         for command, function in default_commands.items():
             self.register_command(command, function)
+        threading.Thread(target=self.command_thread, args=(default_commands,)).start()
 
     def default_help(self):
         help_text = ("/clean 清空本轮对话历史 \n "
@@ -79,3 +82,13 @@ class Command:
         self.Muice.remove_last_chat_memory()
         self.Muice.history = self.Muice.get_recent_chat_memory()
         return "undoed"
+
+    def command_thread(self, commands):
+        AutoPrompt.load_commands(commands)
+        try:
+            while True:
+                im_text = AutoPrompt.prompt()
+                response = self.run(im_text)
+                print(response)
+        except KeyboardInterrupt:
+            pass

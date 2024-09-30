@@ -11,3 +11,4 @@ sentence_transformers
 langchain
 langchain_community
 alive-progress
+prompt_toolkit

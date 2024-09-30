@@ -22,7 +22,7 @@ model_adapter = importlib.import_module(f"llm.{model_loader}")
 model = model_adapter.llm(model_name_or_path, adapter_name_or_path)
 
 # Faiss配置
-enable_faiss = configs["enable_faiss"]
+enable_faiss = configs.get('enable_faiss', False)
 if enable_faiss:
     from llm.faiss_memory import FAISSMemory
     import signal
