@@ -13,7 +13,7 @@ from utils.Tools import process_at_message
 from utils.Tools import is_reply_message
 from utils.Tools import is_image_message
 from utils.Tools import voice_message_reply
-from command import Command
+from utils.command import Command
 
 
 async def build_reply_json(reply_message, sender_user_id):
@@ -171,19 +171,24 @@ class QQBot:
                         logging.info(f"收到QQ{sender_user_id}的消息：{message}")
                     else:
                         logging.info(f"收到QQ{sender_user_id}的图片消息")
-                    if sender_user_id in self.trust_qq_list:
-                        if is_image: 
-                            message = await self.image_captioning_pipeline.generate_caption(image_url)
-                            await self.image_db.insert_data(message, image_url)
-                            message = f"(收到图片描述：{message})"
-                        reply_message_list = await self.produce_reply(message, sender_user_id)
-                        if reply_message_list:
-                            logging.debug(f"回复list{reply_message_list}")
-                            if reply_message_list is None:
-                                return None
-                            return reply_message_list, sender_user_id, -1
-                        else:
+
+                    if sender_user_id not in self.trust_qq_list:
+                        return None
+                    
+                    if is_image: 
+                        message = await self.image_captioning_pipeline.generate_caption(image_url)
+                        await self.image_db.insert_data(message, image_url)
+                        message = f"(收到图片描述：{message})"
+                    
+                    reply_message_list = await self.produce_reply(message, sender_user_id)
+                    if reply_message_list:
+                        logging.debug(f"回复list{reply_message_list}")
+                        if reply_message_list is None:
                             return None
+                        return reply_message_list, sender_user_id, -1
+                    else:
+                        return None
+
 
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
@@ -204,34 +209,27 @@ class QQBot:
                             logging.info(f"消息中未@机器人，已过滤")
                             return None
        
-                    if group_id in self.group_message_reply_list:
-                        if self.group_reply_only_to_trusted:
-                            if sender_user_id in self.trust_qq_list:
-                                if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                                if is_image: 
-                                    message = await self.image_captioning_pipeline.generate_caption(image_url)
-                                    await self.image_db.insert_data(message, image_url)
-                                    message = f"(收到图片描述：{message})"
-                                reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
-                                logging.debug(f"回复list{reply_message_list}")
-                                if reply_message_list is None:
-                                    return None
-                                return reply_message_list, sender_user_id, group_id
-                            else:
-                                return None
-                        else:
-                            if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): logging.info(f"未达到消息回复率{self.reply_rate}%，不回复") ; return None
-                            if is_image: 
-                                message = await self.image_captioning_pipeline.generate_caption(image_url)
-                                await self.image_db.insert_data(message, image_url)
-                                message = f"(收到图片描述：{message})"
-                            reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
-                            logging.debug(f"回复list{reply_message_list}")
-                            if reply_message_list is None:
-                                return None
-                            return reply_message_list, sender_user_id, group_id
-                    else:
+                    if group_id not in self.group_message_reply_list:
                         return None
+                    
+                    if self.group_reply_only_to_trusted:
+                        if sender_user_id not in self.trust_qq_list:
+                            return None
+                        
+                    if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): 
+                        logging.info(f"未达到消息回复率{self.reply_rate}%，不回复")
+                        return None
+                    
+                    if is_image: 
+                        message = await self.image_captioning_pipeline.generate_caption(image_url)
+                        await self.image_db.insert_data(message, image_url)
+                        message = f"(收到图片描述：{message})"
+
+                    reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
+                    logging.debug(f"回复list{reply_message_list}")
+                    if reply_message_list is None:
+                        return None
+                    return reply_message_list, sender_user_id, group_id
                 else:
                     return None
             else:
@@ -250,6 +248,7 @@ class QQBot:
             await self.store_time(sender_user_id)
         if not str(mess).strip():
             return [] #None会导致reply_list为空，导致TypeError: 'NoneType' object is not iterable
+        
         '''检测是否匹配前缀'''
         for prefix in self.nonreply_prefix:
             if str(mess).startswith(prefix):
@@ -258,30 +257,30 @@ class QQBot:
             reply = self.command.run(mess)
             reply_list = divide_sentences(reply)
             return reply_list
-        else:
-            reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
-            logging.info(f"回复消息：{reply}")
-            if self.enable_ofa_image:
-                similar_image = await self.image_db.find_similar_content(reply)
-                if similar_image is not None and similar_image[1] is not None:
-                    if similar_image[1] > 0.6:
-                        logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
-                        try:
-                            url = similar_image[0].replace('&', '&amp;')
-                        except:
-                            pass
-                        reply_list = [f"[CQ:image,url={url}]"]
-                        return reply_list
-            reply_list = divide_sentences(reply)
-            self.muice_app.finish_ask(reply_list)
-            if voice_message_reply(self.voice_reply_rate):
-                logging.info(f"尝试回复语音消息")
-                try:
-                    voice_file = await fish_speech_api(reply)
-                    reply_list = [f'[CQ:record,file=file:///{voice_file}]']
-                except Exception as e:
-                    logging.error(f"回复语音消息失败: {e}")
-            return reply_list
+
+        reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
+        logging.info(f"回复消息：{reply}")
+        if self.enable_ofa_image:
+            similar_image = await self.image_db.find_similar_content(reply)
+            if similar_image is not None and similar_image[1] is not None:
+                if similar_image[1] > 0.6:
+                    logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                    try:
+                        url = similar_image[0].replace('&', '&amp;')
+                    except:
+                        pass
+                    reply_list = [f"[CQ:image,url={url}]"]
+                    return reply_list
+        reply_list = divide_sentences(reply)
+        self.muice_app.finish_ask(reply_list)
+        if voice_message_reply(self.voice_reply_rate):
+            logging.info(f"尝试回复语音消息")
+            try:
+                voice_file = await fish_speech_api(reply)
+                reply_list = [f'[CQ:record,file=file:///{voice_file}]']
+            except Exception as e:
+                logging.error(f"回复语音消息失败: {e}")
+        return reply_list
 
     async def produce_group_reply(self, mess, sender_user_id, group_id) -> list | None:
         """ 回复消息群聊 """
@@ -290,6 +289,7 @@ class QQBot:
                 mess="在吗"#待定，中文语境中单at含义与在吗相似
             else:
                 return []
+            
         '''检测是否匹配前缀'''
         for prefix in self.nonreply_prefix:
             if str(mess).startswith(prefix):
@@ -298,30 +298,30 @@ class QQBot:
             reply = self.command.run(mess)
             reply_list = divide_sentences(reply)
             return reply_list
-        else:
-            reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
-            logging.info(f"回复消息：{reply}")
-            if self.enable_ofa_image:
-                similar_image = await self.image_db.find_similar_content(reply)
-                if similar_image is not None and similar_image[1] is not None:
-                    if similar_image[1] > 0.6:
-                        logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
-                        try:
-                            url = similar_image[0].replace('&', '&amp;')
-                        except:
-                            pass
-                        reply_list = [f"[CQ:image,url={url}]"]
-                        return reply_list
-            reply_list = divide_sentences(reply)
-            self.muice_app.finish_ask(reply_list)
-            if voice_message_reply(self.voice_reply_rate):
-                logging.info(f"尝试回复语音消息")
-                try:
-                    voice_file = await fish_speech_api(reply)
-                    reply_list = [f'[CQ:record,file=file:///{voice_file}]']
-                except Exception as e:
-                    logging.error(f"回复语音消息失败: {e}")
-            return reply_list
+
+        reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
+        logging.info(f"回复消息：{reply}")
+        if self.enable_ofa_image:
+            similar_image = await self.image_db.find_similar_content(reply)
+            if similar_image is not None and similar_image[1] is not None:
+                if similar_image[1] > 0.6:
+                    logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                    try:
+                        url = similar_image[0].replace('&', '&amp;')
+                    except:
+                        pass
+                    reply_list = [f"[CQ:image,url={url}]"]
+                    return reply_list
+        reply_list = divide_sentences(reply)
+        self.muice_app.finish_ask(reply_list)
+        if voice_message_reply(self.voice_reply_rate):
+            logging.info(f"尝试回复语音消息")
+            try:
+                voice_file = await fish_speech_api(reply)
+                reply_list = [f'[CQ:record,file=file:///{voice_file}]']
+            except Exception as e:
+                logging.error(f"回复语音消息失败: {e}")
+        return reply_list
 
     async def store_time(self, user_id):
         """ 存储time_dict """
