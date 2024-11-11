@@ -297,7 +297,9 @@ Muice-Chatbot     <- 主路径
     "Reply_Rate": 50,
     "At_Reply": false,
     "NonReply_Prefix": [],
-    "Voice_Reply_Rate": 0
+    "Voice_Reply_Rate": 0,
+    "Group_Cmd_For_Trusted_Users_Only": true,
+    "Group_Ignore_Cmd_Not_Found": true
 }
 ```
 
@@ -338,6 +340,10 @@ Muice-Chatbot     <- 主路径
 `NonReply_Prefix`: 消息前缀，机器人不会回复以这些前缀开头的消息。
 
 `Voice_Reply_Rate`: 语音回复的概率，取值范围为 0-100。
+
+`Group_Cmd_For_Trusted_Users_Only`: （群聊）只允许信任的人在群里使用命令
+
+`Group_Ignore_Cmd_Not_Found`: （群聊）当找不到命令时,是否**不**在群里发送: "没有当前命令"
 
 # 使用🎉
 

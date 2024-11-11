@@ -45,7 +45,17 @@ def process_at_message(is_cq_code: bool, data) -> tuple[bool, list, str]:
         if at_qq_list and len(at_qq_list) > 0:
             return True, at_qq_list, message
         return False, at_qq_list, message
-    
+
+def is_command(message_raw: str) -> bool:
+    """
+    判断是否是命令。
+    Args:
+    - message_raw (str): 原始消息。
+    Returns:
+    - bool: 是否是命令。
+    """
+    return message_raw.strip().startswith('/')
+
 def is_reply_message(at_reply: bool, reply_rate: int, is_at_message: bool) -> bool:
     """
     判断是否是回复消息。

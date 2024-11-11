@@ -32,5 +32,7 @@
     "NonReply_Prefix": [
         "#"
     ],
-    "Voice_Reply_Rate": 0
+    "Voice_Reply_Rate": 0,
+    "Group_Cmd_For_Trusted_Users_Only": true,
+    "Group_Ignore_Cmd_Not_Found": true
 }

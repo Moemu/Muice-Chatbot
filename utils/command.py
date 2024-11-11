@@ -69,12 +69,13 @@ class Command:
         return "cleaned"
 
     def reset(self) -> str:
-        if os.path.isfile(f'./memory/{self.Muice.user_qq}_backup.json'):
-            os.remove(f'./memory/{self.Muice.user_qq}_backup.json')
-        if not os.path.isfile(f'./memory/{self.Muice.user_qq}.json'):
+        memory_file = self.Muice.user_id
+        if os.path.isfile(f'./memory/{memory_file}_backup.json'):
+            os.remove(f'./memory/{memory_file}_backup.json')
+        if not os.path.isfile(f'./memory/{memory_file}.json'):
             return "你说得对，但是本雪和你没有说过一句话噢"
-        shutil.copy(f'./memory/{self.Muice.user_qq}.json', f'./memory/{self.Muice.user_qq}_backup.json')
-        os.remove(f'./memory/{self.Muice.user_qq}.json')
+        shutil.copy(f'./memory/{memory_file}.json', f'./memory/{memory_file}_backup.json')
+        os.remove(f'./memory/{memory_file}.json')
         self.Muice.history = []
         return "reseted"
 
