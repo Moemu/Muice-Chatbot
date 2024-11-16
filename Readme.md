@@ -109,137 +109,6 @@ pip install -r requirements.txt
 
 如果你没有合适的显卡，需要通过 CPU 加载模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`.
 
-## Faiss 长期记忆（实验性内容）
-
-本项目支持 Faiss 向量记忆，即将聊天记录保存至 Faiss 中，以便长期记忆。
-
-若您希望使用 Faiss 向量记忆，请在配置文件中设置 `enable_faiss` 为 `true`，并设置 `sentence_transformer_model_name_or_path` 为 `sentence-transformers` 模型的路径。
-
-Faiss 记忆用到的 `sentence-transformers` 模型需要额外下载（理论上所有 `sentence-transformers` 模型都可以）：
-
-| 推荐 `sentence-transformers` 模型                                                      |
-| ------------------------------------------------------------ |
-| [distiluse-base-multilingual-cased-v1](https://hf-mirror.com/sentence-transformers/distiluse-base-multilingual-cased-v1)|
-
-Faiss 向量库位于 `memory` 文件夹中，一共三个文件：`faiss_index.faiss`、`faiss_index.faiss.docstore`、`faiss_index.faiss.mapping`，三者一一对应，改动前请注意备份。
-
-### 导入 CSV 记忆
-
-下载 CSV 记忆文件，确保其内部格式（**UTF-8**）为：
-
-```csv
-topic1\tcontent1
-topic2\tontent2
-...
-```
-
-将文件放入根目录，运行导入程序：
-
-```powershell
-python import_csv_memory.py
-```
-
-输入文件名（**包括 `.csv` 后缀**），程序将自动导入 Faiss 向量库中。
-
-## OFA 图像识别（识别 / 发送表情包）
-
-本项目支持 OFA 图像识别，即对聊天图片进行特征提取，并通过 OFA 模型进行描述生成。发送信息时，会检索本地图片库，若存在匹配的图片，则会发送图片。
-
-若您希望使用OFA图像识别，请在配置文件中设置 `enable_ofa_image` 为 `true`，并设置 `ofa_image_model_name_or_path` 为 OFA 图像识别模型的路径。
-
-OFA 使用到的依赖需要额外安装：
-
-```powershell
-conda activate Muice
-pip install -r ofa_requirements.txt
-```
-
-目前支持的 OFA 模型如下表：
-
-| OFA 模型                                                      |
-| ------------------------------------------------------------ |
-| [OFA-Image-Caption-Meme-Large-ZH](https://www.modelscope.cn/models/iic/ofa_image-caption_meme_large_zh) （建议） |
-| [ofa_image-caption_muge_base_zh](https://www.modelscope.cn/models/iic/ofa_image-caption_muge_base_zh) |
-
-本地图片数据库位于 `image_data` 文件夹中，程序会每五分钟备份一次数据库，默认保留5个备份槽位。
-
-若您想要回退数据库到某个时间点，请将 `image_data` 文件夹中的 `image_data.db` 删除，并将备份槽位文件 `image_data.db.backup_xxx_xxx` 修改为 `image_data.db`。
-
-## 语音回复
-
-若您希望使用语音回复，请在配置文件中设置 `Voice_Reply_Rate` 为大于 0 的整数，机器人将会以设置的概率回复语音消息。
-
-语音回复使用到的项目：[fishaudio/fish-speech](https://github.com/fishaudio/fish-speech)
-
-在 fish-speech 的 WebUI 启动（使用 `--infer` 参数）后，更改 `fish_speech_api.py` 中的 `Client`、`reference_audio`、`reference_text` 即可。
-
-- `Client` 为 fish-speech 的 WebUI 地址
-
-- `reference_audio` 为参考音频文件路径，此音频用于变声效果。
-
-- `reference_text` 为参考音频文件的参考文本。
-
-## 启动实时语音聊天
-
-1.安装依赖：
-
-```powershell
-conda activate Muice
-pip install -r audio_requirements.txt
-```
-
-2.安装配置语音回复（详见上文）
-
-3.获取语音识别模型
-
-目前支持的模型如下表：
-
-| 语音识别模型                                                                                                                  |
-|---------------------------------------------------------------------------------------------------------------------------------|
-| [SenseVoice 多语言语音理解模型 Small](https://www.modelscope.cn/models/iic/SenseVoiceSmall) |
-
-你可以通过以下命令下载并解压模型：
-
-```powershell
-modelscope download --model iic/SenseVoiceSmall --local_path ./SenseVoice
-```
-
-下载完成后，在配置文件中设置 `audio_name_or_path` 为模型文件夹的路径。
-
-4.配置信息和设备
-
-你可以通过以下命令查看输入输出设备信息：
-
-```powershell
-python realtime_refence.py --get_device
-```
-在 `realtime_refence.py` 中配置输入输出设备信息：
-
-```python
-
-CHUNK = 1024  # 每次读取的音频块大小
-FORMAT = pyaudio.paFloat32  # 音频格式
-CHANNELS = 1  # 输入设备声道
-RATE = 22050  # 采样率（16000/22050/44100）
-THRESHOLD = 75  # 声音响度阈值（60-150左右，请根据实际情况调节）
-SILENCE_THRESHOLD_MS = 1500  # 静音持续时间阈值（毫秒）
-SILENCE_COUNT = int(SILENCE_THRESHOLD_MS / (1000 * CHUNK / RATE))  # 静音计数器阈值
-use_virtual_device = False  # 是否使用虚拟设备（当你需要通过语音通话时，请设置为True）
-if use_virtual_device:
-    speaker_device_index = 3  # 输入设备索引
-    mic_device_index = 10  # 输出设备索引
-    device_index = speaker_device_index
-else:
-    device_index = 1  # 录音设备索引
-
-```
-
-4.启动实时语音聊天
-
-```powershell
-python realtime_refence.py
-```
-
 ## Bot 服务配置
 
 现以提供 OneBot 服务支持, 无需担心 gocq 的风控(喜)
@@ -251,6 +120,13 @@ python realtime_refence.py
 您也可以使用 [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core) 以及 [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock) 等来链接QQ, 或其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
 
 **能使用请勿随意更新 QQNT, 若无法使用请尝试降级 QQNT**
+
+## 其他功能
+
+- [语音回复](docs/other_func.md#语音回复)
+- [图像识别（识别 / 发送表情包）](docs/other_func.md##ofa-图像识别识别--发送表情包)
+- [Faiss 长期记忆](docs/other_func.md#faiss-长期记忆实验性内容)
+- [实时语音聊天](docs/other_func.md#启动实时语音聊天)
 
 ## 总结
 
@@ -272,81 +148,26 @@ Muice-Chatbot     <- 主路径
  └─...
 ```
 
-
 # 配置⚒️
 
-本项目配置文件为 `configs.json`，目前支持配置的项如下：
+配置文件位于 `config.json`，请根据你的需求进行修改（具体参考[配置说明](docs/config.md)）。
 
-```json
-{
-    "model_loader": "transformers",
-    "model_name_or_path": "./model/chatglm2-6b",
-    "adapter_name_or_path": "./model/Muice",
-    "enable_ofa_image": false,
-    "ofa_image_model_name_or_path": "",
-    "Trust_QQ_list": [],
-    "AutoCreateTopic": false,
-    "read_memory_from_file": true,
-    "known_topic_probability": 0.003,
-    "time_topic_probability": 0.75,
-    "port":21050,
-    "Reply_Wait": true,
-    "bot_qq_id":123456789,
-    "Is_CQ_Code": false,
-    "Group_Message_Reply_Only_To_Trusted": true,
-    "Reply_Rate": 50,
-    "At_Reply": false,
-    "NonReply_Prefix": [],
-    "Voice_Reply_Rate": 0
-}
+你也可以使用`configuration_gui.py`图形化界面配置文件。
+
+```powershell
+python configuration_gui.py
 ```
-
-`model_loader`: 指定模型加载器的类型，当前支持 `api/transformers/llmtuner/rwkv-api`。
-
-`model_name_or_path`: 指定基底模型的名称或路径，例如 `./model/chatglm2-6b`。
-
-`adapter_name_or_path`: 指定预训练模型的名称或路径， 例如 `./model/Muice`。
-
-`enable_ofa_image`: 是否使用 OFA 图像识别。
-
-`ofa_image_model_name_or_path`: OFA 图像识别模型的名称或路径。
-
-`Trust_QQ_list`: 信任 QQ 号列表，只有在此列表中的 QQ 号发送的消息，机器人才会回复。
-
-`AutoCreateTopic`: 是否自动发起新对话。如果启用，将默认以 Trust_QQ_list 中的第一个 QQ 号作为对话发起对象。
-
-`read_memory_from_file`: 是否从文件中读取记忆。这对于项目重启后恢复之前的对话状态非常有用。
-
-`known_topic_probability`: 随机发起已知话题的概率。
-
-`time_topic_probability`: 根据时间（早、中、傍、晚）触发日常问候的概率。
-
-`port`: 反向WebSocket服务的端口号，默认 `21050`。
-
-`Reply_Wait`: （私聊）是否回复时等待一段时间。
-
-`bot_qq_id`: 机器人的 QQ 号。
-
-`Is_CQ_Code`: 是否启用 CQ 码处理信息。
-
-`Group_Message_Reply_Only_To_Trusted`: （群聊）是否仅对信任的 QQ 回复。
-
-`Reply_Rate`: （群聊）机器人回复的概率，取值范围为 0-100。
-
-`At_Reply`: （群聊）是否只回复 @ 机器人的消息。
-
-`NonReply_Prefix`: 消息前缀，机器人不会回复以这些前缀开头的消息。
-
-`Voice_Reply_Rate`: 语音回复的概率，取值范围为 0-100。
 
 # 使用🎉
 
-在本项目根目录下运行 `main.py` 
+在本项目根目录下运行 `main.py`
 
 ```powershell
 conda activate Muice
 python main.py
 ```
+
+或是运行自动安装脚本生成的启动脚本`start.bat`
 
 # 命令🕹️
 
@@ -379,6 +200,8 @@ python main.py
 代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)
 
 训练集编写与模型微调：[Moemu](https://github.com/Moemu) （RWKV 微调：[Seikaijyu](https://github.com/Seikaijyu)）
+
+> 友情连接：[Coral 框架](https://github.com/ProjectCoral/Coral)
 
 总代码贡献：
 
