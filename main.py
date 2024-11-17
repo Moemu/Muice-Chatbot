@@ -2,6 +2,7 @@ import importlib
 import json
 import logging
 import sys
+import os
 
 from Muice import Muice
 from ws import QQBot
@@ -9,6 +10,14 @@ from ws import QQBot
 logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
+
+if not os.path.exists('configs.json'):
+    logger.warning("未找到配置configs.json文件，尝试配置")
+    try:
+        os.system("python configuration_gui.py")
+    except:
+        logger.error("配置失败，请手动配置configs.json文件")
+        os._exit(1)
 
 configs = json.load(open('configs.json', 'r', encoding='utf-8'))
 
