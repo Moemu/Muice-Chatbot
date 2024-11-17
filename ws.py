@@ -8,6 +8,7 @@ from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
 
 from utils.fish_speech_api import fish_speech_api
+from utils.Tools import is_command
 from utils.Tools import divide_sentences
 from utils.Tools import process_at_message
 from utils.Tools import is_reply_message
@@ -78,9 +79,15 @@ class QQBot:
             self.group_message_reply_list = self.configs.get('Trust_QQ_Group_list', [])
             self.group_reply_only_to_trusted = self.configs.get('Group_Message_Reply_Only_To_Trusted', True)
             self.TEST_New_Group_Memory = self.configs.get('TEST_New_Group_Memory', False)
-            logging.debug(f"group_message_reply_list = {self.group_message_reply_list}"
-                          f"group_reply_only_to_trusted = {self.group_reply_only_to_trusted}"
-                          f"TEST_New_Group_Memory = {self.TEST_New_Group_Memory}")
+            self.group_cmd_for_trusted_users_only = self.configs.get('Group_Cmd_For_Trusted_Users_Only', True)
+            self.group_ignore_cmd_not_found = self.configs.get('Group_Ignore_Cmd_Not_Found', True)
+            logging.debug(
+                f"group_message_reply_list = {self.group_message_reply_list}"
+                f"group_reply_only_to_trusted = {self.group_reply_only_to_trusted}"
+                f"TEST_New_Group_Memory = {self.TEST_New_Group_Memory}"
+                f"Group_Cmd_For_Trusted_Users_Only = {self.group_cmd_for_trusted_users_only}"
+                f"Group_Ignore_Cmd_Not_Found = {self.group_ignore_cmd_not_found}"
+            )
 
         # 定义公共变量
         self.is_at_message = False
@@ -216,7 +223,18 @@ class QQBot:
                         if sender_user_id not in self.trust_qq_list:
                             return None
                         
-                    if not is_reply_message(self.at_reply,self.reply_rate,self.is_at_message): 
+                    if is_command(message):
+                        # 此条消息为命令,需要判断执行者是否有权限执行
+                        if self.group_cmd_for_trusted_users_only:
+                            if sender_user_id not in self.trust_qq_list:
+                                logging.info(
+                                    f"执行命令者{sender_user_id}未在白名单中，已过滤"
+                                )
+                                return None
+                        logging.info(f"执行命令：{message}")
+                    elif not is_reply_message(
+                        self.at_reply, self.reply_rate, self.is_at_message
+                    ):
                         logging.info(f"未达到消息回复率{self.reply_rate}%，不回复")
                         return None
                     
@@ -225,7 +243,10 @@ class QQBot:
                         await self.image_db.insert_data(message, image_url)
                         message = f"(收到图片描述：{message})"
 
-                    reply_message_list = await self.produce_group_reply(message, sender_user_id, group_id)
+                    reply_message_list = await self.produce_group_reply(str(message), sender_user_id, group_id)
+                    if is_command(message) and '没有当前命令' in reply_message_list and self.group_ignore_cmd_not_found:
+                        logging.info("找不到命令")
+                        return None
                     logging.debug(f"回复list{reply_message_list}")
                     if reply_message_list is None:
                         return None
@@ -284,6 +305,8 @@ class QQBot:
 
     async def produce_group_reply(self, mess, sender_user_id, group_id) -> list | None:
         """ 回复消息群聊 """
+        # msg_raw用来判断是否为命令
+        msg_raw = str(mess.strip())
         if not str(mess).strip():
             if self.is_at_message:
                 mess="在吗"#待定，中文语境中单at含义与在吗相似
@@ -294,8 +317,10 @@ class QQBot:
         for prefix in self.nonreply_prefix:
             if str(mess).startswith(prefix):
                 return []
-        if str(mess).startswith('/'):
-            reply = self.command.run(mess)
+        if str(msg_raw).startswith("/"):
+            # 此处在ask之前,需要手动设置user_id(实际为记忆路径)用于/reset
+            self.muice_app.user_id = f"group_{group_id}"
+            reply = self.command.run(msg_raw)
             reply_list = divide_sentences(reply)
             return reply_list
 

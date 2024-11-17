@@ -162,6 +162,20 @@ config_infomation = [
         "description": "机器人回复语音的概率。(设置为0则不回复语音)",
         "recommend": "50",
         "range": (0, 100)
+    },
+    {
+        "key": "Group_Ignore_Cmd_Not_Found",
+        "name": "群消息忽略命令未找到错误",
+        "type": "bool",
+        "description": "是否忽略用户在群内使用/找不到命令的提示。",
+        "recommend": "True"
+    },
+    {
+        "key": "Group_Cmd_For_Trusted_Users_Only",
+        "name": "仅允许可信用户在群使用命令",
+        "type": "bool",
+        "description": "若开启，机器人不会理会可信列表之外的人使用命令。",
+        "recommend": "True"
     }
 ]
 
@@ -187,7 +201,8 @@ Reply_Rate = 50
 At_Reply = False
 NonReply_Prefix = ["#"]
 Voice_Reply_Rate = 50
-
+Group_Cmd_For_Trusted_Users_Only = True
+Group_Ignore_Cmd_Not_Found = True
 
 def str_messagebox(index):
     """
