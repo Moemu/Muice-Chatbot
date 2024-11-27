@@ -35,6 +35,9 @@
 
 ⬜ 建立常见 Q&A 指南
 
+⬜ 提供多语言文档
+
+
 # 快速开始💻
 
 建议环境：
@@ -61,9 +64,15 @@
 ```powershell
 git clone https://github.com/Moemu/Muice-Chatbot
 cd Muice-Chatbot
-conda create --name Muice python=3.10.10
+conda create --name Muice python=3.10.10 -y
 conda activate Muice
-pip install -r requirements.txt
+pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+```
+
+对于 GPU 用户，请额外执行
+
+```powershell
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
 
 ## 模型下载和加载
@@ -107,7 +116,7 @@ pip install -r requirements.txt
 
 （若是 API / rwkv-api 加载，`model_name_or_path` 填写对应的 API 地址）
 
-如果你没有合适的显卡，需要通过 CPU 加载模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`.
+如果你没有合适的显卡，需要通过 CPU 加载模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
 
 ## Bot 服务配置
 
@@ -197,9 +206,11 @@ python main.py
 
 # 关于🎗️
 
-代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)
+代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)、[zkhssb](https://github.com/zkhssb)
 
 训练集编写与模型微调：[Moemu](https://github.com/Moemu) （RWKV 微调：[Seikaijyu](https://github.com/Seikaijyu)）
+
+帮助文档编写：[TurboHK](https://github.com/TurboHK)、[叶子](https://github.com/FHU-yezi)
 
 > 友情连接：[Coral 框架](https://github.com/ProjectCoral/Coral)
 
@@ -208,6 +219,12 @@ python main.py
 <a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
   <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="图片加载中..."/>
 </a>
+
+如果此项目对你有帮助，您可以考虑赞助。按照沐雪赞助使用方法，所有收入将抽取20%用于慈善事业（提供证书）。
+
+<a href="https://www.buymeacoffee.com/Moemu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 163px !important;" ></a>
+
+感谢你们所有人的支持！无论你是否赞助和贡献代码！
 
 Star History：
 
