@@ -32,7 +32,7 @@ class Command:
         return self.no_command()
 
     def no_command(self) -> str:
-        return "没有当前命令"
+        return "没有这样的命令呢"
 
     # 用于后期其他功能扩展
 
@@ -66,23 +66,23 @@ class Command:
 
     def clean(self) -> str:
         self.Muice.history = []
-        return "cleaned"
+        return "已成功重置对话上下文~"
 
     def reset(self) -> str:
         memory_file = self.Muice.user_id
         if os.path.isfile(f'./memory/{memory_file}_backup.json'):
             os.remove(f'./memory/{memory_file}_backup.json')
         if not os.path.isfile(f'./memory/{memory_file}.json'):
-            return "你说得对，但是本雪和你没有说过一句话噢"
+            return "指令执行失败：我没有和你说过一句话哦"
         shutil.copy(f'./memory/{memory_file}.json', f'./memory/{memory_file}_backup.json')
         os.remove(f'./memory/{memory_file}.json')
         self.Muice.history = []
-        return "reseted"
+        return "已成功移除记忆~"
 
     def undo(self) -> str:
         self.Muice.remove_last_chat_memory()
         self.Muice.history = self.Muice.get_recent_chat_memory()
-        return "undoed"
+        return "已成功撤销上一段对话~"
 
     def command_thread(self, commands):
         AutoPrompt.load_commands(commands)
