@@ -55,7 +55,7 @@ class QQBot:
         self.command.load_default_command()
 
         # 配置获取
-        self.configs = yaml.load(open('configs.json', 'r', encoding='utf-8'), Loader=yaml.FullLoader)
+        self.configs = yaml.load(open('configs.yml', 'r', encoding='utf-8'), Loader=yaml.FullLoader)
         self.websocket_port = self.configs['bot']['port']
         self.is_cq_code = self.configs['bot']['cq_code']
         self.bot_qq_id = self.configs['bot']['id']
@@ -74,6 +74,11 @@ class QQBot:
             self.scheduler = AsyncIOScheduler()
             self.scheduler.add_job(self.time_work, 'interval', minutes=1)
             self.websocket = None
+
+        if self.configs['bot']['anyone']:
+            self.trust_qq_list = []
+        else:
+            self.trust_qq_list = self.configs['bot']['trusted']
 
         # 群聊消息
         self.group_message_reply = self.configs['bot']['group']['enable']
@@ -127,11 +132,12 @@ class QQBot:
                                 logging.debug(f"回复{reply_item}")
                                 reply_json = await build_group_reply_json(reply_item, group_id)
                                 await websocket.send_text(reply_json)
+                                await asyncio.sleep(0.5) # 避免消息过快导致发送顺序错乱
 
             except WebSocketDisconnect:
                 logging.info("WebSocket disconnected")
 
-        @self.app.lifespan("shutdown")
+        @self.app.on_event("shutdown")
         async def shutdown():
             if self.scheduler is not None and self.scheduler.running:
                 self.scheduler.shutdown()
@@ -177,7 +183,7 @@ class QQBot:
                     else:
                         logging.info(f"收到QQ{sender_user_id}的图片消息")
 
-                    if sender_user_id not in self.trust_qq_list:
+                    if (sender_user_id not in self.trust_qq_list) and (self.trust_qq_list != []):
                         return None
                     
                     if is_image: 
