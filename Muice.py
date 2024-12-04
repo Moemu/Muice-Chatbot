@@ -10,21 +10,27 @@ class Muice:
     Muice交互类
     """
 
-    def __init__(self, model, memory, read_memory_from_file: bool = True, known_topic_probability: float = 0.003,
-                 time_topic_probability: float = 0.75):
+    def __init__(self, model, memory, configs):
         self.reply = None
         self.user_text = None
         self.history = None
         self.user_id = None
         self.model = model
         self.memory = memory
-        self.read_memory_from_file = read_memory_from_file
-        self.known_topic_probability = known_topic_probability
-        self.time_topic_probability = time_topic_probability
-        self.known_topic = ['（分享一下你的一些想法）', '（创造一个新话题）']
-        self.time_topic = {'07': '（发起一个早晨问候）', '12': '（发起一个中午问候）', '18': '（发起一个傍晚问候）',
-                           '00': '（发起一个临睡问候）'}
-        self.time_topics = self.time_topic.copy()
+        self.configs = configs
+
+        if self.configs['active']['rate']:
+            self.known_topic_probability = self.configs['active']['rate']
+        else:
+            self.known_topic_probability = 0
+        if self.configs['active']['shecdule']['enable']:
+            self.time_topic_probability = self.configs['active']['shecdule']['rate']
+        else:
+            self.time_topic_probability = 0
+
+        self.known_topic = self.configs['active']['active_prompts']
+        self.time_topic = self.configs['active']['shecdule']['tasks']
+        self.time_topic_backup = self.time_topic.copy()
 
     def ask(self, text: str, user_qq: int, group_id: int) -> str:
         """发送信息"""
@@ -43,11 +49,8 @@ class Muice:
                     faiss_outputs = variables.get('output', [])
                     history = list(zip(faiss_inputs, faiss_outputs))
 
-        if self.read_memory_from_file:
-            self.history = self.get_recent_chat_memory()
-            history.extend(self.history)
-        else:
-            self.history = []
+        self.history = self.get_recent_chat_memory()
+        history.extend(self.history)
 
         start_time = time.time()
         self.reply = self.model.ask(self.user_text, history)
@@ -58,22 +61,34 @@ class Muice:
     def create_a_new_topic(self, last_time):
         """
         主动发起对话
+        args:
+            last_time: 上次对话时间
         """
         current_time = time.strftime("%H:%M", time.localtime())
+        current_hour = time.strftime("%H", time.localtime())
         time_difference = time.time() - last_time
-        if time_difference < 60 * 60:
+
+        # 如果距离上次对话时间小于30分钟，则不主动发起对话
+        if time_difference < 30 * 60:
             return None
+        
+        # 尝试生成日常定时Prompt
         if random.random() < self.time_topic_probability:
-            for hour, topic in self.time_topic.items():
-                event_time = hour + ':' + str(random.randint(0, 59))
+            for index,task in enumerate(self.time_topic):
+                event_time = task['hour'] + ':' + str(random.randint(0, 59))
                 if event_time == current_time:
-                    del self.time_topic[hour]
-                    return topic
-        if not current_time.split(':')[0] in ['23', '00', '01', '02', '03', '04', '05',
-                                              '06'] and random.random() < self.known_topic_probability:
-            return random.choice(self.known_topic)
-        if len(self.time_topic) <= 3 and not time.strftime("%H", time.localtime()) in self.time_topics.keys():
-            self.time_topic = self.time_topics.copy()
+                    del self.time_topic[index]
+                    return task['prompt']
+
+        # 尝试生成不定时Prompt
+        if (not self.configs['active']['enable']) or not (current_hour in ['23', '00', '01', '02', '03', '04', '05', '06']):
+            if random.random() < self.known_topic_probability:
+                return random.choice(self.known_topic)
+        
+        # 日常定时Prompt使用后重置
+        if len(self.time_topic) < len(self.time_topic_backup) and time_difference > 60 * 60:
+            self.time_topic = self.time_topic_backup.copy()
+        
         return None
 
     def finish_ask(self, reply: list):

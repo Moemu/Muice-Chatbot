@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 import importlib
-import json
+import yaml
 import asyncio
 from pydub import AudioSegment
 from pydub.playback import play
@@ -77,19 +77,33 @@ def save_wav(frames, filename):
 logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
 # 读取配置文件
-configs = json.load(open('configs.json', 'r', encoding='utf-8'))
-model_loader = configs["model_loader"]
-model_name_or_path = configs["model_name_or_path"]
-adapter_name_or_path = configs["adapter_name_or_path"]
-audio_name_or_path = configs["audio_name_or_path"]
+configs:dict = yaml.load(open('configs.yml', 'r', encoding='utf-8'),Loader=yaml.FullLoader)
+model_loader = configs['model']["loader"]
+model_name_or_path = configs['model']["model_path"]
+adapter_name_or_path = configs['model']["adapter_path"]
+audio_name_or_path = configs['realtime_voice']['path']
+
+# Faiss配置
+enable_faiss = configs['faiss']["enable"]
+if enable_faiss:
+    from llm.faiss_memory import FAISSMemory
+    import signal
+    memory = FAISSMemory(model_path=configs['faiss']["path"],db_path="./memory/faiss_index.faiss",top_k=2)
+    def handle_interrupt(faiss_memory: FAISSMemory):
+        """处理中断信号"""
+        logging.info("接收到中断信号，正在保存数据...")
+        faiss_memory.save_all_data()
+        sys.exit(0)
+    signal.signal(signal.SIGINT, lambda sig, frame: handle_interrupt(memory))
+else:
+    memory = None
 
 # 加载模型
 SpeechRecognitionPipeline.load_model(audio_name_or_path)
 model = importlib.import_module(f"llm.{model_loader}")
 model = model.llm(model_name_or_path, adapter_name_or_path)
 
-muice_app = Muice(model, configs['read_memory_from_file'], configs['known_topic_probability'],
-                  configs['time_topic_probability'])
+muice_app = Muice(model, memory, configs)
 
 
 # 检查并创建临时文件夹

@@ -3,6 +3,5 @@ onebot
 memory
 *.pyc
 .vscode
-configs.json
 Muice
 image_data

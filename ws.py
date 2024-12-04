@@ -1,8 +1,9 @@
 import asyncio
-import json
+import yaml
 import logging
 import time
 import uvicorn
+import json
 
 from fastapi import FastAPI, WebSocket
 from starlette.websockets import WebSocketDisconnect
@@ -54,39 +55,36 @@ class QQBot:
         self.command.load_default_command()
 
         # 配置获取
-        self.configs = json.load(open('configs.json', 'r', encoding='utf-8'))
-        self.trust_qq_list = self.configs.get('Trust_QQ_list', [])
-        self.websocket_port = self.configs.get('port')
-        self.is_cq_code = self.configs.get('Is_CQ_Code', False)
-        self.bot_qq_id = self.configs.get('bot_qq_id')
-        self.reply_rate = self.configs.get('Reply_Rate', 100)
-        self.at_reply = self.configs.get('At_Reply', False)
-        self.nonreply_prefix = self.configs.get('NonReply_Prefix', [])
-        self.enable_ofa_image = self.configs.get('enable_ofa_image', False)
-        self.voice_reply_rate = self.configs.get('Voice_Reply_Rate', 0)
-        self.reply_wait = self.configs.get('Reply_Wait', True)
-        # 主动对话
-        self.auto_create_topic = self.configs.get('AutoCreateTopic', False)
+        self.configs = yaml.load(open('configs.json', 'r', encoding='utf-8'), Loader=yaml.FullLoader)
+        self.websocket_port = self.configs['bot']['port']
+        self.is_cq_code = self.configs['bot']['cq_code']
+        self.bot_qq_id = self.configs['bot']['id']
+        self.reply_rate = self.configs['bot']['group']['rate']
+        self.at_reply = self.configs['bot']['group']['only_at']
+        self.nonreply_prefix = self.configs['bot']['nonreply_prefix']
+        self.enable_ofa_image = self.configs['ofa_image']['enable']
+        self.voice_reply_rate = self.configs['voice_reply']['rate']
+        self.reply_wait = self.configs['bot']['wait_reply']
+        self.auto_create_topic = self.configs['active']['enable']
+        self.targets = self.configs['active']['targets']
+
         if self.auto_create_topic:
             from apscheduler.schedulers.asyncio import AsyncIOScheduler
-            self.time_dict = {qq_id: time.time() for qq_id in self.trust_qq_list}
+            self.time_dict = {qq_id: time.time() for qq_id in self.targets}
             self.scheduler = AsyncIOScheduler()
             self.scheduler.add_job(self.time_work, 'interval', minutes=1)
             self.websocket = None
+
         # 群聊消息
-        self.group_message_reply = self.configs.get('Group_Message_Reply', False)
+        self.group_message_reply = self.configs['bot']['group']['enable']
         if self.group_message_reply:
-            self.group_message_reply_list = self.configs.get('Trust_QQ_Group_list', [])
-            self.group_reply_only_to_trusted = self.configs.get('Group_Message_Reply_Only_To_Trusted', True)
-            self.TEST_New_Group_Memory = self.configs.get('TEST_New_Group_Memory', False)
-            self.group_cmd_for_trusted_users_only = self.configs.get('Group_Cmd_For_Trusted_Users_Only', True)
-            self.group_ignore_cmd_not_found = self.configs.get('Group_Ignore_Cmd_Not_Found', True)
+            self.group_message_reply_list = self.configs['bot']['group']['trusted']
+            self.group_reply_only_to_trusted = self.configs['bot']['group']['only_trusted']
+            self.group_cmd_for_trusted_users_only = self.configs['bot']['group']['cmd_only_trusted']
             logging.debug(
                 f"group_message_reply_list = {self.group_message_reply_list}"
                 f"group_reply_only_to_trusted = {self.group_reply_only_to_trusted}"
-                f"TEST_New_Group_Memory = {self.TEST_New_Group_Memory}"
                 f"Group_Cmd_For_Trusted_Users_Only = {self.group_cmd_for_trusted_users_only}"
-                f"Group_Ignore_Cmd_Not_Found = {self.group_ignore_cmd_not_found}"
             )
 
         # 定义公共变量
@@ -133,7 +131,7 @@ class QQBot:
             except WebSocketDisconnect:
                 logging.info("WebSocket disconnected")
 
-        @self.app.on_event("shutdown")
+        @self.app.lifespan("shutdown")
         async def shutdown():
             if self.scheduler is not None and self.scheduler.running:
                 self.scheduler.shutdown()
@@ -147,7 +145,7 @@ class QQBot:
             if 'post_type' in data and data['post_type'] == 'meta_event':
                 if data['meta_event_type'] == 'lifecycle':
                     if data['sub_type'] == 'connect':
-                        logging.info(f"已链接")
+                        logging.info(f"沐雪Chatbot已在运行中✨")
                         return None
                 elif data['meta_event_type'] == 'heartbeat':
                     return None
@@ -159,7 +157,7 @@ class QQBot:
                 is_image,image_url = is_image_message(self.is_cq_code, data)
                 if is_image: 
                     if not self.enable_ofa_image:
-                        logging.info("收到图片消息，但未开启图片回复功能")
+                        logging.info("捕获到图片消息，但未开启图片回复功能，已跳过")
                         return None
                 else:
                     if self.is_cq_code:
@@ -244,8 +242,8 @@ class QQBot:
                         message = f"(收到图片描述：{message})"
 
                     reply_message_list = await self.produce_group_reply(str(message), sender_user_id, group_id)
-                    if is_command(message) and '没有当前命令' in reply_message_list and self.group_ignore_cmd_not_found:
-                        logging.info("找不到命令")
+                    if is_command(message) and '没有这样的命令呢' in reply_message_list:
+                        logging.info("没有这样的命令呢")
                         return None
                     logging.debug(f"回复list{reply_message_list}")
                     if reply_message_list is None:
