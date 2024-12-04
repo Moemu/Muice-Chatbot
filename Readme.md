@@ -5,7 +5,7 @@
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
-
+### 2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意
 
 # 介绍✨
 
@@ -75,6 +75,8 @@ pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 ```
 
+对于 GPU 用户，请确保您已配置好 cuda 环境。[参考链接](https://blog.csdn.net/chen565884393/article/details/127905428)
+
 ## 模型下载和加载
 
 目前支持的基底模型如下表：
@@ -108,15 +110,17 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 在配置文件中可调整模型的加载方式：
 
-```json
-"model_loader": "api/transformers/llmtuner/rwkv-api",
-"model_name_or_path": "<基底模型位置>",
-"adapter_name_or_path": "<沐雪微调模型位置>"
+```yaml
+# 模型相关
+model:
+  loader: transformers # 模型加载器 transformers/llmtuner/rwkv-api
+  model_path: ./model/chatglm2-6b # 基底模型路径
+  adapter_path: ./model/Muice # 微调模型路径
 ```
 
 （若是 API / rwkv-api 加载，`model_name_or_path` 填写对应的 API 地址）
 
-如果你没有合适的显卡，需要通过 CPU 加载模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
+如果你没有合适的显卡，需要通过 CPU 加载模型或者需要加载量化模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
 
 ## Bot 服务配置
 
@@ -133,7 +137,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 ## 其他功能
 
 - [语音回复](docs/other_func.md#语音回复)
-- [图像识别（识别 / 发送表情包）](docs/other_func.md##ofa-图像识别识别--发送表情包)
+- [图像识别（识别 / 发送表情包）](docs/other_func.md#ofa-图像识别识别--发送表情包)
 - [Faiss 长期记忆](docs/other_func.md#faiss-长期记忆实验性内容)
 - [实时语音聊天](docs/other_func.md#启动实时语音聊天)
 
@@ -150,7 +154,7 @@ Muice-Chatbot     <- 主路径
  │  ├─ chatglm2-6b-int4  <- int4原始模型
  │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
  │  └─ Muice
- ├─configs.json  <- 配置文件
+ ├─configs.yml  <- 配置文件
  ├─ws.py         <- ws服务
  ├─main.py       <- 主函数
  ├─requirements.txt
@@ -159,12 +163,61 @@ Muice-Chatbot     <- 主路径
 
 # 配置⚒️
 
-配置文件位于 `config.json`，请根据你的需求进行修改（具体参考[配置说明](docs/config.md)）。
+配置文件机器说明位于 `configs.yml`，请根据你的需求进行修改
 
-你也可以使用`configuration_gui.py`图形化界面配置文件。
+我删除了配置之外的所有配置说明文字，如果这都看不懂，烦请另外提问。
 
-```powershell
-python configuration_gui.py
+2024.12.04更新：我们更新了配置文件格式，为了迎合即将到来的 2.7.x 模型，我们添加了如下配置项：
+
+```yaml
+# 主动对话相关
+active:
+  enable: false # 是否启用主动对话
+  rate: 0.003 # 主动对话概率（每分钟）
+  active_prompts:
+    - '<生成推文: 胡思乱想>'
+    - '<生成推文: AI生活>'
+    - '<生成推文: AI思考>'
+    - '<生成推文: 表达爱意>'
+    - '<生成推文: 情感建议>'
+  not_disturb: true # 是否开启免打扰模式
+  shecdule:
+    enable: true # 是否启用定时任务
+    rate: 0.75 # 定时任务概率（每次）
+    tasks:
+      - hour: 8
+        prompt: '<日常问候: 早上>'
+      - hour: 12
+        prompt: '<日常问候: 中午>'
+      - hour: 18
+        prompt: '<日常问候: 傍晚>'
+      - hour: 22
+        prompt: '<日常问候: 深夜>'
+  targets: # 主动对话目标QQ号
+    - 12345678
+    - 23456789
+```
+
+在 2.7.x 模型推出为，请更改如下配置项：
+
+```yaml
+  active_prompts:
+    - '（分享一下你的一些想法）'
+    - '（创造一个新话题）'
+```
+
+以及：
+
+```yaml
+    tasks:
+      - hour: 8
+        prompt: '（发起一个早晨问候）'
+      - hour: 12
+        prompt: '（发起一个中午问候）'
+      - hour: 18
+        prompt: '（发起一个傍晚问候）'
+      - hour: 22
+        prompt: '（发起一个临睡问候）'
 ```
 
 # 使用🎉

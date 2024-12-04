@@ -9,7 +9,7 @@ from ws import QQBot
 logging.basicConfig(format='[%(levelname)s] %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
-
+logger.warning("2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意")
 
 configs:dict = yaml.load(open('configs.yml', 'r', encoding='utf-8'),Loader=yaml.FullLoader)
 

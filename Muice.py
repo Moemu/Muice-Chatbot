@@ -75,7 +75,7 @@ class Muice:
         # 尝试生成日常定时Prompt
         if random.random() < self.time_topic_probability:
             for index,task in enumerate(self.time_topic):
-                event_time = task['hour'] + ':' + str(random.randint(0, 59))
+                event_time = str(task['hour']) + ':' + str(random.randint(0, 59))
                 if event_time == current_time:
                     del self.time_topic[index]
                     return task['prompt']
