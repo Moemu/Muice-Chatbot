@@ -17,3 +17,4 @@ decord>=0.6.0
 aiohttp
 fairseq
 jieba
+open_clip_torch
