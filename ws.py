@@ -368,7 +368,7 @@ class QQBot:
             if topic is None:
                 continue
             else:
-                mess = self.muice_app.ask(topic, key)
+                mess = self.muice_app.ask(topic, key, -1)
                 reply = await build_reply_json(mess, key)
                 await self.websocket.send_text(reply)
 
