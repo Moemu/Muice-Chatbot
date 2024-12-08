@@ -17,10 +17,12 @@ configs:dict = yaml.load(open('configs.yml', 'r', encoding='utf-8'),Loader=yaml.
 model_loader = configs['model']["loader"]
 model_name_or_path = configs['model']["model_path"]
 adapter_name_or_path = configs['model']["adapter_path"]
+system_prompt = configs['model']["system_prompt"]
+auto_system_prompt = configs['model']["auto_system_prompt"]
 
 # 模型加载
 model_adapter = importlib.import_module(f"llm.{model_loader}")
-model = model_adapter.llm(model_name_or_path, adapter_name_or_path)
+model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_prompt, auto_system_prompt)
 
 # Faiss配置
 enable_faiss = configs['faiss']["enable"]

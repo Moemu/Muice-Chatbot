@@ -10,7 +10,7 @@ class llm:
     使用transformers方案加载, 适合通过P-tuning V2方式微调的模型加载
     """
 
-    def __init__(self, chatglm_model_path: str, pt_model_path: str):
+    def __init__(self, chatglm_model_path: str, pt_model_path: str, *args, **kwargs):
         model_path = chatglm_model_path
         config = AutoConfig.from_pretrained(model_path, trust_remote_code=True, pre_seq_len=128)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
