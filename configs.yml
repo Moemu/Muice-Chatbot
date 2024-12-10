@@ -1,0 +1,77 @@
+# 模型相关
+model:
+  loader: transformers # 模型加载器 transformers/llmtuner/rwkv-api
+  model_path: ./model/chatglm2-6b # 基底模型路径
+  adapter_path: ./model/Muice # 微调模型路径
+  system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子，开发者是“沐沐”并住在（沐沐）的机箱里。现在正在努力成为一个合格的VTuber（虚拟主播）并尝试和观众打成一片，以下是你的设定：样貌：有着一头粉白色的长发和一双明亮的大眼睛，喜欢穿日系JK或者是Lolita；喜欢的颜色：浅粉色；性格特征：纯真无邪是沐雪最基本的性格特征之一。即使面对复杂的情境，她也总能保持善良、天真之感。而且，她喜欢倾听别人倾述自己生活中发生的各种事情，在别人需要的时候，能够及时地安慰别人；语言风格：沐雪说话轻快愉悦，充满同情心，富有人情味，有时候会用俏皮话调侃自己和他人' # 系统提示语（目前仅支持llmtuner模式）
+  auto_system_prompt: false # 是否自动生成系统提示语（仅适用于2.7.1以上的Qwen模型）
+
+# Bot相关
+bot:
+  id: 12345678 # 机器人QQ号
+  port: 21050 # LLOneBot反向WebSocket服务端口
+  wait_reply: true # 拟人化回复（回复前等待一段时间）
+  cq_code: false # 是否解析CQ码
+  anyone: false # 是否回复所有人
+  trusted: # 可信QQ号(当anyone为false时生效)
+    - 12345678 
+  group:
+    enable: true # 是否启用群聊回复
+    only_at: true # 是否只回复at自己的消息
+    rate: 0.5 # 群聊回复概率(only_at为false时生效)
+    anyone: false # 是否回复所有群组
+    trusted: # 可信群组(当anyone为false时生效)
+      - 12345678
+    only_trusted: false # 是否只回复可信QQ号
+    cmd_only_trusted: false # 是否只执行可信QQ号的命令
+  nonreply_prefix:  # 不回复消息的前缀
+    - '!'
+    - '！'
+    - '#'
+
+# 主动对话相关
+active:
+  enable: false # 是否启用主动对话
+  rate: 0.003 # 主动对话概率（每分钟）
+  active_prompts:
+    - '<生成推文: 胡思乱想>'
+    - '<生成推文: AI生活>'
+    - '<生成推文: AI思考>'
+    - '<生成推文: 表达爱意>'
+    - '<生成推文: 情感建议>'
+  not_disturb: true # 是否开启免打扰模式
+  shecdule:
+    enable: true # 是否启用定时任务
+    rate: 0.75 # 定时任务概率（每次）
+    tasks:
+      - hour: 8
+        prompt: '<日常问候: 早上>'
+      - hour: 12
+        prompt: '<日常问候: 中午>'
+      - hour: 18
+        prompt: '<日常问候: 傍晚>'
+      - hour: 22
+        prompt: '<日常问候: 深夜>'
+  targets: # 主动对话目标QQ号
+    - 12345678
+    - 23456789
+
+# 其他可选服务
+# OFA 图像识别
+ofa_image:
+  enable: false # 是否启用OFA图像服务
+  path: ./model/ofa_image # OFA模型路径
+
+# 语音回复
+voice_reply:
+  enable: false # 是否启用语音回复
+  rate: 0.75 # 语音回复概率
+
+# 实时语音对话(realtime_refence.py)
+realtime_voice:
+  path: ./model/SenseVoice # 实时语音模型路径
+
+# Faiss长期记忆(Beta)
+faiss:
+  enable: false # 是否启用Faiss长期记忆
+  path: ./model/distiluse-base-multilingual-cased-v1 # Faiss模型路径
