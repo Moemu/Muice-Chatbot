@@ -2,7 +2,7 @@
 name: Bug报告
 about: 运行本项目时出现的问题
 title: "[Bug]"
-labels: bug
+labels: ["bug"]
 assignees: ''
 
 ---
