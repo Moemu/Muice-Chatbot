@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
-[简体中文](../Readme.md) | 繁體中文 | [English](./Readme_en.md) | [日本語](.Readme_jp.md)
+[简体中文](../Readme.md) | 繁體中文 | [English](./Readme_en.md) | [日本語](./Readme_jp.md)
 
 > [!IMPORTANT]
 > 2024.12.04 更新：由於配置文件格式變更，若您曾拉取過本 Repo 並於 12.04 後執行過 fetch 操作，請重新設定配置文件，對此帶來的不便我們深感抱歉。

@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
 
-[简体中文](../Readme.md) | [繁體中文](./Readme_tc.md)  | English | [日本語](.Readme_jp.md)
+[简体中文](../Readme.md) | [繁體中文](./Readme_tc.md)  | English | [日本語](./Readme_jp.md)
 
 > [!IMPORTANT]
 > As of 2024.12.04, due to a configuration format update, please reset your configuration file if you've fetched updates to this repository. We apologize for any inconvenience caused.
