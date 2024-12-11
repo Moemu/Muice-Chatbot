@@ -5,7 +5,12 @@
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
 </p>
-### 2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意
+简体中文 | [繁體中文](./docs/Readme_tc.md) | [English](./docs/Readme_en.md) | [日本語](./docs/Readme_jp.md) 
+
+```markdown
+> [!IMPORTANT]
+> 2024.12.04 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在12.04后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
+```
 
 # 介绍✨
 
@@ -29,13 +34,13 @@
 
 ✅ 在控制台中实时对话（暂不支持打 QQ 语音）
 
+✅ 提供多语言文档
+
 ⬜ 对记忆模块进行优化，实现长期记忆与短期记忆
 
 ⬜ 完善日志记录机制，实现自动生成 bug 报告
 
 ⬜ 建立常见 Q&A 指南
-
-⬜ 提供多语言文档
 
 
 # 快速开始💻
@@ -166,8 +171,6 @@ Muice-Chatbot     <- 主路径
 
 配置文件机器说明位于 `configs.yml`，请根据你的需求进行修改
 
-我删除了配置之外的所有配置说明文字，如果这都看不懂，烦请另外提问。
-
 2024.12.04更新：我们更新了配置文件格式，为了迎合即将到来的 2.7.x 模型，我们添加了如下配置项：
 
 ```yaml
@@ -199,7 +202,7 @@ active:
     - 23456789
 ```
 
-在 2.7.x 模型推出为，请更改如下配置项：
+如果你使用的是 2.7.x 之前的模型，请更改如下配置项：
 
 ```yaml
   active_prompts:
@@ -274,11 +277,11 @@ python main.py
   <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="图片加载中..."/>
 </a>
 
-如果此项目对你有帮助，您可以考虑赞助。按照沐雪赞助使用方法，所有收入将抽取20%用于慈善事业（提供证书）。
+如果此项目对你有帮助，您可以考虑赞助。
 
 <a href="https://www.buymeacoffee.com/Moemu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 163px !important;" ></a>
 
-感谢你们所有人的支持！无论你是否赞助和贡献代码！
+感谢你们所有人的支持！
 
 Star History：
 
