@@ -1,7 +1,7 @@
 fastapi
 requests
 torch
-transformers==4.32.0
+llmtuner
 uvicorn
 apscheduler
 sentencepiece
@@ -12,3 +12,6 @@ langchain
 langchain_community
 alive-progress
 prompt_toolkit
+colorlog
+auto_gptq
+optimum

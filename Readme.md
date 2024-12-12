@@ -86,14 +86,16 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 目前支持的基底模型如下表：
 
-| 基底模型                                                     | 对应微调模型版本号                         | 额外依赖库                  |
-| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
-| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3、2.6.2                                 | llmtuner                    |
-| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3                                      | llmtuner                    |
-| [Qwen2.5-7B-Instruct-GPTQ-Int4](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4) | 2.7.1 | llmtuner |
-| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见 [HF](https://huggingface.co/Seikaijyu) | （需要下载配置 RWKV-Runner） |
+| 基底模型                                                     | 对应微调模型版本号                         | 对应 loader           | 额外依赖库                  |
+| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- | --------------------------- |
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | transformers                        | cpm_kernels                 |
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    | transformers                        |                             |
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3、2.6.2                                 | llmtuner                         | ~~llmtuner~~                |
+| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3                                      | llmtuner                              | ~~llmtuner~~                |
+| [Qwen2.5-7B-Instruct-GPTQ-Int4](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4) | 2.7.1 | llmtuner | ~~llmtuner~~ |
+| [RWKV(Seikaijyu微调)](https://huggingface.co/Seikaijyu)      | 参见 [HF](https://huggingface.co/Seikaijyu) | rwkv-api | （需要下载配置 RWKV-Runner） |
+
+本项目的`requirements.txt`基于 `llmtuner` 环境要求搭建，因此我们建议使用 Qwen 系列模型，若选用 ChatGLM 系列模型，可能会导致环境错误。
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
@@ -106,22 +108,13 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 3. 通过`llmtuner.chat`（`LLaMA-Factory`）的 `ChatModel` 类加载
 4. 通过 `RWKV-Runner` 提供的 API 服务加载
 
-在已测试的模型中，我们建议以下模型通过对应的方式加载，其他模型亦可以通过类似的方式加载：
-
-| 基底模型              | 微调方式        | 加载方法         |
-|-------------------|-------------|--------------|
-| ChatGLM           | P-tuning V2 | transformers |
-| Qwen              | sft         | llmtuner     |
-| RWKV（Seikaijyu 微调） | pissa       | rwkv-api     |
-
 在配置文件中可调整模型的加载方式：
 
 ```yaml
-# 模型相关
 model:
-  loader: transformers # 模型加载器 transformers/llmtuner/rwkv-api
-  model_path: ./model/chatglm2-6b # 基底模型路径
-  adapter_path: ./model/Muice # 微调模型路径
+  loader: llmtuner # 模型加载器 transformers/llmtuner/rwkv-api
+  model_path: model/Qwen2.5-7B-Instruct-GPTQ-Int4 # 基底模型路径
+  adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # 微调模型路径
 ```
 
 （若是 API / rwkv-api 加载，`model_name_or_path` 填写对应的 API 地址）
@@ -146,26 +139,6 @@ model:
 - [图像识别（识别 / 发送表情包）](docs/other_func.md#ofa-图像识别识别--发送表情包)
 - [Faiss 长期记忆](docs/other_func.md#faiss-长期记忆实验性内容)
 - [实时语音聊天](docs/other_func.md#启动实时语音聊天)
-
-## 总结
-
-在完成这些操作后，你应该得到类似如下所示的文件结构：
-
-
-```
-Muice-Chatbot     <- 主路径
- ├─llm
- ├─model
- │  ├─ chatglm2-6b       <- 原始模型 (三者三选一)
- │  ├─ chatglm2-6b-int4  <- int4原始模型
- │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4原始模型
- │  └─ Muice
- ├─configs.yml  <- 配置文件
- ├─ws.py         <- ws服务
- ├─main.py       <- 主函数
- ├─requirements.txt
- └─...
-```
 
 # 配置⚒️
 
