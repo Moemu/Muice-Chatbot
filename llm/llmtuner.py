@@ -48,11 +48,10 @@ class llm:
         messages = []
         if self.auto_system_prompt:
             self.system_prompt = auto_system_prompt(user_text)
-        messages.append({"role": "system", "content": self.system_prompt})
         if history:
             for chat in history:
                 messages.append({"role": "user", "content": chat[0]})
                 messages.append({"role": "assistant", "content": chat[1]})
         messages.append({"role": "user", "content": user_text})
-        response = self.model.chat(messages)
+        response = self.model.chat(messages, system = self.system_prompt)
         return response[0].response_text
