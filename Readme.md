@@ -97,7 +97,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 微调模型下载：[Releases](https://github.com/Moemu/Muice-Chatbot/releases)
 
-请将基底模型与微调模型放入 `model` 文件夹中（确保微调模型目录下存在 `.model` 文件而不是文件夹，部分微调模型由于疏忽还套了一层 `checkpoint` 文件夹）
+建议将基底模型与微调模型放入 `model` 文件夹中然后在配置文件中配置相应配置项（确保配置文件中的路径目录下存在多个模型文件而不是只有一个文件夹，部分微调模型由于疏忽还套了一层 `checkpoint-xxx` 文件夹）
 
 本仓库目前支持如下模型加载方式：
 
