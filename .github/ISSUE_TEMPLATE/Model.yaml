@@ -1,0 +1,59 @@
+name: 模型相关
+description: 模型的输出不符合预期
+title: "[Model]: "
+labels: ["Model"]
+assignees:
+  - Moemu
+body:
+  - type: markdown
+    attributes:
+      value: |
+        很抱歉您遇到了问题，为了更好地定位到问题，请填写以下表单。
+  - type: input
+    id: description
+    attributes:
+      label: 问题描述
+      description: 请简要描述您遇到的问题。
+      placeholder: ex. 模型加载失败
+    validations:
+      required: true
+  - type: textarea
+    id: contexts
+    attributes:
+      label: 适当的上下文
+      description: 适当的上下文有利于我们确定问题，注意移除敏感内容。
+      placeholder: ex. Q：晚上吃什么？A：我不知道
+    validations:
+      required: false
+  - type: input
+    id: prompts
+    attributes:
+      label: 输入的Prompt
+      description: 出现问题的输入的提问。
+      placeholder: ex. 今天天气怎么样？
+    validations:
+      required: true
+  - type: input
+    id: responses
+    attributes:
+      label: 输出的Response
+      description: 出现问题的输出的提问。
+      placeholder: ex. 我不知道
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: 期望的答案
+      description: 期望输出的答案。
+      placeholder: ex. 今天的天气很好，我们出去玩吧
+    validations:
+      required: false
+  - type: textarea
+    id: others
+    attributes:
+      label: 其他信息
+      description: 如果有其他信息需要提供，请在此处填写。
+      placeholder: ex. 我的目录结构是...
+    validations:
+      required: false

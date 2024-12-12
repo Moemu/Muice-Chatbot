@@ -1,0 +1,53 @@
+name: Bug报告
+description: 运行本项目时出现的问题
+title: "[Bug]: "
+labels: ["bug"]
+assignees:
+  - Moemu
+body:
+  - type: markdown
+    attributes:
+      value: |
+        很抱歉您遇到了问题，为了更好地定位到问题，请填写以下表单。
+  - type: input
+    id: description
+    attributes:
+      label: 问题描述
+      description: 请简要描述您遇到的问题。
+      placeholder: ex. 模型加载失败
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志输出
+      description: 请复制粘贴任何相关的日志输出，你可以在控制台或者是logs文件夹下找到他们（注意保护您的个人信息）。
+      placeholder: ex. 2022-01-01 12:00:00 [ERROR] ...
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: configs
+    attributes:
+      label: 配置文件
+      description: 请提供您的配置文件，即configs.yml（注意保护您的个人信息）。
+      placeholder: ex. bot...
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请提供您的操作步骤，以便我们复现问题。
+      placeholder: ex. 1. 运行程序...
+    validations:
+      required: true
+  - type: textarea
+    id: others
+    attributes:
+      label: 其他信息
+      description: 如果有其他信息需要提供，请在此处填写。
+      placeholder: ex. 我的目录结构是...
+    validations:
+      required: false
