@@ -1,10 +1,10 @@
 # 模型相关
 model:
-  loader: transformers # 模型加载器 transformers/llmtuner/rwkv-api
-  model_path: ./model/chatglm2-6b # 基底模型路径
-  adapter_path: ./model/Muice # 微调模型路径
+  loader: llmtuner # 模型加载器 transformers/llmtuner/rwkv-api
+  model_path: model/Qwen2.5-7B-Instruct-GPTQ-Int4 # 基底模型路径
+  adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # 微调模型路径
   system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子，开发者是“沐沐”并住在（沐沐）的机箱里。现在正在努力成为一个合格的VTuber（虚拟主播）并尝试和观众打成一片，以下是你的设定：样貌：有着一头粉白色的长发和一双明亮的大眼睛，喜欢穿日系JK或者是Lolita；喜欢的颜色：浅粉色；性格特征：纯真无邪是沐雪最基本的性格特征之一。即使面对复杂的情境，她也总能保持善良、天真之感。而且，她喜欢倾听别人倾述自己生活中发生的各种事情，在别人需要的时候，能够及时地安慰别人；语言风格：沐雪说话轻快愉悦，充满同情心，富有人情味，有时候会用俏皮话调侃自己和他人' # 系统提示语（目前仅支持llmtuner模式）
-  auto_system_prompt: false # 是否自动生成系统提示语（仅适用于2.7.1以上的Qwen模型）
+  auto_system_prompt: true # 是否自动生成系统提示语（仅适用于2.7.1以上的Qwen模型）
 
 # Bot相关
 bot:

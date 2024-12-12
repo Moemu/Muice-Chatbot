@@ -17,6 +17,7 @@ from utils.Tools import is_image_message
 from utils.Tools import voice_message_reply
 from utils.command import Command
 
+logger = logging.getLogger('Muice')
 
 async def build_reply_json(reply_message, sender_user_id):
     """构建回复的消息的json"""
@@ -86,11 +87,6 @@ class QQBot:
             self.group_message_reply_list = self.configs['bot']['group']['trusted']
             self.group_reply_only_to_trusted = self.configs['bot']['group']['only_trusted']
             self.group_cmd_for_trusted_users_only = self.configs['bot']['group']['cmd_only_trusted']
-            logging.debug(
-                f"group_message_reply_list = {self.group_message_reply_list}"
-                f"group_reply_only_to_trusted = {self.group_reply_only_to_trusted}"
-                f"Group_Cmd_For_Trusted_Users_Only = {self.group_cmd_for_trusted_users_only}"
-            )
 
         # 定义公共变量
         self.is_at_message = False
@@ -110,6 +106,7 @@ class QQBot:
                 # 链接请求
                 while True:
                     data = await websocket.receive_text()
+                    logger.debug(f"收到数据：{data}")
                     result = await self.processing_reply(data)
                     if result is not None:
                         reply_list, sender_user_id, group_id = result
@@ -121,7 +118,7 @@ class QQBot:
                                         await asyncio.sleep(len(reply_item) * 0.6)
                                 if reply_item is None:
                                     continue
-                                logging.debug(f"回复{reply_item}")
+                                logger.debug(f"发送：{reply_item}")
                                 reply_json = await build_reply_json(reply_item, sender_user_id)
                                 await websocket.send_text(reply_json)
                         elif group_id is not None:
@@ -129,13 +126,13 @@ class QQBot:
                                 # await asyncio.sleep(len(reply_item) * 0.8)  #在群聊环境中不使用等等
                                 if reply_item is None:
                                     continue
-                                logging.debug(f"回复{reply_item}")
+                                logger.debug(f"发送：{reply_item}")
                                 reply_json = await build_group_reply_json(reply_item, group_id)
                                 await websocket.send_text(reply_json)
                                 await asyncio.sleep(0.5) # 避免消息过快导致发送顺序错乱
 
             except WebSocketDisconnect:
-                logging.info("WebSocket disconnected")
+                logger.warning("失去与QQ的WebSocket连接")
 
         @self.app.on_event("shutdown")
         async def shutdown():
@@ -146,12 +143,11 @@ class QQBot:
         """解析消息json并返回需发送的消息"""
         try:
             data = json.loads(data)
-            logging.debug(f"收到{data}")
 
             if 'post_type' in data and data['post_type'] == 'meta_event':
                 if data['meta_event_type'] == 'lifecycle':
                     if data['sub_type'] == 'connect':
-                        logging.info(f"沐雪Chatbot已在运行中✨")
+                        logger.info(f"沐雪Chatbot已在运行中✨")
                         return None
                 elif data['meta_event_type'] == 'heartbeat':
                     return None
@@ -163,7 +159,7 @@ class QQBot:
                 is_image,image_url = is_image_message(self.is_cq_code, data)
                 if is_image: 
                     if not self.enable_ofa_image:
-                        logging.info("捕获到图片消息，但未开启图片回复功能，已跳过")
+                        logger.info("捕获到图片消息，但未开启图片回复功能，已跳过")
                         return None
                 else:
                     if self.is_cq_code:
@@ -172,16 +168,16 @@ class QQBot:
                     else:
                         ''' 检查 data['message'] 是否为列表'''
                         if not isinstance(data['message'], list):
-                            logging.error("消息格式错误: data['message'] 不是列表，疑似CQ码消息")
+                            logger.error("消息格式错误: data['message'] 不是列表，疑似CQ码消息")
                             return None
                         message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
 
 
                 if data['message_type'] == 'private':
                     if not is_image:
-                        logging.info(f"收到QQ{sender_user_id}的消息：{message}")
+                        logger.info(f"收到来自QQ{sender_user_id}的消息：{message}")
                     else:
-                        logging.info(f"收到QQ{sender_user_id}的图片消息")
+                        logger.info(f"收到来自QQ{sender_user_id}的图片消息")
 
                     if (sender_user_id not in self.trust_qq_list) and (self.trust_qq_list != []):
                         return None
@@ -193,7 +189,7 @@ class QQBot:
                     
                     reply_message_list = await self.produce_reply(message, sender_user_id)
                     if reply_message_list:
-                        logging.debug(f"回复list{reply_message_list}")
+                        logger.info(f"回复列表：{reply_message_list}")
                         if reply_message_list is None:
                             return None
                         return reply_message_list, sender_user_id, -1
@@ -204,20 +200,20 @@ class QQBot:
                 elif data['message_type'] == 'group' and self.group_message_reply:
                     group_id = data.get('group_id')
                     if not is_image:
-                        logging.info(f"收到群{group_id}QQ{sender_user_id}的消息：{message}")
+                        logger.info(f"收到来自群{group_id}QQ{sender_user_id}的消息：{message}")
                     else:
-                        logging.info(f"收到群{group_id}QQ{sender_user_id}的图片消息")
+                        logger.info(f"收到来自群{group_id}QQ{sender_user_id}的图片消息")
                         
                     ''' 对消息中的 at 信息进行处理过滤 '''
                     self.is_at_message = False
                     self.is_at_message,at_matches,message = process_at_message(self.is_cq_code, data)
                     if at_matches:
                         if str(self.bot_qq_id) not in at_matches:
-                            logging.info(f"消息中@不是机器人，已过滤")
+                            logger.debug(f"消息中不是@机器人，已过滤")
                             return None
                     else:
                         if self.at_reply:
-                            logging.info(f"消息中未@机器人，已过滤")
+                            logger.debug(f"消息中未@机器人，已过滤")
                             return None
        
                     if group_id not in self.group_message_reply_list:
@@ -231,15 +227,15 @@ class QQBot:
                         # 此条消息为命令,需要判断执行者是否有权限执行
                         if self.group_cmd_for_trusted_users_only:
                             if sender_user_id not in self.trust_qq_list:
-                                logging.info(
+                                logger.info(
                                     f"执行命令者{sender_user_id}未在白名单中，已过滤"
                                 )
                                 return None
-                        logging.info(f"执行命令：{message}")
+                        logger.info(f"执行命令：{message}")
                     elif not is_reply_message(
                         self.at_reply, self.reply_rate, self.is_at_message
                     ):
-                        logging.info(f"未达到消息回复率{self.reply_rate}%，不回复")
+                        logger.info(f"未达到消息回复率{self.reply_rate}%，不回复")
                         return None
                     
                     if is_image: 
@@ -249,9 +245,9 @@ class QQBot:
 
                     reply_message_list = await self.produce_group_reply(str(message), sender_user_id, group_id)
                     if is_command(message) and '没有这样的命令呢' in reply_message_list:
-                        logging.info("没有这样的命令呢")
+                        logger.warning("执行的命令不存在")
                         return None
-                    logging.debug(f"回复list{reply_message_list}")
+                    logger.info(f"回复列表：{reply_message_list}")
                     if reply_message_list is None:
                         return None
                     return reply_message_list, sender_user_id, group_id
@@ -260,11 +256,12 @@ class QQBot:
             else:
                 return None
         except json.JSONDecodeError:
-            logging.error("JSON解析错误")
+            logger.error("JSON解析错误")
             return None
         except Exception as e:
-            logging.error(f"处理消息时发生错误: {e}")
-            logging.error(f"接收到的数据: {json.dumps(data, ensure_ascii=False, indent=4)}")
+            logger.error(f"处理消息时发生错误: {e}")
+            logger.error(f"接收到的数据: {json.dumps(data, ensure_ascii=False)}")
+            logger.exception(e)
             return None
 
     async def produce_reply(self, mess, sender_user_id) -> list | None:
@@ -284,12 +281,12 @@ class QQBot:
             return reply_list
 
         reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
-        logging.info(f"回复消息：{reply}")
+        logger.debug(f"回复消息：{reply}")
         if self.enable_ofa_image:
             similar_image = await self.image_db.find_similar_content(reply)
             if similar_image is not None and similar_image[1] is not None:
                 if similar_image[1] > 0.6:
-                    logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                    logger.info(f"找到相似图片：{similar_image[0]}，相似度为{similar_image[1]}")
                     try:
                         url = similar_image[0].replace('&', '&amp;')
                     except:
@@ -299,12 +296,12 @@ class QQBot:
         reply_list = divide_sentences(reply)
         self.muice_app.finish_ask(reply_list)
         if voice_message_reply(self.voice_reply_rate):
-            logging.info(f"尝试回复语音消息")
+            logger.info(f"尝试回复语音消息")
             try:
                 voice_file = await fish_speech_api(reply)
                 reply_list = [f'[CQ:record,file=file:///{voice_file}]']
             except Exception as e:
-                logging.error(f"回复语音消息失败: {e}")
+                logger.error(f"回复语音消息失败: {e}")
         return reply_list
 
     async def produce_group_reply(self, mess, sender_user_id, group_id) -> list | None:
@@ -329,12 +326,12 @@ class QQBot:
             return reply_list
 
         reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
-        logging.info(f"回复消息：{reply}")
+        logger.info(f"回复消息：{reply}")
         if self.enable_ofa_image:
             similar_image = await self.image_db.find_similar_content(reply)
             if similar_image is not None and similar_image[1] is not None:
                 if similar_image[1] > 0.6:
-                    logging.info(f"找到相似图片：{similar_image[0]},相似度为{similar_image[1]}")
+                    logger.info(f"找到相似图片：{similar_image[0]}，相似度为{similar_image[1]}")
                     try:
                         url = similar_image[0].replace('&', '&amp;')
                     except:
@@ -344,12 +341,12 @@ class QQBot:
         reply_list = divide_sentences(reply)
         self.muice_app.finish_ask(reply_list)
         if voice_message_reply(self.voice_reply_rate):
-            logging.info(f"尝试回复语音消息")
+            logger.info(f"尝试回复语音消息")
             try:
                 voice_file = await fish_speech_api(reply)
                 reply_list = [f'[CQ:record,file=file:///{voice_file}]']
             except Exception as e:
-                logging.error(f"回复语音消息失败: {e}")
+                logger.error(f"回复语音消息失败: {e}")
         return reply_list
 
     async def store_time(self, user_id):
@@ -373,11 +370,12 @@ class QQBot:
                 await self.websocket.send_text(reply)
 
     def run(self):
+        logger.info("尝试与QQ建立WebSocket连接...")
         uvicorn.run(self.app, host="127.0.0.1", port=self.websocket_port)
 
 
 if __name__ == '__main__':
-    logging.warning("用户请勿直接运行此文件，请使用main.py运行")
+    logger.warning("用户请勿直接运行此文件，请使用main.py运行")
     Muice_app = None
     ws = QQBot(Muice_app)
     ws.run()

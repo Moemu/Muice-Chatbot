@@ -1,8 +1,11 @@
 import os
 import shutil
+import logging
 
 import threading
 from utils.auto_prompt import AutoPrompt
+
+logger = logging.getLogger('Muice')
 
 class Command:
     """
@@ -26,9 +29,11 @@ class Command:
         """
         执行命令，返回命令命令执行结果或命令不存在的提示
         """
+        logger.info(f"捕获到命令：{command}")
         if command in self.commands:
             # 调用与命令关联的函数
             return self.commands[command]()
+        logger.warning(f"未找到命令：{command}")
         return self.no_command()
 
     def no_command(self) -> str:

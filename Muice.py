@@ -5,6 +5,8 @@ import random
 import time
 import re
 
+logger = logging.getLogger('Muice')
+
 class Muice:
     """
     Muice交互类
@@ -34,6 +36,7 @@ class Muice:
 
     def ask(self, text: str, user_qq: int, group_id: int) -> str:
         """发送信息"""
+        logger.info('正在调用模型...')
         if group_id == -1:
             self.user_id = str(user_qq)
         else:
@@ -53,9 +56,10 @@ class Muice:
         history.extend(self.history)
 
         start_time = time.time()
+        logger.debug(f'模型调用参数：Prompt: {self.user_text}, History: {history}')
         self.reply = self.model.ask(self.user_text, history)
         end_time = time.time()
-        logging.info(f'模型调用时长: {end_time - start_time} s')
+        logger.info(f'模型调用时长: {end_time - start_time} s')
         return self.reply
 
     def create_a_new_topic(self, last_time):
@@ -95,7 +99,6 @@ class Muice:
         """
         结束对话并保存记忆
         """
-        logging.debug(f'Muice.py->finish_ask->{reply}')
         reply = "".join(reply)
         self.save_chat_memory(reply)
 
@@ -109,14 +112,13 @@ class Muice:
             try:
                 with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
                     data = f.readlines()
-                logging.debug(f'Muice.py->get_recent_chat_memory->{self.user_id}')
                 if len(data) == 0:
                     return []
                 memory = json.loads(data[-1])
                 memory['history'].append([memory['prompt'],memory['completion']])
                 return memory['history']
             except Exception as e:
-                logging.error(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
+                logger.warning(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
                 if os.path.isfile(f'./memory/{self.user_id}.json.bak'):
                     os.remove(f'./memory/{self.user_id}.json.bak')
                 os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
@@ -135,16 +137,16 @@ class Muice:
         if image_matches:
             image_caption = image_matches.group(1)
             with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
-                logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
+                logger.debug(f'保存用户{self.user_id}记忆：{self.history[-1]}')
                 json.dump({'prompt': image_caption, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
                 f.write('\n')
             return
         with open(f'./memory/{self.user_id}.json', 'a', encoding='utf-8') as f:
-            logging.debug(f'保存用户记忆:{self.user_id},{self.history}')
             json.dump({'prompt': self.user_text, 'completion': reply, 'history': self.history}, f, ensure_ascii=False)
             f.write('\n')
         if self.memory is not None:
             self.memory.insert_memory({"input": self.user_text}, {"output": reply})
+        logger.debug(f'保存用户{self.user_id}记忆：[{self.user_text}, {reply}]')
 
     def remove_last_chat_memory(self):
         """
@@ -165,11 +167,11 @@ class Muice:
         """
         刷新对话
         """
-        logging.info("Start refresh")
+        logger.info("开始刷新对话")
         if not self.user_text:
-            return "本雪一句话都没有和你说！你在玩我呢？"
+            return "我一句话都没有和你说！你在玩我呢？"
         self.remove_last_chat_memory()
         self.history = self.get_recent_chat_memory()
-        logging.debug(f'刷新后历史记录:{self.history}')
+        logger.debug(f'刷新后历史记录：{self.history}')
         response = self.model.ask(self.user_text, self.history)
         return response
