@@ -11,7 +11,10 @@ from utils.logging import init_logger
 logger = init_logger(logging.INFO)
 
 logger.warning("2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意")
+logger.info("启动Muice-Chatbot中🚀...")
 
+# 加载配置文件
+logger.info("加载配置文件...")
 configs:dict = yaml.load(open('configs.yml', 'r', encoding='utf-8'),Loader=yaml.FullLoader)
 
 # 模型配置
@@ -22,13 +25,14 @@ system_prompt = configs['model']["system_prompt"]
 auto_system_prompt = configs['model']["auto_system_prompt"]
 
 # 模型加载
-logger.info(f"正在加载模型：{model_loader}: {model_name_or_path}")
+logger.info(f"加载模型：{model_loader}: {model_name_or_path}")
 model_adapter = importlib.import_module(f"llm.{model_loader}")
 model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_prompt, auto_system_prompt)
 
 # Faiss配置
 enable_faiss = configs['faiss']["enable"]
 if enable_faiss:
+    logger.info(f"加载Faiss记忆组件...")
     from llm.faiss_memory import FAISSMemory
     import signal
     memory = FAISSMemory(model_path=configs['faiss']["path"],db_path="./memory/faiss_index.faiss",top_k=2)
@@ -46,11 +50,13 @@ else:
 # OFA图像模型
 enable_ofa_image = configs["ofa_image"]['enable']
 if enable_ofa_image:
+    logger.info(f"加载OFA图像模型...")
     from utils.ofa_image_process import ImageCaptioningPipeline
     ofa_image_model_name_or_path = configs["ofa_image"]['path']
     ImageCaptioningPipeline.load_model(ofa_image_model_name_or_path)
 
 # QQBot
+logger.info("初始化Bot服务...")
 muice_app = Muice(model, memory, configs)
 qqbot_app = QQBot(muice_app)
 qqbot_app.run()
