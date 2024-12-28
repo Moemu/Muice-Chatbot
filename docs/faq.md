@@ -2,7 +2,7 @@
 
 ## 通用解决方案
 
-先把报错内容自己读一遍，上面写什么你就尝试着自己修复，如果看不懂就上网搜，实在不行再提问。如果你有英文恐惧症，那么就把本项目的文件夹右键删除，然后清空回收站，因为这个项目是用英文代码写出来的，不删除的话小心英文蟒蛇晚上钻到你的床里面。
+先把报错内容自己读一遍，上面写什么你就尝试着自己修复，如果看不懂就上网搜，实在不行再提问。
 
 如果你使用 Conda，在执行下面的指令前请先激活环境。
 
@@ -73,6 +73,17 @@ call Muice\Scripts\activate.bat
    如果你使用 Conda 环境，则可以参考：https://zhuanlan.zhihu.com/p/367740437
 
 参考Issue：https://github.com/Moemu/Muice-Chatbot/issues/2
+
+## cuda extension not installed
+
+`auto_gptq` 需要自行编译，直接从 pip 拉取的版本将会导致模型推理速度下降。
+
+在这之前，请检查 `nvcc` 安装并配置 `CUDA_HOME` 环境变量（比如 `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.6`）
+
+```powershell
+git clone https://github.com/PanQiWei/AutoGPTQ.git && cd AutoGPTQ
+pip install -vvv --no-build-isolation -e .
+```
 
 ## git : 无法将“git”项识别为 cmdlet...请确保路径正确
 
