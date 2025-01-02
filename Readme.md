@@ -9,6 +9,9 @@
 简体中文 | [繁體中文](./docs/Readme_tc.md) | [English](./docs/Readme_en.md) | [日本語](./docs/Readme_jp.md) 
 
 > [!IMPORTANT]
+> 
+> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关
+> 
 > 2024.12.04 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在12.04后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
 
 
@@ -261,6 +264,8 @@ python main.py
 <a href="https://www.buymeacoffee.com/Moemu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 163px !important;" ></a>
 
 感谢你们所有人的支持！
+
+本项目隶属于 Muice-Project。
 
 Star History：
 
