@@ -42,22 +42,22 @@ class Muice:
         else:
             self.user_id = "group_" + str(group_id)
 
-        history = []
+        history = self.get_recent_chat_memory()
         self.user_text = text
+
         if self.memory is not None:
             variables = self.memory.search_memory({"input": self.user_text})
             if variables is not None:
                 faiss_inputs = variables.get('input', [])
                 if faiss_inputs is not None:
                     faiss_outputs = variables.get('output', [])
-                    history = list(zip(faiss_inputs, faiss_outputs))
-
-        self.history = self.get_recent_chat_memory()
-        history.extend(self.history)
+                    self.history = list(set(history[:5] + list(zip(faiss_inputs, faiss_outputs)))) # 至少保留最近5条对话避免丢失上下文信息
+        else:
+            self.history = history
 
         start_time = time.time()
-        logger.debug(f'模型调用参数：Prompt: {self.user_text}, History: {history}')
-        self.reply = self.model.ask(self.user_text, history)
+        logger.debug(f'模型调用参数：Prompt: {self.user_text}, History: {self.history}')
+        self.reply = self.model.ask(self.user_text, self.history)
         end_time = time.time()
         logger.info(f'模型调用时长: {end_time - start_time} s')
         return self.reply
