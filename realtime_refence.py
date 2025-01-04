@@ -86,7 +86,7 @@ audio_name_or_path = configs['realtime_voice']['path']
 # Faiss配置
 enable_faiss = configs['faiss']["enable"]
 if enable_faiss:
-    from llm.faiss_memory import FAISSMemory
+    from llm.utils.faiss_memory import FAISSMemory
     import signal
     memory = FAISSMemory(model_path=configs['faiss']["path"],db_path="./memory/faiss_index.faiss",top_k=2)
     def handle_interrupt(faiss_memory: FAISSMemory):

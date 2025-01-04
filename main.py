@@ -33,7 +33,7 @@ model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_promp
 enable_faiss = configs['faiss']["enable"]
 if enable_faiss:
     logger.info(f"加载Faiss记忆组件...")
-    from llm.faiss_memory import FAISSMemory
+    from llm.utils.faiss_memory import FAISSMemory
     import signal
     memory = FAISSMemory(model_path=configs['faiss']["path"],db_path="./memory/faiss_index.faiss",top_k=2)
     def handle_interrupt(faiss_memory: FAISSMemory):

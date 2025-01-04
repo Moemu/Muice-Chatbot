@@ -1,7 +1,7 @@
 import csv
 import os
 import shutil
-from llm.faiss_memory import FAISSMemory
+from llm.utils.faiss_memory import FAISSMemory
 from alive_progress import alive_bar
 import time
 
