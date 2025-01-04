@@ -6,16 +6,17 @@ import yaml
 from Muice import Muice
 from ws import QQBot
 from utils.logging import init_logger
+import utils.configs as config
 
 
-logger = init_logger(logging.INFO)
+logger = init_logger(logging.DEBUG)
 
 logger.warning("2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意")
 logger.info("启动Muice-Chatbot中🚀...")
 
 # 加载配置文件
 logger.info("加载配置文件...")
-configs:dict = yaml.load(open('configs.yml', 'r', encoding='utf-8'),Loader=yaml.FullLoader)
+configs = config.get()
 
 # 模型配置
 model_loader = configs['model']["loader"]
@@ -55,8 +56,8 @@ if enable_ofa_image:
     ofa_image_model_name_or_path = configs["ofa_image"]['path']
     ImageCaptioningPipeline.load_model(ofa_image_model_name_or_path)
 
-# QQBot
+# ws服务
 logger.info("初始化Bot服务...")
 muice_app = Muice(model, memory, configs)
-qqbot_app = QQBot(muice_app)
-qqbot_app.run()
+ws_app = QQBot(muice_app, configs)
+ws_app.run()

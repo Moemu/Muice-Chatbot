@@ -10,7 +10,7 @@
 
 > [!IMPORTANT]
 > 
-> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关
+> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。但现在您可以使用 Telegram Bot 运行我们的服务
 > 
 > 2024.12.04 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在12.04后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
 
@@ -137,6 +137,8 @@ model:
 您也可以使用 [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core) 以及 [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock) 等来链接QQ, 或其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
 
 **能使用请勿随意更新 QQNT, 若无法使用请尝试降级 QQNT**
+
+在 Telegram Bot 中使用的方法：[迁移至 Telegram Bot](./docs/telegram.md)
 
 ## 其他功能
 

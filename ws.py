@@ -48,7 +48,7 @@ async def build_group_reply_json(reply_message, group_id):
 
 
 class QQBot:
-    def __init__(self, muice_app):
+    def __init__(self, muice_app, configs:dict):
         self.app = FastAPI()
         self.muice_app = muice_app
 
@@ -56,7 +56,7 @@ class QQBot:
         self.command.load_default_command()
 
         # 配置获取
-        self.configs = yaml.load(open('configs.yml', 'r', encoding='utf-8'), Loader=yaml.FullLoader)
+        self.configs = configs
         self.websocket_port = self.configs['bot']['port']
         self.is_cq_code = self.configs['bot']['cq_code']
         self.bot_qq_id = self.configs['bot']['id']
@@ -84,6 +84,7 @@ class QQBot:
         # 群聊消息
         self.group_message_reply = self.configs['bot']['group']['enable']
         if self.group_message_reply:
+            self.group_anyone = self.configs['bot']['group']['anyone']
             self.group_message_reply_list = self.configs['bot']['group']['trusted']
             self.group_reply_only_to_trusted = self.configs['bot']['group']['only_trusted']
             self.group_cmd_for_trusted_users_only = self.configs['bot']['group']['cmd_only_trusted']
@@ -216,7 +217,7 @@ class QQBot:
                             logger.debug(f"消息中未@机器人，已过滤")
                             return None
        
-                    if group_id not in self.group_message_reply_list:
+                    if group_id not in self.group_message_reply_list and not self.group_anyone:
                         return None
                     
                     if self.group_reply_only_to_trusted:

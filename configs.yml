@@ -8,6 +8,7 @@ model:
 
 # Bot相关
 bot:
+  platform: telegram # 聊天平台 qq/telegram
   id: 12345678 # 机器人QQ号
   port: 21050 # LLOneBot反向WebSocket服务端口
   wait_reply: true # 拟人化回复（回复前等待一段时间）
@@ -73,5 +74,5 @@ realtime_voice:
 
 # Faiss长期记忆(Beta)
 faiss:
-  enable: false # 是否启用Faiss长期记忆
+  enable: true # 是否启用Faiss长期记忆
   path: ./model/distiluse-base-multilingual-cased-v1 # Faiss模型路径
