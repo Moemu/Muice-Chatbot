@@ -28,6 +28,7 @@ def init_logger(LEVEL = logging.INFO):
     # 移除默认的handler
     for handler in logger.handlers:
         logger.removeHandler(handler)
+    logger.propagate = False
     
     # 添加处理器对象
     logger.addHandler(console_handler)
