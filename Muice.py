@@ -51,7 +51,7 @@ class Muice:
                 faiss_inputs = variables.get('input', [])
                 if faiss_inputs is not None:
                     faiss_outputs = variables.get('output', [])
-                    self.history = list(set(history[:5] + list(zip(faiss_inputs, faiss_outputs)))) # 至少保留最近5条对话避免丢失上下文信息
+                    self.history = history[:5] + faiss_outputs # 至少保留最近5条对话避免丢失上下文信息
         else:
             self.history = history
 
