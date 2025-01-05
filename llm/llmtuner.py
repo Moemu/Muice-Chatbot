@@ -6,7 +6,7 @@ class llm:
     使用LLaMA-Factory方案加载, 适合通过其他微调方案微调的模型加载
     """
 
-    def __init__(self, model_name_or_path: str, adapter_name_or_path: str, system_prompt: str = None, auto_system_prompt: bool = False):
+    def __init__(self, model_name_or_path: str, adapter_name_or_path: str, system_prompt: str = None, auto_system_prompt: bool = False, *args, **kwargs):
         self.model = ChatModel(dict(
             model_name_or_path=model_name_or_path,
             adapter_name_or_path=adapter_name_or_path,

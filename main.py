@@ -9,7 +9,7 @@ from utils.logging import init_logger
 import utils.configs as config
 
 
-logger = init_logger(logging.DEBUG)
+logger = init_logger(logging.INFO)
 
 logger.warning("2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意")
 logger.info("启动Muice-Chatbot中🚀...")
@@ -24,11 +24,12 @@ model_name_or_path = configs['model']["model_path"]
 adapter_name_or_path = configs['model']["adapter_path"]
 system_prompt = configs['model']["system_prompt"]
 auto_system_prompt = configs['model']["auto_system_prompt"]
+extra_args = configs['model']["extra_args"]
 
 # 模型加载
 logger.info(f"加载模型：{model_loader}: {model_name_or_path}")
 model_adapter = importlib.import_module(f"llm.{model_loader}")
-model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_prompt, auto_system_prompt)
+model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_prompt, auto_system_prompt, extra_args)
 
 # Faiss配置
 enable_faiss = configs['faiss']["enable"]
