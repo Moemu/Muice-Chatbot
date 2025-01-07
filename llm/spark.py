@@ -23,16 +23,14 @@ class llm:
     def __on_message(self, ws, message):
         response = json.loads(message)
         logger.debug(f"Spark返回数据: {response}")
-        if response['header']['status'] in [0, 2] and response['payload']['choices']['text'][0]['content'] != ' ':
+        if response['header']['status'] in [0, 1, 2] and response['payload']['choices']['text'][0]['content'] != ' ':
             self.response += response['payload']['choices']['text'][0]['content']
         if response['header']['status'] == 2:
-            ws.close()
-        if response['header']['status'] == 1:
-            logger.error(f"调用Spark在线模型时发生错误: {response}")
             ws.close()
 
     def __on_error(self, ws, error):
         logger.error(f"调用Spark在线模型时发生错误: {error}")
+        ws.close()
 
     def __on_close(self, ws, close_status_code, close_msg):
         pass
