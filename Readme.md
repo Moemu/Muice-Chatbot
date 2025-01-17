@@ -8,6 +8,10 @@
 
 简体中文 | [繁體中文](./docs/Readme_tc.md) | [English](./docs/Readme_en.md) | [日本語](./docs/Readme_jp.md) 
 
+> [!CAUTION]
+> 
+> 2025.01.17 更新：近日我们收到有关 “Moemu(Moemu)” Meme 代币在某交易平台上被发行的报告，请注意，我们并未以任何名义发行任何与本仓库或与 Moemu 本人有关的数字货币或其他 NFT 产品，我们也没有发行 Meme 币或其他 NFT 产品的计划， Moemu 本人也没有任何相关的平台账号和数字钱包，故此类代币均属于不安全的非官方代币。投资有风险，理财需谨慎。请谨慎进行相关金融活动，避免钱财流失。
+
 > [!IMPORTANT]
 > 
 > 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。但现在您可以使用 Telegram Bot 运行我们的服务
@@ -266,7 +270,7 @@ python main.py
 
 感谢你们所有人的支持！
 
-本项目隶属于 Muice-Project。
+本项目隶属于 MuikaAI。
 
 Star History：
 
