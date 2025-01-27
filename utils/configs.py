@@ -1,5 +1,6 @@
 import yaml as yaml_
 import shutil
+import sys
 from pathlib import Path
 from ruamel.yaml import YAML
 from .logging import init_logger
@@ -62,12 +63,14 @@ def update_config(func):
             logger.warning("配置文件不存在,正在创建")
             CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
             copy_config(TEMPLATE_PATH, CONFIG_PATH)
+            logger.info("请在configs.yml中配置相关信息")
+            sys.exit(1)
         else:
             logger.info("配置文件存在,正在读取")
 
             if check_yaml_is_changed(TEMPLATE_PATH):
                 yaml_2 = YAML()
-                logger.info("插件新的配置已更新, 正在更新")
+                logger.info("新的配置已更新, 正在更新")
 
                 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
                     old_config = yaml_2.load(f)
