@@ -15,6 +15,7 @@ from utils.Tools import process_at_message
 from utils.Tools import is_reply_message
 from utils.Tools import is_image_message
 from utils.Tools import voice_message_reply
+from utils.Tools import get_nickname
 from utils.command import Command
 
 logger = logging.getLogger('Muice')
@@ -57,17 +58,18 @@ class QQBot:
 
         # 配置获取
         self.configs = configs
-        self.websocket_port = self.configs['bot']['port']
-        self.is_cq_code = self.configs['bot']['cq_code']
-        self.bot_qq_id = self.configs['bot']['id']
-        self.reply_rate = self.configs['bot']['group']['rate']
-        self.at_reply = self.configs['bot']['group']['only_at']
-        self.nonreply_prefix = self.configs['bot']['nonreply_prefix']
-        self.enable_ofa_image = self.configs['ofa_image']['enable']
-        self.voice_reply_rate = self.configs['voice_reply']['rate']
-        self.reply_wait = self.configs['bot']['wait_reply']
-        self.auto_create_topic = self.configs['active']['enable']
-        self.targets = self.configs['active']['targets']
+        self.websocket_port = self.configs.get('bot', {}).get('port', 21050)
+        self.is_cq_code = self.configs.get('bot', {}).get('cq_code', False)
+        self.bot_qq_id = self.configs.get('bot', {}).get('id', "")
+        self.reply_rate = self.configs.get('bot', {}).get('group', {}).get('rate', 0.5)
+        self.at_reply = self.configs.get('bot', {}).get('group', {}).get('only_at', True)
+        self.nonreply_prefix = self.configs.get('bot', {}).get('nonreply_prefix', [])
+        self.enable_ofa_image = self.configs.get('ofa_image', {}).get('enable', False)
+        self.voice_reply_rate = self.configs.get('voice_reply', {}).get('rate', 0.75)
+        self.reply_wait = self.configs.get('bot', {}).get('wait_reply', True)
+        self.auto_create_topic = self.configs.get('active', {}).get('enable', False)
+        self.targets = self.configs.get('active', {}).get('targets', [])
+        self.nickname = self.configs.get('bot', {}).get('nickname', '观众大大')
 
         if self.auto_create_topic:
             from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -76,18 +78,18 @@ class QQBot:
             self.scheduler.add_job(self.time_work, 'interval', minutes=1)
             self.websocket = None
 
-        if self.configs['bot']['anyone']:
+        if self.configs.get('bot', {}).get('anyone', False):
             self.trust_qq_list = []
         else:
-            self.trust_qq_list = self.configs['bot']['trusted']
+            self.trust_qq_list = self.configs.get('bot', {}).get('trusted', [])
 
         # 群聊消息
-        self.group_message_reply = self.configs['bot']['group']['enable']
+        self.group_message_reply = self.configs.get('bot', {}).get('group', {}).get('enable', False)
         if self.group_message_reply:
-            self.group_anyone = self.configs['bot']['group']['anyone']
-            self.group_message_reply_list = self.configs['bot']['group']['trusted']
-            self.group_reply_only_to_trusted = self.configs['bot']['group']['only_trusted']
-            self.group_cmd_for_trusted_users_only = self.configs['bot']['group']['cmd_only_trusted']
+            self.group_anyone = self.configs.get('bot', {}).get('group', {}).get('anyone', False)
+            self.group_message_reply_list = self.configs.get('bot', {}).get('group', {}).get('trusted', [])
+            self.group_reply_only_to_trusted = self.configs.get('bot', {}).get('group', {}).get('only_trusted', False)
+            self.group_cmd_for_trusted_users_only = self.configs.get('bot', {}).get('group', {}).get('cmd_only_trusted', False)
 
         # 定义公共变量
         self.is_at_message = False
@@ -156,8 +158,10 @@ class QQBot:
             elif 'post_type' in data and data['post_type'] == 'message':
                 '''消息处理'''
                 sender_user_id = data.get('sender', {}).get('user_id')
+                qq_nickname = data.get('sender', {}).get('nickname')
+                self.nickname = get_nickname(self.nickname, qq_nickname, data['message_type'] == 'group')
 
-                is_image,image_url = is_image_message(self.is_cq_code, data)
+                is_image, image_url = is_image_message(self.is_cq_code, data)
                 if is_image: 
                     if not self.enable_ofa_image:
                         logger.info("捕获到图片消息，但未开启图片回复功能，已跳过")
@@ -282,6 +286,7 @@ class QQBot:
             return reply_list
 
         reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
+        reply = reply.replace('<USERNAME>', self.nickname)
         logger.debug(f"回复消息：{reply}")
         if self.enable_ofa_image:
             similar_image = await self.image_db.find_similar_content(reply)
@@ -327,6 +332,7 @@ class QQBot:
             return reply_list
 
         reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
+        reply = reply.replace('<USERNAME>', self.nickname)
         logger.info(f"回复消息：{reply}")
         if self.enable_ofa_image:
             similar_image = await self.image_db.find_similar_content(reply)

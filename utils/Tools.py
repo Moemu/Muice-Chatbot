@@ -123,3 +123,23 @@ def voice_message_reply(voice_rate: str) -> bool:
     else:
         return False
 
+def get_nickname(config_nickname:str, qq_nickname:str, group:bool = False) -> str:
+    """
+    获取昵称。
+    Args:
+    - config_nickname (str): 配置中的昵称。
+    - qq_nickname (str): QQ 昵称。
+    - group (bool): 是否是群聊。
+    Returns:
+    - str: 昵称。
+    """
+    if not group:
+        if config_nickname:
+            return config_nickname
+        if qq_nickname:
+            return qq_nickname
+        return '观众大大'
+    else:
+        if qq_nickname:
+            return qq_nickname
+        return '群友大大'
