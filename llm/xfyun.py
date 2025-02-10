@@ -9,21 +9,27 @@ class llm:
     """
     星火大模型
     """
-
-    def __init__(self, model_path:str, adapter_path:str, system_prompt:str, auto_system_prompt:bool, *args, **kwargs):
-        self.app_id =  args[0]['app_id']
-        self.service_id = args[0]['service_id']
-        self.resource_id = args[0]['resource_id']
+    def __init__(self, model_config: dict):
+        self.app_id = model_config.get("app_id")
+        self.service_id = model_config.get("service_id")
+        self.resource_id = model_config.get("resource_id")
         self.url = "wss://maas-api.cn-huabei-1.xf-yun.com/v1.1/chat"
-        self.system_prompt = system_prompt
-        self.auto_system_prompt = auto_system_prompt
+        self.system_prompt = model_config.get("system_prompt", "")
+        self.auto_system_prompt = model_config.get("auto_system_prompt", False)
+        self.temperature = model_config.get("temperature", 0.75)
+        self.top_k = model_config.get("top_k", 4)
+        self.max_tokens = model_config.get("max_tokens", 1024)
         self.response = ''
         self.is_history = False
 
     def __on_message(self, ws, message):
         response = json.loads(message)
         logger.debug(f"Spark返回数据: {response}")
-        if response['header']['status'] in [0, 1, 2] and response['payload']['choices']['text'][0]['content'] != ' ':
+        if response['header']['code'] != 0: # 不合规时该值为10013
+            logger.warning(f"调用Spark在线模型时发生错误: {response['header']['message']}")
+            self.response = '（已被过滤）'
+            ws.close()
+        elif response['header']['status'] in [0, 1, 2] and response['payload']['choices']['text'][0]['content'] != ' ':
             self.response += response['payload']['choices']['text'][0]['content']
         if response['header']['status'] == 2:
             ws.close()
@@ -44,7 +50,9 @@ class llm:
             "parameter": {
                 "chat": {
                     "domain": self.service_id,
-                    "temperature": 0.85
+                    "temperature": self.temperature,
+                    "top_k": self.top_k,
+                    "max_tokens": self.max_tokens
                 }
             },
             "payload": {
@@ -53,6 +61,7 @@ class llm:
                 }
             }
         }
+
         ws.send(json.dumps(request_data))
 
     def generate_system_prompt(self, user_text: str) -> str:
@@ -62,19 +71,22 @@ class llm:
     
     def generate_history(self, history: list):
         self.history = []
+        if len(history) == 0:
+            return
+        self.is_history = True
+        self.history.append({"role": 'user', "content": self.generate_system_prompt(history[0][0]) + history[0][1]})
         for item in history:
-            self.history.append({"role": 'user', "content": self.generate_system_prompt(item[0]) + item[0]})
+            self.history.append({"role": 'user', "content": item[0]})
             self.history.append({"role": 'assistant', "content": item[1]})
-            self.is_history = True
 
-    def ask(self, user_text: str, history: list):
+    def ask(self, prompt: str, history: list) -> str:
         self.generate_history(history)
         if not self.is_history:
-            self.history.append({"role": 'user', "content": self.generate_system_prompt(user_text) + user_text})
+            self.history.append({"role": 'user', "content": self.generate_system_prompt(prompt) + prompt})
         else:
-            self.history.append({"role": 'user', "content": user_text})
-        self.response = ''
+            self.history.append({"role": 'user', "content": prompt})
 
+        logger.debug(f"发送给Spark的数据: {self.history}")
         ws = websocket.WebSocketApp(self.url,
                                     on_message=self.__on_message,
                                     on_error=self.__on_error,

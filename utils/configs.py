@@ -38,11 +38,12 @@ def check_yaml_is_changed(TEMPLATE_PATH):
     
     keys1 = get_all_keys(example_)
     keys2 = get_all_keys(old)
+
+    # 忽略 model 下的所有子配置项变化
+    keys1 = {k for k in keys1 if not k.startswith("model.")}
+    keys2 = {k for k in keys2 if not k.startswith("model.")}
     
-    if keys1 == keys2:
-        return False
-    else:
-        return True
+    return keys1 != keys2
 
 def merge_configs(old_config, new_config):
     """
@@ -70,7 +71,7 @@ def update_config(func):
 
             if check_yaml_is_changed(TEMPLATE_PATH):
                 yaml_2 = YAML()
-                logger.info("新的配置已更新, 正在更新")
+                logger.info("配置文件已更新到新的版本, 正在合并")
 
                 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
                     old_config = yaml_2.load(f)

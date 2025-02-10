@@ -1,7 +1,6 @@
 import importlib
 import logging
 import sys
-import yaml
 
 from Muice import Muice
 from ws import QQBot
@@ -11,7 +10,7 @@ import utils.configs as config
 
 logger = init_logger(logging.INFO)
 
-logger.warning("2024.12.04更新：由于配置文件格式变更，如果先前你拉取过本Repo并在12.04后执行过fetch操作，请您重新设置配置文件，由此带来的不便我们深表歉意")
+logger.warning("2025.02.10更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在 02.10 后执行过fetch操作，请您重新设置模型配置，由此带来的不便我们深表歉意")
 logger.info("启动Muice-Chatbot中🚀...")
 
 # 加载配置文件
@@ -19,17 +18,12 @@ logger.info("加载配置文件...")
 configs = config.get()
 
 # 模型配置
-model_loader = configs['model']["loader"]
-model_name_or_path = configs['model']["model_path"]
-adapter_name_or_path = configs['model']["adapter_path"]
-system_prompt = configs['model']["system_prompt"]
-auto_system_prompt = configs['model']["auto_system_prompt"]
-extra_args = configs['model']["extra_args"]
+model_config = configs['model']
 
 # 模型加载
-logger.info(f"加载模型：{model_loader}: {model_name_or_path}")
-model_adapter = importlib.import_module(f"llm.{model_loader}")
-model = model_adapter.llm(model_name_or_path, adapter_name_or_path, system_prompt, auto_system_prompt, extra_args)
+logger.info(f"加载模型：{model_config.get('loader')}")
+model_adapter = importlib.import_module(f"llm.{model_config.get('loader')}")
+model = model_adapter.llm(model_config)
 
 # Faiss配置
 enable_faiss = configs['faiss']["enable"]
@@ -37,7 +31,7 @@ if enable_faiss:
     logger.info(f"加载Faiss记忆组件...")
     from llm.utils.faiss_memory import FAISSMemory
     import signal
-    memory = FAISSMemory(model_path=configs['faiss']["path"],db_path="./memory/faiss_index.faiss",top_k=2)
+    memory = FAISSMemory(model_path=configs['faiss']["path"], db_path="./memory/faiss_index.faiss", top_k=2)
     def handle_interrupt(faiss_memory: FAISSMemory):
         """处理中断信号"""
         logger.info("接收到中断信号，正在保存数据...")

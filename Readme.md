@@ -10,11 +10,9 @@
 
 > [!CAUTION]
 > 
-> 2025.01.17 更新：近日我们收到有关 “Moemu(Moemu)” Meme 代币在某交易平台上被发行的报告，请注意，我们并未以任何名义发行任何与本仓库或与 Moemu 本人有关的数字货币或其他 NFT 产品，我们也没有发行 Meme 币或其他 NFT 产品的计划， Moemu 本人也没有任何相关的平台账号和数字钱包，故此类代币均属于不安全的非官方代币。投资有风险，理财需谨慎。请谨慎进行相关金融活动，避免钱财流失。
+> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。您可以使用 Telegram Bot 来安全地运行我们的服务
 
 > [!IMPORTANT]
-> 
-> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。但现在您可以使用 Telegram Bot 运行我们的服务
 > 
 > 2024.12.04 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在12.04后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
 
@@ -109,12 +107,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 建议将基底模型与微调模型放入 `model` 文件夹中然后在配置文件中配置相应配置项（确保配置文件中的路径目录下存在多个模型文件而不是只有一个文件夹，部分微调模型由于疏忽还套了一层 `checkpoint-xxx` 文件夹）
 
-本仓库目前支持如下模型加载方式：
-
-1. 通过 API 加载
-2. 通过 `transformers` 的`AutoTokenizer`, `AutoModel` 函数加载
-3. 通过`llmtuner.chat`（`LLaMA-Factory`）的 `ChatModel` 类加载
-4. 通过 `RWKV-Runner` 提供的 API 服务加载
+本仓库目前支持的模型加载器： [支持的模型加载器列表](./docs/model.md)
 
 在配置文件中可调整模型的加载方式：
 
@@ -125,9 +118,11 @@ model:
   adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # 微调模型路径
 ```
 
-（若是 API / rwkv-api 加载，`model_name_or_path` 填写对应的 API 地址）
+不同的模型加载器需要使用不同的配置项，具体参考： [支持的模型加载器列表](./docs/model.md)
 
 如果你没有合适的显卡，需要通过 CPU 加载模型或者需要加载量化模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
+
+
 
 ## Bot 服务配置
 
