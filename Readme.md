@@ -88,7 +88,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 对于 GPU 用户，请确保您已配置好 cuda 环境。[参考链接](https://blog.csdn.net/chen565884393/article/details/127905428)
 
-## 模型下载和加载
+## 加载沐雪微调模型
 
 目前支持的基底模型如下表：
 
@@ -107,9 +107,9 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 建议将基底模型与微调模型放入 `model` 文件夹中然后在配置文件中配置相应配置项（确保配置文件中的路径目录下存在多个模型文件而不是只有一个文件夹，部分微调模型由于疏忽还套了一层 `checkpoint-xxx` 文件夹）
 
-本仓库目前支持的模型加载器： [支持的模型加载器列表](./docs/model.md)
+本仓库目前支持的模型加载器和对应的配置项： [支持的模型加载器列表](./docs/model.md)
 
-在配置文件中可调整模型的加载方式：
+在配置文件中调整模型加载方式：
 
 ```yaml
 model:
@@ -118,10 +118,12 @@ model:
   adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # 微调模型路径
 ```
 
-不同的模型加载器需要使用不同的配置项，具体参考： [支持的模型加载器列表](./docs/model.md)
-
 如果你没有合适的显卡，需要通过 CPU 加载模型或者需要加载量化模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
 
+
+## 脱离沐雪微调模型使用
+
+本仓库同时支持脱离沐雪微调模型使用（如直接使用基底模型或使用其他微调模型等），另请参考 [支持的模型加载器列表](./docs/model.md) 配置。
 
 
 ## Bot 服务配置

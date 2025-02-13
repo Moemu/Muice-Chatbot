@@ -17,6 +17,7 @@ from utils.Tools import is_image_message
 from utils.Tools import voice_message_reply
 from utils.Tools import get_nickname
 from utils.command import Command
+from llm.utils.thought import process_thoughts
 
 logger = logging.getLogger('Muice')
 
@@ -285,11 +286,11 @@ class QQBot:
             reply_list = divide_sentences(reply)
             return reply_list
 
-        reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
-        reply = reply.replace('<USERNAME>', self.nickname)
-        logger.debug(f"回复消息：{reply}")
+        raw_reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=-1)
+        raw_reply = raw_reply.replace('<USERNAME>', self.nickname)
+        logger.debug(f"回复消息：{raw_reply}")
         if self.enable_ofa_image:
-            similar_image = await self.image_db.find_similar_content(reply)
+            similar_image = await self.image_db.find_similar_content(raw_reply)
             if similar_image is not None and similar_image[1] is not None:
                 if similar_image[1] > 0.6:
                     logger.info(f"找到相似图片：{similar_image[0]}，相似度为{similar_image[1]}")
@@ -299,12 +300,19 @@ class QQBot:
                         pass
                     reply_list = [f"[CQ:image,url={url}]"]
                     return reply_list
-        reply_list = divide_sentences(reply)
-        self.muice_app.finish_ask(reply_list)
+        if self.muice_app.think:
+            thought, result = process_thoughts(raw_reply, output_thoughts=self.muice_app.think)
+            reply_list = divide_sentences(result)
+            if thought:
+                reply_list.insert(0, thought)
+        else:
+            result = raw_reply
+            reply_list = divide_sentences(raw_reply)
+        self.muice_app.save_chat_memory(raw_reply)
         if voice_message_reply(self.voice_reply_rate):
             logger.info(f"尝试回复语音消息")
             try:
-                voice_file = await fish_speech_api(reply)
+                voice_file = await fish_speech_api(result)
                 reply_list = [f'[CQ:record,file=file:///{voice_file}]']
             except Exception as e:
                 logger.error(f"回复语音消息失败: {e}")
@@ -331,11 +339,11 @@ class QQBot:
             reply_list = divide_sentences(reply)
             return reply_list
 
-        reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
-        reply = reply.replace('<USERNAME>', self.nickname)
-        logger.info(f"回复消息：{reply}")
+        raw_reply = self.muice_app.ask(text=mess, user_qq=sender_user_id, group_id=group_id)
+        raw_reply = raw_reply.replace('<USERNAME>', self.nickname)
+        logger.info(f"回复消息：{raw_reply}")
         if self.enable_ofa_image:
-            similar_image = await self.image_db.find_similar_content(reply)
+            similar_image = await self.image_db.find_similar_content(raw_reply)
             if similar_image is not None and similar_image[1] is not None:
                 if similar_image[1] > 0.6:
                     logger.info(f"找到相似图片：{similar_image[0]}，相似度为{similar_image[1]}")
@@ -345,12 +353,21 @@ class QQBot:
                         pass
                     reply_list = [f"[CQ:image,url={url}]"]
                     return reply_list
-        reply_list = divide_sentences(reply)
-        self.muice_app.finish_ask(reply_list)
+        if self.muice_app.think:
+            thought, result = process_thoughts(raw_reply, output_thoughts=self.muice_app.think)
+            logger.debug('thought:', thought)
+            logger.debug('result:', result)
+            reply_list = divide_sentences(result)
+            if thought:
+                reply_list.insert(0, thought)
+        else:
+            result = raw_reply
+            reply_list = divide_sentences(raw_reply)
+        self.muice_app.save_chat_memory(raw_reply)
         if voice_message_reply(self.voice_reply_rate):
             logger.info(f"尝试回复语音消息")
             try:
-                voice_file = await fish_speech_api(reply)
+                voice_file = await fish_speech_api(result)
                 reply_list = [f'[CQ:record,file=file:///{voice_file}]']
             except Exception as e:
                 logger.error(f"回复语音消息失败: {e}")

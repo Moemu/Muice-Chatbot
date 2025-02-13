@@ -11,8 +11,8 @@ class llm:
     """
 
     def __init__(self, model_config: dict):
-        model_path = model_config.get("chatglm_model_path")
-        pt_model_path = model_config.get("pt_model_path", None)
+        model_path = model_config.get("model_path", None)
+        pt_model_path = model_config.get("adapter_path", None)
         config = AutoConfig.from_pretrained(model_path, trust_remote_code=True, pre_seq_len=128)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         if torch.cuda.is_available():

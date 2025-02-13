@@ -1,8 +1,9 @@
 import openai
 import requests
-from utils.logging import init_logger
+import logging
+from llm.utils.auto_system_prompt import auto_system_prompt
 
-logger = init_logger('Muice.LLM.OpenAI')
+logger = logging.getLogger('Muice')
 
 class llm:
     # def __init__(self, api_key, api_base=None, model="text-davinci-003", max_tokens=1024, temperature=0.7):
@@ -10,15 +11,15 @@ class llm:
 
         self.api_key = config.get("api_key")
         self.api_base = config.get("api_base", "https://api.openai.com/v1")  # 默认的 OpenAI API 基地址
-        self.model = config.get("model", "text-davinci-003")
+        self.model = config.get("model_name", "text-davinci-003")
         self.max_tokens = config.get("max_tokens", 1024)
         self.temperature = config.get("temperature", 0.7)
+        self.system_prompt = config.get("system_prompt", None)
+        self.auto_system_prompt = config.get("auto_system_prompt", False)
 
-        # 配置 OpenAI API 密钥和基础 URL
-        openai.api_key = self.api_key
-        openai.api_base = self.api_base
+        self.client = openai.OpenAI(api_key=self.api_key, base_url=self.api_base)
 
-    def ask(self, prompt, history=None):
+    def ask(self, prompt, history=None) -> str:
         """
         向 OpenAI 模型发送请求，并获取模型的推理结果
 
@@ -27,15 +28,24 @@ class llm:
         :return: 模型生成的文本
         """
         try:
-            full_prompt = "\n".join(history + [prompt]) if history else prompt
-            response = openai.Completion.create(
+            messages = []
+            if self.auto_system_prompt:
+                self.system_prompt = auto_system_prompt(prompt)
+            if self.system_prompt:
+                messages.append({"role": "system", "content": self.system_prompt})
+            if history:
+                for h in history:
+                    messages.append({"role": "user", "content": h[0]})
+                    messages.append({"role": "assistant", "content": h[1]})
+            messages.append({"role": "user", "content": prompt})
+            response = self.client.chat.completions.create(
                 model=self.model,
-                prompt=full_prompt,
+                messages=messages,
                 max_tokens=self.max_tokens,
                 temperature=self.temperature,
             )
             # 获取并返回模型生成的文本
-            return response.choices[0].text.strip()
+            return response.choices[0].message.content
         except openai.OpenAIError as e:
             logger.error(f"OpenAI API 错误: {e}", exc_info=True)
         except requests.exceptions.RequestException as e:
