@@ -70,7 +70,7 @@ class Command:
         return reply
 
     def clean(self) -> str:
-        self.Muice.history = []
+        self.Muice.clean_memory = True
         return "已成功重置对话上下文~"
 
     def reset(self) -> str:

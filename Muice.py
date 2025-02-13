@@ -17,6 +17,7 @@ class Muice:
         self.user_text = None
         self.history = None
         self.user_id = None
+        self.clean_memory = False
         self.model = model
         self.memory = memory
         self.configs = configs
@@ -33,6 +34,7 @@ class Muice:
         self.known_topic = self.configs['active']['active_prompts']
         self.time_topic = self.configs['active']['shecdule']['tasks']
         self.time_topic_backup = self.time_topic.copy()
+        self.think = self.configs.get("model", {}).get("think", 0)
 
     def ask(self, text: str, user_qq: int, group_id: int) -> str:
         """发送信息"""
@@ -95,34 +97,29 @@ class Muice:
         
         return None
 
-    def finish_ask(self, reply: list):
-        """
-        结束对话并保存记忆
-        """
-        reply = "".join(reply)
-        self.save_chat_memory(reply)
-
     def get_recent_chat_memory(self):
         """
         获取最近一条记忆
         """
-        if not os.path.isfile(f'./memory/{self.user_id}.json') or self.user_id == None:
+        if self.clean_memory:
+            self.clean_memory = False
             return []
-        else:
-            try:
-                with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
-                    data = f.readlines()
-                if len(data) == 0:
-                    return []
-                memory = json.loads(data[-1])
-                memory['history'].append([memory['prompt'],memory['completion']])
-                return memory['history']
-            except Exception as e:
-                logger.warning(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
-                if os.path.isfile(f'./memory/{self.user_id}.json.bak'):
-                    os.remove(f'./memory/{self.user_id}.json.bak')
-                os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
+        if not os.path.isfile(f'./memory/{self.user_id}.json') or not self.user_id:
+            return []
+        try:
+            with open(f'./memory/{self.user_id}.json', 'r', encoding='utf-8') as f:
+                data = f.readlines()
+            if len(data) == 0:
                 return []
+            memory = json.loads(data[-1])
+            memory['history'].append([memory['prompt'],memory['completion']])
+            return memory['history']
+        except Exception as e:
+            logger.warning(f"记忆文件内部发生了一个错误，已更名此文件: {e}")
+            if os.path.isfile(f'./memory/{self.user_id}.json.bak'):
+                os.remove(f'./memory/{self.user_id}.json.bak')
+            os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
+            return []
 
     def save_chat_memory(self, reply: str):
         """
