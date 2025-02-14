@@ -109,13 +109,16 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 
 本仓库目前支持的模型加载器和对应的配置项： [支持的模型加载器列表](./docs/model.md)
 
-在配置文件中调整模型加载方式：
+对于沐雪系列微调模型，建议的配置如下：
 
 ```yaml
 model:
-  loader: llmtuner # 模型加载器 transformers/llmtuner/rwkv-api
+  loader: llmtuner
   model_path: model/Qwen2.5-7B-Instruct-GPTQ-Int4 # 基底模型路径
   adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # 微调模型路径
+  template: qwen # LLaMA-Factory 中模型的模板（必填）
+  system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子' # 系统提示（可选）
+  auto_system_prompt: true # 自动配置沐雪的系统提示（默认为 false）
 ```
 
 如果你没有合适的显卡，需要通过 CPU 加载模型或者需要加载量化模型，请安装并配置 `GCC` 环境，然后勾选 `openmp`。[参考链接](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
