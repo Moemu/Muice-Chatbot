@@ -105,9 +105,11 @@ adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4# # 微调模�
 
 ```yaml
 loader: xfyun # 使用 xfyun 加载器
-app_id: 'b84ff476' # 服务管控中的 app_id
-service_id: 'xqwen257bchat' # 服务管控中的 service_id
-resource_id: '1876995238256476160' # 服务管控中的 resource_id
+app_id: xxxxxxx # 服务管控中的 app_id
+api_key: 1dxxxxxx # APIKey
+api_secret: XXXXX # APISecret
+service_id: xqwen257bchat # 服务管控中的 service_id
+resource_id: '123456789' # 服务管控中的 resource_id
 system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子' # 系统提示（可选）
 auto_system_prompt: false # 自动配置沐雪的系统提示（默认为 false）
 max_tokens: 1024 # 模型生成的最大 token 数（可选，默认为 2048）
