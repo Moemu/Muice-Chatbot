@@ -15,7 +15,6 @@ logger.info("启动Muice-Chatbot中🚀...")
 
 # 加载配置文件
 logger.info("加载配置文件...")
-logger.debug("检查配置文件是否需要更新...")
 configs = config.get()
 
 # 模型配置
