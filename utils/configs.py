@@ -1,15 +1,16 @@
 import yaml as yaml_
 import shutil
 import sys
+import logging
 from pathlib import Path
 from ruamel.yaml import YAML
-from .logging import init_logger
 
 
 TEMPLATE_PATH = Path(__file__).parent / "configs_template.yml"
 CONFIG_PATH = Path("configs.yml").resolve()
 yaml = YAML()
-logger = init_logger()
+
+logger = logging.getLogger('Muice')
 
 def copy_config(TEMPLATE_PATH, CONFIG_PATH):
     """

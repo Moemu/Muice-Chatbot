@@ -3,14 +3,14 @@ import colorlog
 import time
 import os
 
-def init_logger(LEVEL = logging.INFO):
+def init_logger(console_handler_level = logging.INFO):
     # 创建logger对象
     logger = logging.getLogger('Muice')
-    logger.setLevel(LEVEL)
+    logger.setLevel(logging.DEBUG)
 
     # 创建控制台日志处理器
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(LEVEL)
+    console_handler.setLevel(console_handler_level)
 
     # 创建文件日志处理器
     if os.path.exists('logs') == False:
