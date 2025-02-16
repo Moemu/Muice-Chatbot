@@ -12,7 +12,7 @@ model:
 
 # Bot相关
 bot:
-  platform: telegram # 聊天平台 qq/telegram
+  platform: qq # 聊天平台 qq/telegram
   id: 12345678 # 机器人QQ号
   port: 21050 # LLOneBot反向WebSocket服务端口
   wait_reply: true # 拟人化回复（回复前等待一段时间）
