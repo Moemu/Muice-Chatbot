@@ -64,7 +64,7 @@ class Muice:
 
         start_time = time.time()
         logger.debug(f'模型调用参数：Prompt: {self.user_text}, History: {self.history}')
-        self.reply = self.model.ask(self.user_text, self.history)
+        self.reply:str = self.model.ask(self.user_text, self.history).strip()
         end_time = time.time()
         logger.info(f'模型调用时长: {end_time - start_time} s')
         return self.reply
