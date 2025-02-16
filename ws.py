@@ -308,7 +308,7 @@ class QQBot:
         else:
             result = raw_reply
             reply_list = divide_sentences(raw_reply)
-        self.muice_app.save_chat_memory(raw_reply)
+        self.muice_app.save_chat_memory(result)
         if voice_message_reply(self.voice_reply_rate):
             logger.info(f"尝试回复语音消息")
             try:
@@ -363,7 +363,7 @@ class QQBot:
         else:
             result = raw_reply
             reply_list = divide_sentences(raw_reply)
-        self.muice_app.save_chat_memory(raw_reply)
+        self.muice_app.save_chat_memory(result)
         if voice_message_reply(self.voice_reply_rate):
             logger.info(f"尝试回复语音消息")
             try:

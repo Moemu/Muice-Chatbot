@@ -49,13 +49,18 @@ class Muice:
 
         if self.memory is not None:
             variables = self.memory.search_memory({"input": self.user_text})
-            if variables is not None:
+            if variables != {"input": ["", ""], "output": ["", ""]}:
                 faiss_inputs = variables.get('input', [])
                 if faiss_inputs is not None:
                     faiss_outputs = variables.get('output', [])
-                    self.history = history[:5] + faiss_outputs # 至少保留最近5条对话避免丢失上下文信息
+                    self.history = history[:5] + [[inp, out] for inp, out in zip(faiss_inputs, faiss_outputs) if inp and out] # 至少保留最近5条对话避免丢失上下文信息
+            else:
+                self.history = history
         else:
             self.history = history
+
+        # 列表去重
+        self.history = [list(t) for t in set(tuple(i) for i in self.history)]
 
         start_time = time.time()
         logger.debug(f'模型调用参数：Prompt: {self.user_text}, History: {self.history}')
