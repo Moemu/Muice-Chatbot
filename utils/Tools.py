@@ -1,5 +1,8 @@
 import re
 import random
+import logging
+
+logger = logging.getLogger('Muice.Tools')
 
 def divide_sentences(text: str) -> list:
     """
@@ -29,6 +32,10 @@ def process_at_message(is_cq_code: bool, data) -> tuple[bool, list, str]:
             message = data['message']
         else:
             message = data
+        if not isinstance(message, str):
+            logger.warning(f"消息数据类型错误: {message}, 可能不是 CQ 码消息，请检查配置文件，尝试回退...")
+            return process_at_message(False, data)
+        
         at_pattern = re.compile(r'\[CQ:at,qq=(\d+)(?:,name=\w+)?\]')
         at_matches = at_pattern.findall(message)
         if at_matches:
@@ -38,6 +45,9 @@ def process_at_message(is_cq_code: bool, data) -> tuple[bool, list, str]:
             return False,at_matches, message
     else:
         at_qq_list = []
+        if not isinstance(data, dict):
+            logger.critical(f"消息数据类型错误: {data}, 可能为 CQ 码消息，请检查配置文件和消息数据")
+        
         message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
         for msg in data.get('message', []):
             if msg.get('type') == 'at':
@@ -91,6 +101,10 @@ def is_image_message(is_cq_code: bool, data) -> tuple[bool, str]:
             message = data['message']
         else:
             message = data
+        if not isinstance(message, str):
+            logger.warning(f"消息数据类型错误: {message}, 可能不是 CQ 码消息，请检查配置文件，尝试回退...")
+            return is_image_message(False, data)
+        
         url_pattern = r"url=(https?[^,]+)"
         image_match = re.search(url_pattern, message)
         if image_match:
@@ -104,6 +118,9 @@ def is_image_message(is_cq_code: bool, data) -> tuple[bool, str]:
         else:
             return False, ''
     else:
+        if not isinstance(data, dict):
+            logger.error(f"消息数据类型错误: {data}, 可能为 CQ 码消息，请检查配置文件和消息数据")
+            return False, ''
         for msg in data.get('message', []):
             if msg.get('type') == 'image':
                 image_url = msg['data'].get('url')

@@ -167,7 +167,7 @@ class QQBot:
                 if is_image and not (self.enable_ofa_image or self.enable_multi_modal):
                     logger.info("捕获到图片消息，但未开启图片回复功能，已跳过")
                     return None
-                if self.is_cq_code:
+                if self.is_cq_code and isinstance(data, dict):
                     '''对于CQ码消息处理'''
                     message = data['message']
                 else:
