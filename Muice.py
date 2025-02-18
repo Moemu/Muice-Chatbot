@@ -12,13 +12,14 @@ class Muice:
     Muice交互类
     """
 
-    def __init__(self, model, memory, configs):
+    def __init__(self, model, multimodal, memory, configs):
         self.reply = None
         self.user_text = None
         self.history = None
         self.user_id = None
         self.clean_memory = False
         self.model = model
+        self.multimodal = multimodal
         self.memory = memory
         self.configs = configs
 
@@ -125,6 +126,11 @@ class Muice:
                 os.remove(f'./memory/{self.user_id}.json.bak')
             os.rename(f'./memory/{self.user_id}.json', f'./memory/{self.user_id}.json.bak')
             return []
+
+    def image_query(self, image_path:str) -> str|None:
+        if not self.multimodal:
+            return
+        return self.multimodal.query_image(image_path)
 
     def save_chat_memory(self, reply: str):
         """

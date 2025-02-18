@@ -10,6 +10,12 @@ model:
   temperature: 0.75 # 模型生成的温度参数（可选）
   top_k: 0.95 # 模型生成的 Top_k 参数（可选）
 
+multimodal:
+  enable: false # 是否启用多模态
+  loader: dashscope # 使用 dashscope 加载器
+  model_name: qwen-vl-plus # 多模态模型名称
+  api_key: sk-xxxxxxx # API 密钥（必须）
+
 # Bot相关
 bot:
   platform: qq # 聊天平台 qq/telegram
@@ -79,5 +85,5 @@ realtime_voice:
 
 # Faiss长期记忆(Beta)
 faiss:
-  enable: true # 是否启用Faiss长期记忆
+  enable: false # 是否启用Faiss长期记忆
   path: ./model/distiluse-base-multilingual-cased-v1 # Faiss模型路径

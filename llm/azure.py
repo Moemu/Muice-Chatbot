@@ -10,6 +10,7 @@ class llm:
         self.system_prompt = model_config.get("system_prompt", None)
         self.auto_system_prompt = model_config.get("auto_system_prompt", False)
         self.user_instructions = model_config.get("user_instructions", None)
+        self.auto_user_instructions = model_config.get("auto_user_instructions", False)
         self.max_tokens = model_config.get("max_tokens", 1024)
         self.temperature = model_config.get("temperature", None)
         self.top_p = model_config.get("top_p", None)
@@ -33,13 +34,21 @@ class llm:
             messages = [SystemMessage(self.system_prompt)]
         else:
             messages = []
-        for h in history:
-            messages.append(UserMessage(h[0]))
-            messages.append(AssistantMessage(h[1]))
-        if self.user_instructions and len(history) == 0:
+        if self.auto_user_instructions:
+            self.user_instructions = auto_system_prompt(user_text)
+        
+        for index, value in enumerate(history):
+            if index == 0 and self.user_instructions:
+                messages.append(UserMessage(self.user_instructions + '\n' + value[0]))
+            else:
+                messages.append(UserMessage(value[0]))
+            messages.append(AssistantMessage(value[1]))
+
+        if not history and self.user_instructions:
             messages.append(UserMessage(self.user_instructions + '\n' + user_text))
         else:
             messages.append(UserMessage(user_text))
+
         response = self.client.complete(messages=messages, model=self.model_name,
                                         max_tokens=self.max_tokens,
                                         temperature=self.temperature,

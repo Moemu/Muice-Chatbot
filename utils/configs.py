@@ -40,9 +40,9 @@ def check_yaml_is_changed(TEMPLATE_PATH):
     keys1 = get_all_keys(example_)
     keys2 = get_all_keys(old)
 
-    # 忽略 model 下的所有子配置项变化
-    keys1 = {k for k in keys1 if not k.startswith("model.")}
-    keys2 = {k for k in keys2 if not k.startswith("model.")}
+    # 忽略 model 下和 multimodal 下的所有子配置项变化
+    keys1 = {k for k in keys1 if not k.startswith("model.") and not k.startswith("multimodal.")}
+    keys2 = {k for k in keys2 if not k.startswith("model.") and not k.startswith("multimodal.")}
     
     return keys1 != keys2
 

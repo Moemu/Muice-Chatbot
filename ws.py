@@ -66,6 +66,7 @@ class QQBot:
         self.at_reply = self.configs.get('bot', {}).get('group', {}).get('only_at', True)
         self.nonreply_prefix = self.configs.get('bot', {}).get('nonreply_prefix', [])
         self.enable_ofa_image = self.configs.get('ofa_image', {}).get('enable', False)
+        self.enable_multi_modal = self.configs.get('multimodal', {}).get('enable', False)
         self.voice_reply_rate = self.configs.get('voice_reply', {}).get('rate', 0.75)
         self.reply_wait = self.configs.get('bot', {}).get('wait_reply', True)
         self.auto_create_topic = self.configs.get('active', {}).get('enable', False)
@@ -163,20 +164,18 @@ class QQBot:
                 self.nickname = get_nickname(self.nickname, qq_nickname, data['message_type'] == 'group')
 
                 is_image, image_url = is_image_message(self.is_cq_code, data)
-                if is_image: 
-                    if not self.enable_ofa_image:
-                        logger.info("捕获到图片消息，但未开启图片回复功能，已跳过")
-                        return None
+                if is_image and not (self.enable_ofa_image or self.enable_multi_modal):
+                    logger.info("捕获到图片消息，但未开启图片回复功能，已跳过")
+                    return None
+                if self.is_cq_code:
+                    '''对于CQ码消息处理'''
+                    message = data['message']
                 else:
-                    if self.is_cq_code:
-                        '''对于CQ码消息处理'''
-                        message = data['message']
-                    else:
-                        ''' 检查 data['message'] 是否为列表'''
-                        if not isinstance(data['message'], list):
-                            logger.error("消息格式错误: data['message'] 不是列表，疑似CQ码消息")
-                            return None
-                        message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
+                    ''' 检查 data['message'] 是否为列表'''
+                    if not isinstance(data['message'], list):
+                        logger.error("消息格式错误: data['message'] 不是列表，疑似CQ码消息")
+                        return None
+                    message = ' '.join([item['data']['text'] for item in data['message'] if item['type'] == 'text'])
 
 
                 if data['message_type'] == 'private':
@@ -188,10 +187,17 @@ class QQBot:
                     if (sender_user_id not in self.trust_qq_list) and (self.trust_qq_list != []):
                         return None
                     
-                    if is_image: 
-                        message = await self.image_captioning_pipeline.generate_caption(image_url)
-                        await self.image_db.insert_data(message, image_url)
-                        message = f"(收到图片描述：{message})"
+                    if is_image:
+                        if self.enable_multi_modal:
+                            message = self.muice_app.image_query(image_url)
+                            logger.info(f"图片描述：{message}")
+                            message = f"<收到图片描述：{message}>"
+
+                        elif self.enable_ofa_image:
+                            message = await self.image_captioning_pipeline.generate_caption(image_url)
+                            await self.image_db.insert_data(message, image_url)
+                            logger.info(f"图片描述：{message}")
+                            message = f"<收到图片描述：{message}>"
                     
                     reply_message_list = await self.produce_reply(message, sender_user_id)
                     if reply_message_list:
@@ -244,10 +250,14 @@ class QQBot:
                         logger.info(f"未达到消息回复率{self.reply_rate}%，不回复")
                         return None
                     
-                    if is_image: 
-                        message = await self.image_captioning_pipeline.generate_caption(image_url)
-                        await self.image_db.insert_data(message, image_url)
-                        message = f"(收到图片描述：{message})"
+                    if is_image:
+                        if self.enable_multi_modal:
+                            message = self.muice_app.image_query(image_url)
+
+                        elif self.enable_ofa_image:
+                            message = await self.image_captioning_pipeline.generate_caption(image_url)
+                            await self.image_db.insert_data(message, image_url)
+                            message = f"<收到图片描述：{message}>"
 
                     reply_message_list = await self.produce_group_reply(str(message), sender_user_id, group_id)
                     if is_command(message) and '没有这样的命令呢' in reply_message_list:
@@ -355,8 +365,6 @@ class QQBot:
                     return reply_list
         if self.muice_app.think:
             thought, result = process_thoughts(raw_reply, output_thoughts=self.muice_app.think)
-            logger.debug('thought:', thought)
-            logger.debug('result:', result)
             reply_list = divide_sentences(result)
             if thought:
                 reply_list.insert(0, thought)
@@ -394,8 +402,9 @@ class QQBot:
                 await self.websocket.send_text(reply)
 
     def run(self):
-        logger.info("尝试与QQ建立WebSocket连接...")
-        uvicorn.run(self.app, host="127.0.0.1", port=self.websocket_port)
+        logger.info("尝试与适配器建立WebSocket连接...")
+        logger.info(f"WebSocket运行地址：http://127.0.0.1:{self.websocket_port}")
+        uvicorn.run(self.app, host="127.0.0.1", port=self.websocket_port, log_level="warning")
 
 
 if __name__ == '__main__':

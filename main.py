@@ -41,7 +41,15 @@ if enable_faiss:
 else:
     memory = None
 
-
+# 多模态配置
+enable_multi_modal = configs["multimodal"]["enable"]
+if enable_multi_modal:
+    multi_modal_config = configs["multimodal"]
+    logger.info(f"加载多模态模型...")
+    multimodal = importlib.import_module(f"llm.{model_config.get('loader')}")
+    multimodal = multimodal.llm(multi_modal_config)
+else:
+    multimodal = None
 
 # OFA图像模型
 enable_ofa_image = configs["ofa_image"]['enable']
@@ -53,6 +61,6 @@ if enable_ofa_image:
 
 # ws服务
 logger.info("初始化Bot服务...")
-muice_app = Muice(model, memory, configs)
+muice_app = Muice(model, multimodal, memory, configs)
 ws_app = QQBot(muice_app, configs)
 ws_app.run()

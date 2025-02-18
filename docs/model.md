@@ -13,6 +13,8 @@
 | [transformers](./llm/transformers.py) | 使用 transformers 方案加载, 适合通过 P-tuning V2 方式微调的模型 | ChatGLM                                                      |
 | [xfyun](./llm/xfyun.py)               | 可调用由 [星火大模型精调平台](https://training.xfyun.cn/) 微调的在线模型 | [*模型列表*](https://training.xfyun.cn/modelSquare)          |
 
+对于不同的加载器，可能需要额外的依赖，请根据报错提示安装。
+
 不同的模型加载器需要添加/修改的配置如下：
 
 ### azure
@@ -22,8 +24,9 @@ loader: azure # 使用 azure 加载器
 model_name: DeepSeek-R1 # 模型名称（可选，默认为 DeepSeek-R1）
 token: <your-github-token-goes-here> # GitHub Token（若配置了环境变量，此项不填）
 system_prompt: # 系统提示（可选）
-user_instructions: '我们来玩一个角色扮演的小游戏吧，现在开始你是一个名为的“沐雪”的AI女孩子，用猫娘的语气和我说话。' # 用户提示（对于 DeepSeek-R1 此类不推荐添加系统提示的模型非常有用。此项仅在 History 为空时生效）
 auto_system_prompt: false # 自动配置沐雪的系统提示（默认为 false）
+user_instructions: '我们来玩一个角色扮演的小游戏吧，现在开始你是一个名为的“沐雪”的AI女孩子，用猫娘的语气和我说话。' # 用户提示（对于 DeepSeek-R1 此类不推荐添加系统提示的模型非常有用，此项内容自动添加至历史上下文中）
+auto_user_instructions: true # 自动配置沐雪的用户提示（默认为 false）
 max_tokens: 1024 # 模型生成的最大 token 数（可选，默认为 1024）
 temperature: 0.75 # 模型生成的温度参数（可选）
 top_p: 0.95 # 模型生成的 Top_p 参数（可选）
@@ -40,10 +43,13 @@ model_name: qwen-max # 模型名称（必须）
 api_key: xxxxxx # API 密钥（必须）
 max_tokens: 1024 # 模型生成的最大 token 数（可选，默认为 1024）
 temperature: 0.7 #  模型生成的温度参数（可选，默认为 0.7）
-top_p: Null # 模型生成的 Top_p 参数（可选）
-repetition_penalty: Null # 模型生成的重复惩罚（可选）
+top_p: 0.95 # 模型生成的 Top_p 参数（可选）
+repetition_penalty: 1.2 # 模型生成的重复惩罚（可选）
 system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子' # 系统提示（可选）
 auto_system_prompt: false # 自动配置沐雪的系统提示（默认为 false）
+user_instructions: '我们来玩一个角色扮演的小游戏吧，现在开始你是一个名为的“沐雪”的AI女孩子，用猫娘的语气和我说话。' # 用户提示（对于 DeepSeek-R1 此类不推荐添加系统提示的模型非常有用。此项仅在 History 为空时生效）
+auto_user_instructions: true # 自动配置沐雪的用户提示（默认为 false）
+think: 1 # DeepSeek-R1 思考过程优化（0不做任何处理；1提取并同时输出思考过程和结果；2仅输出思考结果）
 ```
 
 ### llmtuner
@@ -117,3 +123,16 @@ temperature: 0.75 # 模型生成的温度参数（可选，默认为 0.5）
 top_p: 0.95 # 模型生成的 Top_p 参数（可选，默认为 4）
 ```
 
+## 多模态模型加载器配置
+
+本仓库目前仅支持 `dashscope` 模型加载器调用多模态模型，使用其他的模型加载器可能会导致预料之外的结果。
+
+### dashscope
+
+```yaml
+multimodal:
+  enable: true # 是否启用多模态
+  loader: dashscope # 使用 dashscope 加载器
+  model_name: qwen-vl-plus # 多模态模型名称
+  api_key: sk-xxxxxxx # 阿里百炼平台密钥（必须）
+```
