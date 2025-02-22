@@ -17,6 +17,7 @@
 > 2025.02.22 更新：LiteLoaderQQNT导致的封号问题仍未解决。如果仍想继续使用，可以通过降级到旧版QQNT`9.9.15-2xxxx`，安装框架后登录一次并立即关闭，在根目录下修改文件内容：
 > 
 > `\resources\app-update.yml` -> `provider: 3rdparty`
+> 
 > `\resources\app\versions\channel.json` -> `"channel": "bbbbbbbbbbeta"`
 >
 > 将修改文件设为只读，这样QQNT将不会自动更新补丁。
