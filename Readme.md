@@ -146,13 +146,27 @@ model:
 
 ## Bot 服务配置
 
-现以提供 OneBot 服务支持, ~~无需担心 gocq 的风控(喜)~~
+现以提供 OneBot 服务支持
 
-本项目使用 [OneBot V11](https://github.com/botuniverse/onebot-11) 协议, 若您希望于 QQ 使用, 推荐参考 [LLOneBot](https://github.com/LLOneBot/LLOneBot) 使用 OneBot 服务
+本项目使用 [OneBot V11](https://github.com/botuniverse/onebot-11) 协议, 若您希望于 QQ 使用, 推荐参考 [LLOneBot](https://github.com/LLOneBot/LLOneBot) 或  [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)  使用 OneBot 服务
 
-注：请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`, 以正常运行
+使用LLOneBot: 请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`
+使用Lagrange.Core: 请参照 [Lagrange快速部署](https://lagrangedev.github.io/Lagrange.Doc/Lagrange.OneBot/Config/) 完成配置, 并在其配置文件中添加以下配置项
+```
+{
+	"Type": "ReverseWebSocket",
+	"Host": "127.0.0.1",
+	"Port": 21050,
+	"Suffix": "/ws/api",
+	"ReconnectInterval": 5000,
+	"HeartBeatInterval": 5000,
+	"HeartBeatEnable": true,
+	"AccessToken": ""
+}
+```
 
-您也可以使用 [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core) 以及 [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock) 等来链接QQ, 或其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
+
+其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
 
 **能使用请勿随意更新 QQNT, 若无法使用请尝试降级 QQNT**
 
