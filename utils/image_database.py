@@ -117,6 +117,8 @@ class ImageDatabase:
                 image_bytes = await response.read()
                 image = Image.open(io.BytesIO(image_bytes))
                 image_name = str(time.time()) + '.jpg'
+                if image.mode != 'RGB':
+                    image = image.convert('RGB')
                 image.save(os.path.join(self.storge_dir, image_name))
         url = os.path.join(self.storge_dir, image_name)
         with self.conn:
