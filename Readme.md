@@ -151,6 +151,7 @@ model:
 本项目使用 [OneBot V11](https://github.com/botuniverse/onebot-11) 协议, 若您希望于 QQ 使用, 推荐参考 [LLOneBot](https://github.com/LLOneBot/LLOneBot) 或  [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)  使用 OneBot 服务
 
 使用LLOneBot: 请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`
+
 使用Lagrange.Core: 请参照 [Lagrange快速部署](https://lagrangedev.github.io/Lagrange.Doc/Lagrange.OneBot/Config/) 完成配置, 并在其配置文件中添加以下配置项
 ```
 {
