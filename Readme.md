@@ -13,11 +13,20 @@
 > 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。您可以使用 Telegram Bot 来安全地运行我们的服务
 >
 > 2025.02.19 更新：由于主开发者的账号相继被限制登录，难以进行后续调试与开发，故本日开始，本项目停止功能性更新并进入缓慢维护状态，我们将在后续迁移至 Nonebot 生态，敬请期待。
+>
+> 2025.02.22 更新：LiteLoaderQQNT导致的封号问题仍未解决。如果仍想继续使用，可以通过降级到旧版QQNT`9.9.15-2xxxx`，安装框架后登录一次并立即关闭，在根目录下修改文件内容：
+> 
+> `\resources\app-update.yml` -> `provider: 3rdparty`
+> 
+> `\resources\app\versions\channel.json` -> `"channel": "bbbbbbbbbbeta"`
+>
+> 将修改文件设为只读，这样QQNT将不会自动更新补丁。
 
 > [!IMPORTANT]
 > 
 > 2025.02.10 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在 02.10 后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
-
+>
+> 2025.02.22 更新：在安装fairseq时，需要在本地编译（需求完整的C环境），如果安装不上可以搜索编译好的文件安装/复制到site-packages文件夹里。需要注意的是，fairseq必定会与某包冲突，属于正常情况，程序可以正常运行的。
 
 # 介绍✨
 
@@ -137,13 +146,28 @@ model:
 
 ## Bot 服务配置
 
-现以提供 OneBot 服务支持, ~~无需担心 gocq 的风控(喜)~~
+现以提供 OneBot 服务支持
 
-本项目使用 [OneBot V11](https://github.com/botuniverse/onebot-11) 协议, 若您希望于 QQ 使用, 推荐参考 [LLOneBot](https://github.com/LLOneBot/LLOneBot) 使用 OneBot 服务
+本项目使用 [OneBot V11](https://github.com/botuniverse/onebot-11) 协议, 若您希望于 QQ 使用, 推荐参考 [LLOneBot](https://github.com/LLOneBot/LLOneBot) 或  [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core)  使用 OneBot 服务
 
-注：请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`, 以正常运行
+使用LLOneBot: 请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`
 
-您也可以使用 [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core) 以及 [~~OpenShamrock~~](https://github.com/whitechi73/OpenShamrock) 等来链接QQ, 或其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
+使用Lagrange.Core: 请参照 [Lagrange快速部署](https://lagrangedev.github.io/Lagrange.Doc/Lagrange.OneBot/Config/) 完成配置, 并在其配置文件中添加以下配置项
+```
+{
+	"Type": "ReverseWebSocket",
+	"Host": "127.0.0.1",
+	"Port": 21050,
+	"Suffix": "/ws/api",
+	"ReconnectInterval": 5000,
+	"HeartBeatInterval": 5000,
+	"HeartBeatEnable": true,
+	"AccessToken": ""
+}
+```
+
+
+其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
 
 **能使用请勿随意更新 QQNT, 若无法使用请尝试降级 QQNT**
 
