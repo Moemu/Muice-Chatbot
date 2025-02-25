@@ -16,6 +16,8 @@ class llm:
         self.temperature = config.get("temperature", 0.7)
         self.system_prompt = config.get("system_prompt", None)
         self.auto_system_prompt = config.get("auto_system_prompt", False)
+        self.user_instructions = config.get("user_instructions", None)
+        self.auto_user_instructions = config.get("auto_user_instructions", False)
 
         self.client = openai.OpenAI(api_key=self.api_key, base_url=self.api_base)
 
@@ -44,7 +46,10 @@ class llm:
                 max_tokens=self.max_tokens,
                 temperature=self.temperature,
             )
+
             # 获取并返回模型生成的文本
+            if self.model in ['deepseek-reasoner']:
+                return '<think>' + response.choices[0].message.reasoning_content + '</think>' + response.choices[0].message.content
             return response.choices[0].message.content
         except openai.OpenAIError as e:
             logger.error(f"OpenAI API 错误: {e}", exc_info=True)

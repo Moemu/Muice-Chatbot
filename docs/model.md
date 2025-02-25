@@ -8,7 +8,7 @@
 | [dashscope](./llm/dashscope.py)       | 可调用阿里云百炼平台的在线模型                               | [*模型列表*](https://help.aliyun.com/zh/model-studio/getting-started/models) |
 | [llmtuner](./llm/llmtuner.py)         | 可调用 [LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory/tree/main) 支持的模型 | [*模型列表*](https://github.com/hiyouga/LLaMA-Factory/blob/main/README_zh.md#模型) |
 | [ollama](./llm/ollama.py)             | 使用 Ollama Python SDK 访问 Ollama 接口，需要提前启动模型服务 | [*模型列表*](https://ollama.com/search)                      |
-| [openai](./llm/openai.py)             | 可调用 OpenAI API 格式的接口                                 | *any*                                                        |
+| [openai](./llm/openai.py)             | 可调用 OpenAI API 格式的接口，支持 DeepSeek 官方API          | *any*                                                        |
 | [rwkv-api](./llm/rwkv-api.py)         | 使用 [RWKV-Runner](https://github.com/josStorer/RWKV-Runner) 提供的 API 服务访问 RWKV 模型 | *RWKV-any*                                                   |
 | [transformers](./llm/transformers.py) | 使用 transformers 方案加载, 适合通过 P-tuning V2 方式微调的模型 | ChatGLM                                                      |
 | [xfyun](./llm/xfyun.py)               | 可调用由 [星火大模型精调平台](https://training.xfyun.cn/) 微调的在线模型 | [*模型列表*](https://training.xfyun.cn/modelSquare)          |
@@ -74,17 +74,20 @@ model_path: deepseek-r1 # ollama 模型名称（必填）
 host: http://localhost:11434 # ollama 客户端端口
 ```
 
-### openai
+### openai (支持 DeepSeek 官方 API 调用)
 
 ```yaml
 loader: openai # 使用 openai 加载器
-model_name: text-davinci-003 # OpenAI API 模型名称（可选，默认为 "text-davinci-003"）
-api_key: xxxxxx # OpenAI API 密钥（必须）
+model_name: text-davinci-003 # 模型名称（可选，默认为 "text-davinci-003"，DeepSeek-R1使用“deepseek-reasoner”）
+api_key: xxxxxx # API 密钥（必须）
 api_base: https://api.openai.com/v1 # 服务器 API 接口地址 （可选，默认 OpenAI 服务）
 max_tokens: 1024 # 模型生成的最大 token 数（可选，默认为 1024）
-temperature: 0.7 #  模型生成的温度参数（可选，默认为 0.7）
+temperature: 0.7 #  模型生成的温度参数（可选，默认为 0.7，对R1使用无效）
 system_prompt: '现在开始你是一个名为的“沐雪”的AI女孩子' # 系统提示（可选）
 auto_system_prompt: false # 自动配置沐雪的系统提示（默认为 false）
+user_instructions: '我们来玩一个角色扮演的小游戏吧，现在开始你是一个名为的“沐雪”的AI女孩子，用猫娘的语气和我说话。' # 用户提示（对于 DeepSeek-R1 此类不推荐添加系统提示的模型非常有用。此项仅在 History 为空时生效）
+auto_user_instructions: true # 自动配置沐雪的用户提示（默认为 false）
+think: 1 # DeepSeek-R1 思考过程优化（0不做任何处理；1提取并同时输出思考过程和结果；2仅输出思考结果）
 ```
 
 ### rwkv-api
