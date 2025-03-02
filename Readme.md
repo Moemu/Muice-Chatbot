@@ -4,6 +4,7 @@
 <img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
+<a href='https://pd.qq.com/s/d4n2xp45i'><img src="https://img.shields.io/badge/QQ频道-沐雪的小屋-blue" alt="Stars"></a>
 </p>
 
 简体中文 | [繁體中文](./docs/Readme_tc.md) | [English](./docs/Readme_en.md) | [日本語](./docs/Readme_jp.md) 
@@ -280,13 +281,13 @@ python main.py
 
 # 关于🎗️
 
-代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)、[zkhssb](https://github.com/zkhssb)
+代码实现：[Moemu](https://github.com/Moemu)、[MoeSnowyFox](https://github.com/MoeSnowyFox)、[NaivG](https://github.com/NaivG)、[zkhssb](https://github.com/zkhssb)、[Asankilp](https://github.com/Asankilp)
 
 训练集编写与模型微调：[Moemu](https://github.com/Moemu) （RWKV 微调：[Seikaijyu](https://github.com/Seikaijyu)）
 
 帮助文档编写：[TurboHK](https://github.com/TurboHK)、[叶子](https://github.com/FHU-yezi)
 
-> 友情连接：[Coral 框架](https://github.com/ProjectCoral/Coral)
+> 友情连接：[Coral 框架](https://github.com/ProjectCoral/Coral)、[nonebot-plugin-marshoai](https://github.com/LiteyukiStudio/nonebot-plugin-marshoai)
 
 总代码贡献：
 
@@ -301,7 +302,9 @@ python main.py
 
 感谢你们所有人的支持！
 
-本项目隶属于 MuikaAI。
+本项目隶属于 MuikaAI
+
+官方唯一频道：[沐雪的小屋](https://pd.qq.com/s/d4n2xp45i)
 
 Star History：
 
