@@ -10,24 +10,11 @@
 简体中文 | [繁體中文](./docs/Readme_tc.md) | [English](./docs/Readme_en.md) | [日本語](./docs/Readme_jp.md) 
 
 > [!CAUTION]
-> 
-> 2025.01.02 更新：本项目依赖于 LiteLoaderQQNT 框架。自 2024.11.23 起，陆续有用户反馈自己使用该框架而被封号的事件（[#1032](https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/issues/1032)）。需要声明的一点是，本 Repo 与此次封号事件无直接关联，但继续使用此 Repo 有着被封号的风险，继续使用则代表您承认此后所遭遇到的账号问题与本 Repo 无关。您可以使用 Telegram Bot 来安全地运行我们的服务
 >
-> 2025.02.19 更新：由于主开发者的账号相继被限制登录，难以进行后续调试与开发，故本日开始，本项目停止功能性更新并进入缓慢维护状态，我们将在后续迁移至 Nonebot 生态，敬请期待。
->
-> 2025.02.22 更新：LiteLoaderQQNT导致的封号问题仍未解决。如果仍想继续使用，可以通过降级到旧版QQNT`9.9.15-2xxxx`，安装框架后登录一次并立即关闭，在根目录下修改文件内容：
+> Muice-Chatbot 已于 2025.02.19 正式停止更新，并将于 2025.07.16 进入归档状态。
 > 
-> `\resources\app-update.yml` -> `provider: 3rdparty`
-> 
-> `\resources\app\versions\channel.json` -> `"channel": "bbbbbbbbbbeta"`
->
-> 将修改文件设为只读，这样QQNT将不会自动更新补丁。
+> 因此我们强烈建议您迁移至基于 Nonebot2 实现的 MuiceBot 框架中，有关迁移说明，请参考: [从 Muice-Chatbot 中迁移](https://bot.snowy.moe/guide/migrations)
 
-> [!IMPORTANT]
-> 
-> 2025.02.10 更新：由于配置文件格式变更，如果先前你拉取过本 Repo 并在 02.10 后执行过 fetch 操作，请您重新设置配置文件，由此带来的不便我们深表歉意
->
-> 2025.02.22 更新：在安装fairseq时，需要在本地编译（需求完整的C环境），如果安装不上可以搜索编译好的文件安装/复制到site-packages文件夹里。需要注意的是，fairseq必定会与某包冲突，属于正常情况，程序可以正常运行的。
 
 # 介绍✨
 
@@ -62,7 +49,6 @@
 ✅ Faiss 记忆模块，从过去的对话数据中进行检索并自动加入上下文
 
 
-
 # 快速开始💻
 
 建议环境：
@@ -70,7 +56,7 @@
 - Python 3.10
 - 一张拥有 6GB 及以上显存的显卡（int4 量化最低要求为 4G 显存，CPU 推理需要 16G 及以上内存）
 
-## 自动安装
+## 自动安装（venv）
 
 目前已做到自动安装所有软件、依赖，通过 `Code -> Download ZIP` 下载解压最新源码。
 
@@ -154,7 +140,8 @@ model:
 使用LLOneBot: 请在安装好 LLOneBot 后, 于设置中开启反向 WebSocket 服务, 填写 `ws://127.0.0.1:21050/ws/api`
 
 使用Lagrange.Core: 请参照 [Lagrange快速部署](https://lagrangedev.github.io/Lagrange.Doc/Lagrange.OneBot/Config/) 完成配置, 并在其配置文件中添加以下配置项
-```
+
+```json
 {
 	"Type": "ReverseWebSocket",
 	"Host": "127.0.0.1",
@@ -167,10 +154,19 @@ model:
 }
 ```
 
-
-其他适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
+您也可以使用其他 OneBot V11 的适配器链接其他软件，详见 [OneBot V11 适配器](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1)
 
 **能使用请勿随意更新 QQNT, 若无法使用请尝试降级 QQNT**
+
+> [!CAUTION]
+>
+> 2025.02.22 更新：LiteLoaderQQNT导致的封号问题仍未解决。如果仍想继续使用，可以通过降级到旧版QQNT`9.9.15-2xxxx`，安装框架后登录一次并立即关闭，在根目录下修改文件内容：
+> 
+> `\resources\app-update.yml` -> `provider: 3rdparty`
+> 
+> `\resources\app\versions\channel.json` -> `"channel": "bbbbbbbbbbeta"`
+>
+> 将修改文件设为只读，这样QQNT将不会自动更新补丁。
 
 在 Telegram Bot 中使用的方法：[迁移至 Telegram Bot](./docs/telegram.md)
 
@@ -183,60 +179,7 @@ model:
 
 # 配置⚒️
 
-配置文件机器说明位于 `configs.yml`，请根据你的需求进行修改
-
-2024.12.04更新：我们更新了配置文件格式，为了迎合即将到来的 2.7.x 模型，我们添加了如下配置项：
-
-```yaml
-# 主动对话相关
-active:
-  enable: false # 是否启用主动对话
-  rate: 0.003 # 主动对话概率（每分钟）
-  active_prompts:
-    - '<生成推文: 胡思乱想>'
-    - '<生成推文: AI生活>'
-    - '<生成推文: AI思考>'
-    - '<生成推文: 表达爱意>'
-    - '<生成推文: 情感建议>'
-  not_disturb: true # 是否开启免打扰模式
-  shecdule:
-    enable: true # 是否启用定时任务
-    rate: 0.75 # 定时任务概率（每次）
-    tasks:
-      - hour: 8
-        prompt: '<日常问候: 早上>'
-      - hour: 12
-        prompt: '<日常问候: 中午>'
-      - hour: 18
-        prompt: '<日常问候: 傍晚>'
-      - hour: 22
-        prompt: '<日常问候: 深夜>'
-  targets: # 主动对话目标QQ号
-    - 12345678
-    - 23456789
-```
-
-如果你使用的是 2.7.x 之前的模型，请更改如下配置项：
-
-```yaml
-  active_prompts:
-    - '（分享一下你的一些想法）'
-    - '（创造一个新话题）'
-```
-
-以及：
-
-```yaml
-    tasks:
-      - hour: 8
-        prompt: '（发起一个早晨问候）'
-      - hour: 12
-        prompt: '（发起一个中午问候）'
-      - hour: 18
-        prompt: '（发起一个傍晚问候）'
-      - hour: 22
-        prompt: '（发起一个临睡问候）'
-```
+配置文件说明位于 `configs.yml`，请根据你的需求进行修改
 
 # 使用🎉
 
@@ -292,7 +235,7 @@ python main.py
 总代码贡献：
 
 <a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
-  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="图片加载中..."/>
+  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="contributors"/>
 </a>
 
 如果此项目对你有帮助，您可以考虑赞助。

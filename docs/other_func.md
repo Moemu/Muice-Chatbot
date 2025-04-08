@@ -47,6 +47,10 @@ conda activate Muice
 pip install -r ofa_requirements.txt
 ```
 
+> [!IMPORTANT]
+>
+> 在安装fairseq时，需要在本地编译（需求完整的C环境），如果安装不上可以搜索编译好的文件安装/复制到site-packages文件夹里。需要注意的是，fairseq必定会与某包冲突，这属于正常情况。
+
 目前支持的 OFA 模型如下表：
 
 | OFA 模型                                                      |

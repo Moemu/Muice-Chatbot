@@ -118,8 +118,6 @@ pip instal ...
 
 ## ImportError: This modeling file requires the following packages that were not found in your environment:'tiktoken'. Run 'pip install tiktoken'
 
-不会读英文的可以把整个 Chatbot 文件夹删除了，我们的项目不适合您。
-
 ```powershell
 pip install tiktoken
 ```

@@ -1,15 +1,19 @@
-![](../src/Cover.png)
+![](src/Cover.png)
 <p style="text-align:center">
 <img src="https://img.shields.io/github/stars/Moemu/Muice-Chatbot" alt="Stars">
 <img src="https://img.shields.io/badge/Model-ChatGLM2--6B & Qwen--7B-green" alt="Model">
 <img src="https://img.shields.io/badge/HuggingFace-Dataset-yellow?link=https%3A%2F%2Fhuggingface.co%2Fdatasets%2FMoemu%2FMuice-Dataset" alt="HuggingFace">
 <img src="https://img.shields.io/badge/Python-3.10-blue" alt="Python">
+<a href='https://pd.qq.com/s/d4n2xp45i'><img src="https://img.shields.io/badge/QQ频道-沐雪的小屋-blue" alt="Stars"></a>
 </p>
 
 [简体中文](../Readme.md) | [繁體中文](./Readme_tc.md)  | English | [日本語](./Readme_jp.md)
 
-> [!IMPORTANT]
-> As of 2024.12.04, due to a configuration format update, please reset your configuration file if you've fetched updates to this repository. We apologize for any inconvenience caused.
+> [!CAUTION]  
+>  
+> Muice-Chatbot has officially ceased updates as of February 19, 2025, and will enter archive status on July 16, 2025.  
+>  
+> Therefore, we strongly recommend migrating to the MuiceBot framework based on Nonebot2. For migration instructions, please refer to: [Migrating from Muice-Chatbot](https://bot.snowy.moe/guide/migrations)  
 
 > [!WARNING]
 > The chatbot is trained in Simplified Chinese, which may limit its ability to handle English input effectively. Let us know if you are interested in a version fine-tuned with a machine-translated dataset in English!
@@ -17,279 +21,234 @@
 > [!TIP]
 > This page's content might not always reflect the latest updates. Visit the Simplified Chinese page for the most recent information.
 
-# Introduction ✨
+# Introduction ✨  
 
-Muice is an AI chatbot, who actively engages in conversation and is trained using over 3,000 dialogue samples. The chatbot features a conversational style resembling a cheerful anime girl who enjoys sharing daily life anecdotes and greets users with unique messages every day. It is fine-tuned on [ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B) and [Qwen](https://github.com/QwenLM).
+Muice, an AI girl who **actively** initiates conversations with you. Her dialogue model is fine-tuned based on [Qwen](https://github.com/QwenLM), trained on a dataset of 3k+ dialogues. She embodies the speech style of an anime girl—somewhat tsundere but eager to share life's trivialities with you, offering unique greetings every day.  
 
-## Features 🪄
+# Features 🪄  
 
-✅ **Automated Environment Setup**: Easy, nearly hands-free installation process.
+✅ Supports nearly fully automated environment setup.  
 
-✅**Fine-tuned Models Provided**: Provide ChatGLM2-6B P-Uni V2 model and Qwen Qlora fine-tuning model fine tuned by myself with 3k+conversation data
+✅ Provides a Qwen LoRA fine-tuned model trained on 3k+ dialogues.  
 
-✅ **Scheduled and Random Conversations**: Automatically initiates chats at specific times of the day.
+✅ Supports multiple model loaders, allowing use without Muice's fine-tuned model.  
 
-✅ **Command Support**: Includes five commands to refresh, reply, and manage conversations.
+✅ Initiates conversations actively (randomly or at fixed times in the morning, noon, and evening).  
 
-✅ **OFA Image Recognition**: Can recognize and send memes or stickers.
+✅ Offers 5 commands for refreshing replies and other operations during chats.  
 
-✅ **TTS Support**: Uses [fish-speech](https://github.com/fishaudio/fish-speech) for voice synthesis (custom TTS models are under development).
+✅ OFA image recognition: Identifies memes, understands memes, and sends memes.  
 
-✅ **Multi-Language Support**: Comprehensive multilingual documentation.
+✅ Supports speech synthesis via [fishaudio/fish-speech](https://github.com/fishaudio/fish-speech) (Muice TTS model not yet released).  
 
-⬜ Optimized memory modules for long-term and short-term memory capabilities.
+✅ Engages in group chats (supports replying when @mentioned or randomly without @mention).  
 
-⬜ Improved logging mechanisms with automated bug report generation.
+✅ Real-time voice conversations in the console (QQ voice calls not yet supported).  
 
-⬜ Comprehensive FAQ guide.
+✅ Multilingual documentation.  
 
+✅ Common Q&A guide.  
 
-## Getting Started 💻
+✅ Clear log management output.  
 
-### Recommended Environment:
+✅ Faiss memory module: Retrieves past dialogue data and automatically adds it to the context.  
 
-- **Python**: Version 3.10+
-- **Hardware**: A GPU with at least 6GB VRAM (4GB VRAM for int4 quantization, 16GB RAM for CPU inference).
+# Quick Start 💻  
 
-### Automated Installation
+Recommended environment:  
 
-Follow these steps for a quick setup:
-1. Download and unzip the latest code from `Code -> Download ZIP`.
-2. Run `install_env.bat` by double-clicking or using the following command:
+- Python 3.10  
+- A GPU with 6GB+ VRAM (int4 quantization requires at least 4GB VRAM; CPU inference requires 16GB+ RAM).  
 
-```powershell
-.\install_env.bat
-```
+## Automatic Installation (venv)  
 
-Note: The script sets up a Python virtual environment, no Conda required.
+The setup now automates the installation of all software and dependencies. Download the latest source code via `Code -> Download ZIP` and extract it.  
 
-### Manual Installation (Using Conda)
+Double-click `install_env.bat` to install (**do not enable legacy console**), or run the following command in the terminal:  
 
-```powershell
-git clone https://github.com/Moemu/Muice-Chatbot
-cd Muice-Chatbot
-conda create --name Muice python=3.10.10 -y
-conda activate Muice
-pip install -r requirements.txt
-```
+```powershell  
+.\install_env.bat  
+```  
 
-For GPU users:
+The automatic installation may take some time. After completion, you still need to manually download the model.  
 
-```powershell
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-```
+**The automatic installation script uses Python virtual environments and does not require Conda. Pay attention to the script's prompts.**  
 
-Ensure CUDA is configured properly ( [Reference](https://blog.csdn.net/chen565884393/article/details/127905428) ).
+## Manual Installation (Using Conda)  
 
-## Model Download and Loading
+```powershell  
+git clone https://github.com/Moemu/Muice-Chatbot  
+cd Muice-Chatbot  
+conda create --name Muice python=3.10.10 -y  
+conda activate Muice  
+pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple  
+```  
 
-Supported base models:
+For GPU users, additionally run:  
 
-| Model                                                        | Fine-tuned Version                         | Extra Dependencies          |
-| ------------------------------------------------------------ | ------------------------------------------ | --------------------------- |
-| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4                                    | cpm_kernels                 |
-| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3                                    |                             |
-| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3、2.6.2                                 | llmtuner                    |
-| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3                                      | llmtuner                    |
-| [Qwen2.5-7B-Instruct-GPTQ-Int4](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4) | 2.7.1                                      | llmtuner                    |
-| [RWKV (By Seikaijyu)](https://huggingface.co/Seikaijyu)      | see [HF](https://huggingface.co/Seikaijyu) | （RWKV-Runner is required） |
+```powershell  
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124  
+```  
 
-Place the models in the `model` folder. Ensure fine-tuned models include a `.model` file.
+For GPU users, ensure your CUDA environment is configured. [Reference link](https://blog.csdn.net/chen565884393/article/details/127905428).  
 
-Loading methods:
+## Loading Muice's Fine-Tuned Model  
 
-- Via API
-- Using `transformers.AutoTokenizer` and `transformers.AutoModel`.
-- Through `llmtuner.chat.ChatModel`.
-- With `RWKV-Runner` APIs.
+Currently supported base models are listed below:  
 
-In the tested models, we recommend using the corresponding loading method for the following models, and other models can also be loaded using similar methods:
+| Base Model | Corresponding Fine-Tuned Model Version | Loader | Additional Dependencies |  
+|------------|----------------------------------------|--------|-------------------------|  
+| [ChatGLM2-6B-Int4](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b-int4/summary) | 2.2-2.4 | transformers | cpm_kernels |  
+| [ChatGLM2-6B](https://www.modelscope.cn/models/ZhipuAI/chatglm2-6b/summary) | 2.0-2.3 | transformers | - |  
+| [Qwen-7B-Chat-Int4](https://www.modelscope.cn/models/qwen/Qwen-7B-Chat-Int4/summary) | 2.3, 2.6.2 | llmtuner | ~~llmtuner~~ |  
+| [Qwen2-1.5B-Instruct-GPTQ-Int4](https://www.modelscope.cn/models/qwen/Qwen2-1.5B-Instruct-GPTQ-Int4/summary) | 2.5.3 | llmtuner | ~~llmtuner~~ |  
+| [Qwen2.5-7B-Instruct-GPTQ-Int4](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4) | 2.7.1 | llmtuner | ~~llmtuner~~ |  
+| [RWKV (Fine-tuned by Seikaijyu)](https://huggingface.co/Seikaijyu) | See [HF](https://huggingface.co/Seikaijyu) | rwkv-api | (Requires RWKV-Runner setup) |  
 
-| Base model                   | Fine tuning method | Loading method |
-| ---------------------------- | ------------------ | -------------- |
-| ChatGLM                      | P-tuning V2        | transformers   |
-| Qwen                         | sft                | llmtuner       |
-| RWKV (Seikaijyu fine-tuning) | pissa              | rwkv apin      |
+The `requirements.txt` in this project is based on the `llmtuner` environment. Therefore, we recommend using the Qwen series models. Using ChatGLM series models may cause environment errors.  
 
-The model loading method can be adjusted in the configuration file:
+Download fine-tuned models: [Releases](https://github.com/Moemu/Muice-Chatbot/releases)  
 
-```yaml
-# model
-model:
-  loader: transformers # transformers/llmtuner/rwkv-api
-  model_path: ./model/chatglm2-6b # base model path
-  adapter_path: ./model/Muice # fine-tuning model path
-```
-
-(If loading for API / rwkv-api , fill in the corresponding API address for `model_name_or_path`)
-
-If you do not have a suitable graphics card and need to load models or quantization models through the CPU, please install and configure the `GCC` environment and check `openmp`. [Reference link(ZH)]( https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501)
-
-## Bot Service Configuration ⚙️
-
-This project supports the [OneBot V11 Protocol](https://github.com/botuniverse/onebot-11), enabling compatibility with QQ and other applications.
-
-To connect with QQ:
-
-1. Install [LLOneBot](https://github.com/LLOneBot/LLOneBot).
-2. Enable reverse WebSocket and set it to `ws://127.0.0.1:21050/ws/api`.
-3. Alternatively, use [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core) or other adapters compatible with OneBot V11 ([Adapter List](https://onebot.dev/ecosystem.html#onebot-implementations)).
-
-**Important**: Avoid upgrading QQNT unnecessarily. If issues arise, consider downgrading.
-
-
-## Additional Features 🎨
-
-- **Voice Reply**: Supports TTS replies. [Learn more(ZH)](./docs/other_func.md#voice-replies).
-- **Image Recognition**: Handles meme recognition and response. [Details(ZH)](./docs/other_func.md#image-recognition).
-- **Faiss Long-Term Memory**: Experimental long-term memory capability. [Documentation(ZH)](https://chatgpt.com/c/docs/other_func.md#faiss-memory).
-- **Real-Time Voice Chat**: Allows for interactive voice communication. [Setup Guide(ZH)](https://chatgpt.com/c/docs/other_func.md#real-time-voice-chat).
+Place the base model and fine-tuned model in the `model` folder, then configure the corresponding settings in the configuration file (ensure the path in the configuration file points to multiple model files, not just a folder; some fine-tuned models may have an additional `checkpoint-xxx` folder).  
 
+For Muice's Qwen fine-tuned models, the recommended configuration is:  
 
-## Project Structure Overview 🗂️
-
-After completing setup, your directory should resemble the following:
-
-```
-Muice-Chatbot     <- Root directory
- ├─llm
- ├─model
- │  ├─ chatglm2-6b       <- Base model (select one)
- │  ├─ chatglm2-6b-int4  <- Int4 quantized model
- │  ├─ Qwen-7B-Chat-Int4 <- Qwen-7B-int4
- │  └─ Muice
- ├─configs.yml  <- Configuration file
- ├─ws.py         <- WebSocket service
- ├─main.py       <- Main application
- ├─requirements.txt
- └─...
-```
+```yaml  
+model:  
+  loader: llmtuner  
+  model_path: model/Qwen2.5-7B-Instruct-GPTQ-Int4 # Base model path  
+  adapter_path: model/Muice-2.7.1-Qwen2.5-7B-Instruct-GPTQ-Int4-8e-4 # Fine-tuned model path  
+  template: qwen # Model template in LLaMA-Factory (required)  
+  system_prompt: 'Now you are an AI girl named "Muice"' # System prompt (optional)  
+  auto_system_prompt: true # Automatically configure Muice's system prompt (default: false)  
+```  
 
----
+If you lack a suitable GPU and need to load the model on CPU or a quantized model, install and configure the `GCC` environment, then enable `openmp`. [Reference link](https://blog.csdn.net/m0_52985087/article/details/136480206?spm=1001.2014.3001.5501).  
 
-## Configuration ⚒️
+## Using Without Muice's Fine-Tuned Model  
 
-The configuration file is located in `configs.yml`. Adjust settings to match your requirements.
+This repository also supports using other fine-tuned models or base models directly. Refer to [Supported Model Loaders](./docs/model.md) for configuration.  
 
-### Updates (Post-2024.12.04):
+Multimodal models are also supported. Refer to [Multimodal Model Loaders](./docs/model.md#multimodal-model-loader-configuration).  
 
-New configurations have been introduced for models versioned 2.7.x and above:
+## Bot Service Configuration  
 
-```yaml
-# Active Conversations
-active:
-  enable: false  # Enable or disable active conversations
-  rate: 0.003    # Probability of initiating a conversation (per minute)
-  active_prompts:
-    - '<生成推文: 胡思乱想>'
-    - '<生成推文: AI生活>'
-    - '<生成推文: AI思考>'
-    - '<生成推文: 表达爱意>'
-    - '<生成推文: 情感建议>'
-  not_disturb: true  # Enable Do Not Disturb mode
-  schedule:
-    enable: true  # Enable scheduled tasks
-    rate: 0.75    # Probability of executing scheduled tasks
-    tasks:
-      - hour: 8
-        prompt: '<日常问候: 早上>'
-      - hour: 12
-        prompt: '<日常问候: 中午>'
-      - hour: 18
-        prompt: '<日常问候: 傍晚>'
-      - hour: 22
-        prompt: '<日常问候: 深夜>'
-  targets:  # List of QQ IDs for active conversations
-    - 12345678
-    - 23456789
+OneBot service is now supported.  
 
-```
+This project uses the [OneBot V11](https://github.com/botuniverse/onebot-11) protocol. For QQ usage, we recommend [LLOneBot](https://github.com/LLOneBot/LLOneBot) or [Lagrange.Core](https://github.com/LagrangeDev/Lagrange.Core).  
 
-For pre-2.7.x models, use the following configuration format instead:
+For LLOneBot: After installation, enable the reverse WebSocket service in settings and enter `ws://127.0.0.1:21050/ws/api`.  
 
-```yaml
-  active_prompts:
-    - '（分享一下你的一些想法）'
-    - '（创造一个新话题）'
-```
+For Lagrange.Core: Follow [Lagrange Quick Deployment](https://lagrangedev.github.io/Lagrange.Doc/Lagrange.OneBot/Config/) and add the following configuration to its file:  
 
-And:
+```json  
+{  
+	"Type": "ReverseWebSocket",  
+	"Host": "127.0.0.1",  
+	"Port": 21050,  
+	"Suffix": "/ws/api",  
+	"ReconnectInterval": 5000,  
+	"HeartBeatInterval": 5000,  
+	"HeartBeatEnable": true,  
+	"AccessToken": ""  
+}  
+```  
 
-```yaml
-    tasks:
-      - hour: 8
-        prompt: '（发起一个早晨问候）'
-      - hour: 12
-        prompt: '（发起一个中午问候）'
-      - hour: 18
-        prompt: '（发起一个傍晚问候）'
-      - hour: 22
-        prompt: '（发起一个临睡问候）'
-```
+Other OneBot V11 adapters can also be used. See [OneBot V11 Adapters](https://onebot.dev/ecosystem.html#onebot-%E5%AE%9E%E7%8E%B0-1).  
 
-## Usage 🎉
+**Avoid updating QQNT unnecessarily. If issues arise, try downgrading QQNT.**  
 
-Run the main application from the project root directory:
+> [!CAUTION]  
+>  
+> Update as of February 22, 2025: LiteLoaderQQNT-related account bans remain unresolved. To continue using it, downgrade QQNT to version `9.9.15-2xxxx`, install the framework, log in once, and immediately close it. Modify the following files in the root directory:  
+>  
+> `\resources\app-update.yml` -> `provider: 3rdparty`  
+>  
+> `\resources\app\versions\channel.json` -> `"channel": "bbbbbbbbbbeta"`  
+>  
+> Set these files to read-only to prevent QQNT from auto-updating.  
 
-```powershell
-conda activate Muice
-python main.py
-```
+For Telegram Bot usage: [Migrate to Telegram Bot](./docs/telegram.md)  
 
-Alternatively, use the generated `start.bat` script.
+## Other Features  
 
-------
+- [Voice Replies](docs/other_func.md#voice-replies)  
+- [Image Recognition (Identify/Send Memes)](docs/other_func.md#ofa-image-recognition-identify--send-memes)  
+- [Faiss Long-Term Memory (Experimental)](docs/other_func.md#faiss-long-term-memory-experimental)  
+- [Real-Time Voice Chat](docs/other_func.md#start-real-time-voice-chat)  
 
-## Commands 🕹️
+# Configuration ⚒️  
 
-| Command  | Description                            |
-| -------- | -------------------------------------- |
-| /clean   | Clear the current conversation history |
-| /refresh | Refresh the current conversation       |
-| /help    | Display all available commands         |
-| /reset   | Reset all conversation data            |
-| /undo    | Undo the last conversation entry       |
+Configuration file instructions are located in `configs.yml`. Modify them according to your needs.  
 
-------
+# Usage 🎉  
 
-## Example Conversations (Training Data) 📑
+Run `main.py` in the project root directory:  
 
-View the public dataset: [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset).
+```powershell  
+conda activate Muice  
+python main.py  
+```  
 
-------
+Or use the `start.bat` script generated by the automatic installation.  
 
-## Character Design 🎨
+# Commands 🕹️  
 
-Unlike other chatbot projects, this project provides a model that I have fine tuned based on my own conversation dataset, which can be downloaded in the Release. The publicly available information regarding the fine tuned model persona is as follows:
+| Command | Description |  
+|---------|-------------|  
+| /clean | Clear current dialogue history. |  
+| /refresh | Refresh the current dialogue. |  
+| /help | Display all available commands. |  
+| /reset | Reset all dialogue data (archives dialogue data). |  
+| /undo | Undo the last dialogue. |  
 
-![Muice Character Design](https://i0.hdslb.com/bfs/new_dyn/9fc79347b54c5f2835884c8f755bd1ea97020216.png)
+# FAQ  
 
-Training set open source address: [Moemu/Muice-Dataset]( https://huggingface.co/datasets/Moemu/Muice-Dataset )
+[FAQ](./docs/faq.md)  
 
-Original model: [THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B) & [QwenLM/Qwen](https://github.com/QwenLM/Qwen)
+# Example Dialogues (Training Dataset) 📑  
 
-The source code of this project uses [MIT License]（ https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE ）For fine tuned model files, it is not recommended to use them for commercial purposes.
+See the public dataset: [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)  
 
-## About🎗️
+# Muice's Character  
 
-- **Code Implementation**: [Moemu](https://github.com/Moemu), [MoeSnowyFox](https://github.com/MoeSnowyFox), [NaivG](https://github.com/NaivG), [zkhssb](https://github.com/zkhssb).
-- **Dataset Creation and Model Tuning**: [Moemu](https://github.com/Moemu), RWKV fine-tuning by [Seikaijyu](https://github.com/Seikaijyu).
-- **Documentation**: [TurboHK](https://github.com/TurboHK), [FHU-yezi](https://github.com/FHU-yezi).
+Unlike other chatbot projects, this project provides a model fine-tuned on a custom dialogue dataset, available for download in Releases. For details about the fine-tuned model's character, the currently public information is as follows:  
 
-> **Friendship Link: **[Coral](https://github.com/ProjectCoral/Coral)
+![Muice's Character Image (Right-click to open if unavailable)](https://i0.hdslb.com/bfs/new_dyn/9fc79347b54c5f2835884c8f755bd1ea97020216.png)  
 
-All contributors:
+Training dataset: [Moemu/Muice-Dataset](https://huggingface.co/datasets/Moemu/Muice-Dataset)  
 
-<a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">
-  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot"  alt="Loading..."/></a>
+Base models: [THUDM/ChatGLM2-6B](https://github.com/THUDM/ChatGLM2-6B) & [QwenLM/Qwen](https://github.com/QwenLM/Qwen))  
 
-If you find this project helpful, consider supporting it:
+This project's source code uses the [MIT License](https://github.com/Moemu/Muice-Chatbot/blob/main/LICENSE). Commercial use of the fine-tuned model files is discouraged.  
 
-<a href="https://www.buymeacoffee.com/Moemu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 163px !important;" ></a>
+# About 🎗️  
 
-Thanks you all!
+Code Implementation: [Moemu](https://github.com/Moemu), [MoeSnowyFox](https://github.com/MoeSnowyFox), [NaivG](https://github.com/NaivG), [zkhssb](https://github.com/zkhssb), [Asankilp](https://github.com/Asankilp)  
 
-**Star History:**
+Dataset Creation and Model Fine-Tuning: [Moemu](https://github.com/Moemu) (RWKV fine-tuning: [Seikaijyu](https://github.com/Seikaijyu))  
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)
+Documentation: [TurboHK](https://github.com/TurboHK), [Leaf](https://github.com/FHU-yezi)  
 
+> Related Projects: [Coral Framework](https://github.com/ProjectCoral/Coral), [nonebot-plugin-marshoai](https://github.com/LiteyukiStudio/nonebot-plugin-marshoai)  
+
+Code Contributions:  
+
+<a href="https://github.com/eryajf/Moemu/Muice-Chatbot/contributors">  
+  <img src="https://contrib.rocks/image?repo=Moemu/Muice-Chatbot" alt="contributors"/>  
+</a>  
+
+If this project is helpful, consider supporting it.  
+
+<a href="https://www.afdian.com/a/Moemu" target="_blank"><img src="https://pic1.afdiancdn.com/static/img/welcome/button-sponsorme.png" alt="afadian" style="height: 45px !important;width: 163px !important;"></a>  
+<a href="https://www.buymeacoffee.com/Moemu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 45px !important;width: 163px !important;" ></a>  
+
+Thank you for your support!  
+
+This project is part of MuikaAI.  
+
+Official Channel: [Muice's Room](https://pd.qq.com/s/d4n2xp45i)  
+
+Star History:  
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Moemu/Muice-Chatbot&type=Date)](https://star-history.com/#Moemu/Muice-Chatbot&Date)  
