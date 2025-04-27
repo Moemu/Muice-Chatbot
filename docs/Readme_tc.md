@@ -13,7 +13,7 @@
 >  
 > Muice-Chatbot 已於 2025 年 2 月 19 日正式停止更新，並將於 2025 年 7 月 16 日進入歸檔狀態。  
 >  
-> 因此我們強烈建議您遷移至基於 Nonebot2 實現的 MuiceBot 框架中，有關遷移說明，請參考: [從 Muice-Chatbot 中遷移](https://bot.snowy.moe/guide/migrations)  
+> 因此我們強烈建議您遷移至 [基於 Nonebot2 實現的 MuiceBot 框架](https://github.com/Moemu/MuiceBot) 中，有關遷移說明，請參考: [從 Muice-Chatbot 中遷移](https://bot.snowy.moe/guide/migrations)  
 
 > [!WARNING]
 > 我們使用簡體中文進行訓練，所以可能模型難以回答由繁體中文組成的問題。

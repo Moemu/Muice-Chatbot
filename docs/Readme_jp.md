@@ -9,6 +9,12 @@
 
 [简体中文](../Readme.md) | [繁體中文](./Readme_tc.md) | [English](./Readme_en.md) | 日本語
 
+> [!CAUTION]  
+>
+> Muice-Chatbotは2025年2月19日をもって正式に更新を終了し、2025年7月16日にアーカイブ状態に入ります。 
+>  
+> そのため、Nonebot2 をベースとした [MuiceBot](https://github.com/Moemu/MuiceBot) フレームワークへの移行を強くお勧めします。移行手順については、以下を参照してください： [Muice-Chatbot からの移行](https://bot.snowy.moe/guide/migrations) を参照してください。 
+
 > [!NOTE]
 > 私たちは簡体字中国語を使って訓練を行っているので、モデルは日本語からなる質問に答えにくいかもしれません。
 > 機械翻訳された日本語訓練集から微調整されたモデルが必要なら、教えてください！

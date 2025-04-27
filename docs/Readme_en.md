@@ -13,7 +13,7 @@
 >  
 > Muice-Chatbot has officially ceased updates as of February 19, 2025, and will enter archive status on July 16, 2025.  
 >  
-> Therefore, we strongly recommend migrating to the MuiceBot framework based on Nonebot2. For migration instructions, please refer to: [Migrating from Muice-Chatbot](https://bot.snowy.moe/guide/migrations)  
+> Therefore, we strongly recommend migrating to [the MuiceBot framework based on Nonebot2](https://github.com/Moemu/MuiceBot). For migration instructions, please refer to: [Migrating from Muice-Chatbot](https://bot.snowy.moe/guide/migrations)  
 
 > [!WARNING]
 > The chatbot is trained in Simplified Chinese, which may limit its ability to handle English input effectively. Let us know if you are interested in a version fine-tuned with a machine-translated dataset in English!
